@@ -185,6 +185,28 @@ export default function App() {
   // Modais de Edição de Disciplina
   const [activeDisciplineEditor, setActiveDisciplineEditor] = useState(null);
   const [newTopicInput, setNewTopicInput] = useState('');
+  const [draggedTopicIndex, setDraggedTopicIndex] = useState(null);
+
+  const handleDragStart = (e, index) => {
+    setDraggedTopicIndex(index);
+    e.dataTransfer.effectAllowed = 'move';
+  };
+
+  const handleDragOver = (e, index) => {
+    e.preventDefault();
+    if (draggedTopicIndex === null || draggedTopicIndex === index) return;
+
+    const list = [...activeDisciplineEditor.topics];
+    const item = list.splice(draggedTopicIndex, 1)[0];
+    list.splice(index, 0, item);
+
+    setDraggedTopicIndex(index);
+    setActiveDisciplineEditor({ ...activeDisciplineEditor, topics: list });
+  };
+
+  const handleDragEnd = () => {
+    setDraggedTopicIndex(null);
+  };
 
   // Metas Diárias
   const [dailyGoals, setDailyGoals] = useState([
@@ -198,7 +220,7 @@ export default function App() {
       type: 'THEORY',
       durationMinutes: 90,
       completed: false,
-      studyMethod: 'PDF, Lei Seca',
+      studyMethod: '',
       tecUrl: 'https://www.tecconcursos.com.br',
       videoUrl: 'https://www.grancursosonline.com.br',
       pdfUrl: '#',
@@ -310,9 +332,9 @@ export default function App() {
       prev.map((d) =>
         d.id === activeDisciplineEditor.id
           ? {
-              ...activeDisciplineEditor,
-              totalTopics: activeDisciplineEditor.topics.length
-            }
+            ...activeDisciplineEditor,
+            totalTopics: activeDisciplineEditor.topics.length
+          }
           : d
       )
     );
@@ -422,15 +444,15 @@ export default function App() {
       prev.map((g) =>
         g.id === activeStudyModal.id
           ? {
-              ...g,
-              completed: true,
-              durationMinutes: calculatedMinutes,
-              questionsTotal: Number(questionsDone),
-              questionsCorrect: Number(questionsRight),
-              summaryNotes: summaryHtml,
-              errorNotes: errorHtml,
-              studyMethod: methodsString
-            }
+            ...g,
+            completed: true,
+            durationMinutes: calculatedMinutes,
+            questionsTotal: Number(questionsDone),
+            questionsCorrect: Number(questionsRight),
+            summaryNotes: summaryHtml,
+            errorNotes: errorHtml,
+            studyMethod: methodsString
+          }
           : g
       )
     );
@@ -448,10 +470,10 @@ export default function App() {
 
   return (
     <div className="relative w-screen h-screen overflow-hidden bg-slate-950 text-slate-100 font-sans antialiased">
-      
+
       {/* APLICATIVO PRINCIPAL */}
       <div className="flex w-full h-full">
-        
+
         {/* MENU LATERAL */}
         <aside className={`${isSidebarCollapsed ? 'w-20' : 'w-64'} bg-slate-900 border-r border-slate-800 flex flex-col justify-between transition-all duration-300 select-none z-10 shrink-0`}>
           <div>
@@ -462,7 +484,7 @@ export default function App() {
                 </div>
                 {!isSidebarCollapsed && (
                   <div className="leading-tight">
-                    <h1 className="font-extrabold text-sm text-white whitespace-nowrap">PAPYRUS</h1>
+                    <h1 className="font-extrabold text-lg text-white whitespace-nowrap">PAPYRUS</h1>
                     <p className="text-[10px] text-emerald-400 font-semibold uppercase whitespace-nowrap">Plataforma</p>
                   </div>
                 )}
@@ -488,11 +510,10 @@ export default function App() {
                   <button
                     key={item.id}
                     onClick={() => setActiveTab(item.id)}
-                    className={`w-full flex items-center ${isSidebarCollapsed ? 'justify-center px-0' : 'gap-3 px-3.5'} py-2.5 rounded-xl font-medium text-sm transition-all ${
-                      isActive
-                        ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 font-bold'
-                        : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
-                    }`}
+                    className={`w-full flex items-center ${isSidebarCollapsed ? 'justify-center px-0' : 'gap-3 px-3.5'} py-2.5 rounded-xl font-medium text-sm transition-all ${isActive
+                      ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 font-bold'
+                      : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
+                      }`}
                   >
                     <Icon size={18} className={isActive ? 'text-emerald-400' : 'text-slate-400'} />
                     {!isSidebarCollapsed && <span className="whitespace-nowrap">{item.label}</span>}
@@ -516,7 +537,7 @@ export default function App() {
 
         {/* CONTEÚDO PRINCIPAL */}
         <main className="flex-1 flex flex-col overflow-y-auto bg-slate-950 z-0">
-          
+
           <header className="h-16 border-b border-slate-800 px-8 flex items-center justify-between bg-slate-900/40 backdrop-blur-md sticky top-0 z-10 shrink-0">
             <div className="flex items-center gap-3 text-xs">
               <span className="uppercase font-bold text-slate-400">Plano Selecionado:</span>
@@ -545,7 +566,7 @@ export default function App() {
             {/* ========================================================= */}
             {activeTab === 'concursos' && (
               <div className="space-y-8">
-                
+
                 {/* Cabeçalho Limpo (Sem o botão no canto direito) */}
                 <div>
                   <h2 className="text-2xl font-black text-white">Planos de Concurso</h2>
@@ -554,7 +575,7 @@ export default function App() {
 
                 {/* Grid com o Card de Criar Novo Plano + Planos Existentes */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-                  
+
                   {/* Card Tracejado: Criar Novo Plano */}
                   <div
                     onClick={() => setIsCreatePlanModalOpen(true)}
@@ -579,11 +600,10 @@ export default function App() {
                       <div
                         key={p.id}
                         onClick={() => setSelectedPlanId(p.id)}
-                        className={`bg-slate-900 border rounded-2xl p-5 space-y-3 cursor-pointer transition-all ${
-                          isSelected
-                            ? 'border-emerald-500 ring-2 ring-emerald-500/20 shadow-lg shadow-emerald-500/10'
-                            : 'border-slate-800 hover:border-slate-700'
-                        }`}
+                        className={`bg-slate-900 border rounded-2xl p-5 space-y-3 cursor-pointer transition-all ${isSelected
+                          ? 'border-emerald-500 ring-2 ring-emerald-500/20 shadow-lg shadow-emerald-500/10'
+                          : 'border-slate-800 hover:border-slate-700'
+                          }`}
                       >
                         <div className="flex justify-between items-start">
                           <div
@@ -609,10 +629,10 @@ export default function App() {
 
                 {/* PAINEL DO CONCURSO ATIVO */}
                 <div className="bg-slate-900 border border-slate-800 rounded-3xl p-8 space-y-8">
-                  
+
                   {/* Topo do Plano: Info + Progresso do Edital + Questões/Desempenho */}
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pb-6 border-b border-slate-800">
-                    
+
                     {/* Informações do Edital */}
                     <div className="flex items-start gap-5">
                       <div
@@ -825,7 +845,7 @@ export default function App() {
                     <h3 className="font-extrabold text-lg text-white flex items-center gap-2"><CheckCircle2 size={20} className="text-emerald-400" /> Metas de Hoje (Teoria & Revisões)</h3>
                     <button onClick={() => setActiveTab('metas')} className="text-xs font-bold text-emerald-400 hover:underline">Ver todas as metas →</button>
                   </div>
-                  
+
                   <div className="space-y-3">
                     {dailyGoals.map((goal) => (
                       <div key={goal.id} onClick={() => handleOpenStudy(goal)} className={`p-4 rounded-xl border cursor-pointer flex justify-between items-center transition-all ${goal.completed ? 'bg-emerald-950/15 border-emerald-500/30' : 'bg-slate-800/60 border-slate-700 hover:border-slate-500'}`}>
@@ -868,9 +888,8 @@ export default function App() {
                     <div
                       key={goal.id}
                       onClick={() => handleOpenStudy(goal)}
-                      className={`bg-slate-900 border rounded-2xl p-6 space-y-4 cursor-pointer transition-all ${
-                        goal.completed ? 'border-emerald-500/30 bg-emerald-950/10' : 'border-slate-800 hover:border-slate-700'
-                      }`}
+                      className={`bg-slate-900 border rounded-2xl p-6 space-y-4 cursor-pointer transition-all ${goal.completed ? 'border-emerald-500/30 bg-emerald-950/10' : 'border-slate-800 hover:border-slate-700'
+                        }`}
                     >
                       <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-slate-800 pb-4">
                         <div>
@@ -1083,7 +1102,7 @@ export default function App() {
       {activeDisciplineEditor && (
         <div className="absolute inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm animate-in fade-in">
           <div className="bg-[#18181b] border border-zinc-700 rounded-3xl w-full max-w-2xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
-            
+
             <div className="p-6 border-b border-zinc-800 flex justify-between items-center bg-[#13141a]">
               <h3 className="text-xl font-black text-white">{activeDisciplineEditor.name}</h3>
               <button onClick={() => setActiveDisciplineEditor(null)} className="text-zinc-400 hover:text-white">
@@ -1091,35 +1110,16 @@ export default function App() {
               </button>
             </div>
 
-            <div className="p-6 overflow-y-auto space-y-6 flex-1 text-xs">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="md:col-span-2">
-                  <label className="text-zinc-400 font-bold block mb-1.5 uppercase">Nome da Disciplina</label>
-                  <input
-                    type="text"
-                    value={activeDisciplineEditor.name}
-                    onChange={(e) => setActiveDisciplineEditor({ ...activeDisciplineEditor, name: e.target.value })}
-                    className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-2.5 text-white font-bold outline-none focus:border-emerald-500"
-                  />
-                </div>
-                <div>
-                  <label className="text-zinc-400 font-bold block mb-1.5 uppercase">Cor</label>
-                  <div className="flex items-center gap-2 bg-zinc-900 border border-zinc-700 rounded-xl p-2">
-                    <div className="w-5 h-5 rounded-md" style={{ backgroundColor: activeDisciplineEditor.color }} />
-                    <select
-                      value={activeDisciplineEditor.color}
-                      onChange={(e) => setActiveDisciplineEditor({ ...activeDisciplineEditor, color: e.target.value })}
-                      className="bg-transparent text-white font-bold outline-none w-full cursor-pointer"
-                    >
-                      <option value="#6366F1">Azul Índigo</option>
-                      <option value="#EC4899">Rosa</option>
-                      <option value="#F59E0B">Âmbar / Laranja</option>
-                      <option value="#EF4444">Vermelho</option>
-                      <option value="#10B981">Verde Esmeralda</option>
-                      <option value="#8B5CF6">Roxo</option>
-                    </select>
-                  </div>
-                </div>
+        <div className="p-6 overflow-y-auto space-y-6 flex-1 text-xs">
+              {/* Nome da Disciplina ocupando 100% da largura (Sem seleção de Cor) */}
+              <div>
+                <label className="text-zinc-400 font-bold block mb-1.5 uppercase">Nome da Disciplina</label>
+                <input
+                  type="text"
+                  value={activeDisciplineEditor.name}
+                  onChange={(e) => setActiveDisciplineEditor({ ...activeDisciplineEditor, name: e.target.value })}
+                  className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-2.5 text-white font-bold outline-none focus:border-emerald-500"
+                />
               </div>
 
               <div className="space-y-3">
@@ -1146,36 +1146,39 @@ export default function App() {
                   </button>
                 </div>
 
+                {/* Lista com Drag & Drop (arrastar e soltar suave) */}
                 <div className="border border-zinc-800 bg-zinc-950/80 rounded-2xl divide-y divide-zinc-800/80 max-h-64 overflow-y-auto">
                   {activeDisciplineEditor.topics.length === 0 ? (
                     <div className="p-6 text-center text-zinc-500">Nenhum tópico adicionado ainda.</div>
                   ) : (
                     activeDisciplineEditor.topics.map((t, idx) => (
-                      <div key={t.id} className="p-3 flex items-center justify-between hover:bg-zinc-900/60 transition-colors">
-                        <span className="font-semibold text-zinc-200 truncate pr-4">{t.name}</span>
-                        <div className="flex items-center gap-1 shrink-0">
+                      <div
+                        key={t.id}
+                        draggable
+                        onDragStart={(e) => handleDragStart(e, idx)}
+                        onDragOver={(e) => handleDragOver(e, idx)}
+                        onDragEnd={handleDragEnd}
+                        className={`p-3 flex items-center justify-between transition-colors select-none cursor-grab active:cursor-grabbing ${
+                          draggedTopicIndex === idx
+                            ? 'bg-emerald-500/10 border-emerald-500/30'
+                            : 'hover:bg-zinc-900/60'
+                        }`}
+                      >
+                        <span className="font-semibold text-zinc-200 truncate pr-4 pointer-events-none">
+                          {t.name}
+                        </span>
+
+                        <div className="flex items-center shrink-0">
                           <button
-                            onClick={() => handleMoveTopic(idx, -1)}
-                            disabled={idx === 0}
-                            className="p-1 text-zinc-400 hover:text-white disabled:opacity-30"
-                            title="Subir"
-                          >
-                            <ArrowUp size={14} />
-                          </button>
-                          <button
-                            onClick={() => handleMoveTopic(idx, 1)}
-                            disabled={idx === activeDisciplineEditor.topics.length - 1}
-                            className="p-1 text-zinc-400 hover:text-white disabled:opacity-30"
-                            title="Descer"
-                          >
-                            <ArrowDown size={14} />
-                          </button>
-                          <button
-                            onClick={() => handleDeleteTopicFromEditor(t.id)}
-                            className="p-1 text-zinc-400 hover:text-rose-400 ml-1"
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDeleteTopicFromEditor(t.id);
+                            }}
+                            className="p-1 text-zinc-500 hover:text-rose-400 transition-colors"
                             title="Excluir Tópico"
                           >
-                            <Trash2 size={14} />
+                            <Trash2 size={15} />
                           </button>
                         </div>
                       </div>
@@ -1183,16 +1186,26 @@ export default function App() {
                   )}
                 </div>
               </div>
-
             </div>
 
-            <div className="p-6 border-t border-zinc-800 flex justify-between items-center bg-[#13141a]">
+            {/* MANTENHA ESTA PARTE DO RODAPÉ INTACTA (a que aparece no print): */}
+            <div className="p-6 bg-zinc-950/60 border-t border-zinc-800 flex justify-end gap-3 rounded-b-3xl">
               <button
-                onClick={() => handleDeleteDiscipline(activeDisciplineEditor.id)}
-                className="px-4 py-2.5 rounded-xl text-xs font-bold text-rose-400 hover:bg-rose-500/10 border border-rose-500/30 transition-colors"
+                type="button"
+                onClick={() => setActiveDisciplineEditor(null)}
+                className="px-5 py-2.5 rounded-xl border border-zinc-700 font-bold text-zinc-300 hover:bg-zinc-800"
               >
-                Remover Disciplina
+                Cancelar
               </button>
+              <button
+                type="button"
+                onClick={handleSaveDisciplineEditor}
+                className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black px-6 py-2.5 rounded-xl shadow-lg flex items-center gap-2"
+              >
+                Salvar Alterações
+              </button>
+            </div>
+
               <div className="flex gap-3">
                 <button
                   onClick={() => setActiveDisciplineEditor(null)}
@@ -1210,7 +1223,7 @@ export default function App() {
             </div>
 
           </div>
-        </div>
+      
       )}
 
       {/* MODAL: SESSÃO DE ESTUDO & CRONÔMETRO */}
@@ -1231,7 +1244,7 @@ export default function App() {
                     <Clock size={20} className="text-zinc-500" />
                     <span className="font-mono text-xl font-bold tracking-wider">{formatTimer(timerSeconds)}</span>
                   </div>
-                  
+
                   {!isManualTime && (
                     <>
                       <button
@@ -1248,14 +1261,14 @@ export default function App() {
                       </button>
                     </>
                   )}
-                  
+
                   <button onClick={() => setIsManualTime(!isManualTime)} className="text-xs font-bold text-zinc-500 hover:text-emerald-400 underline ml-2 transition-colors">
                     {isManualTime ? 'Voltar para Cronômetro' : 'Inserir Tempo Manual'}
                   </button>
                 </div>
-                
+
                 <button onClick={handleFinishStudy} className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black px-6 py-3 rounded-lg flex items-center gap-2 transition-colors shadow-lg shadow-emerald-500/20">
-                  <Trophy size={18} /> Finalizar missão
+                  <Trophy size={18} /> Finalizar Tarefa
                 </button>
               </div>
 
@@ -1273,7 +1286,7 @@ export default function App() {
               )}
             </div>
 
-            <div className="p-8 overflow-y-auto space-y-6 bg-[#13141a] rounded-b-2xl">
+            <div className="p-8 space-y-6 bg-[#13141a] rounded-b-2xl">
               <div className="space-y-2">
                 <span className="text-xs font-bold text-zinc-500 uppercase tracking-wider">Anotações & Cadernos de Estudo</span>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1288,7 +1301,7 @@ export default function App() {
                       <div>
                         <div className="flex items-center gap-2">
                           <h4 className="font-extrabold text-sm text-white">Caderno de Erros</h4>
-                          {errorHtml && <span className="bg-rose-500/20 text-rose-300 text-[10px] font-bold px-2 py-0.5 rounded-full border border-rose-500/30">Preenchido</span>}
+
                         </div>
                         <p className="text-[11px] text-zinc-400 mt-0.5">Pegadinhas e questões erradas</p>
                       </div>
@@ -1307,7 +1320,7 @@ export default function App() {
                       <div>
                         <div className="flex items-center gap-2">
                           <h4 className="font-extrabold text-sm text-white">Resumo da Matéria</h4>
-                          {summaryHtml && <span className="bg-emerald-500/20 text-emerald-300 text-[10px] font-bold px-2 py-0.5 rounded-full border border-emerald-500/30">Preenchido</span>}
+
                         </div>
                         <p className="text-[11px] text-zinc-400 mt-0.5">Pontos-chave e mnemônicos</p>
                       </div>
@@ -1319,7 +1332,7 @@ export default function App() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-3">
-                  <span className="text-xs font-bold text-zinc-500 uppercase tracking-wider">Métodos Utilizados</span>
+                  <span className="text-xs font-bold text-zinc-500 uppercase tracking-wider">Material Utilizado</span>
                   <div className="flex flex-wrap gap-2">
                     {['PDF', 'Videoaula', 'Questões', 'Lei Seca', 'Resumo Próprio'].map((method) => (
                       <button
@@ -1329,9 +1342,8 @@ export default function App() {
                             prev.includes(method) ? prev.filter((m) => m !== method) : [...prev, method]
                           );
                         }}
-                        className={`text-xs font-bold px-3 py-2 rounded-lg border transition-colors ${
-                          selectedMethods.includes(method) ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30' : 'bg-zinc-900 border-zinc-800 text-zinc-500 hover:border-zinc-700'
-                        }`}
+                        className={`text-xs font-bold px-3 py-2 rounded-lg border transition-colors ${selectedMethods.includes(method) ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30' : 'bg-zinc-900 border-zinc-800 text-zinc-500 hover:border-zinc-700'
+                          }`}
                       >
                         {method}
                       </button>
@@ -1342,53 +1354,125 @@ export default function App() {
                 <div className="space-y-3">
                   <span className="text-xs font-bold text-zinc-500 uppercase tracking-wider">Desempenho em Questões</span>
                   <div className="flex gap-4">
+                    {/* Campo Qtd. Feitas */}
                     <div className="flex-1">
-                      <label className="text-[10px] font-bold text-zinc-500 mb-1 block">Qtd. Feitas</label>
-                      <input
-                        type="number"
-                        value={questionsDone}
-                        onChange={(e) => setQuestionsDone(e.target.value)}
-                        className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-4 py-2 text-sm text-white outline-none"
-                      />
+                      <label className="text-[10px] font-bold text-zinc-500 mb-1 block">Feitas</label>
+                      <div className="flex items-center justify-between bg-zinc-900 border border-zinc-800 rounded-lg p-1.5">
+                        <button
+                          type="button"
+                          onClick={() => setQuestionsDone((prev) => Math.max(0, Number(prev || 0) - 1))}
+                          className="w-7 h-7 flex items-center justify-center text-emerald-400 text-base font-bold select-none"
+                        >
+                          -
+                        </button>
+                        <input
+                          type="number"
+                          min="0"
+                          value={questionsDone ?? ''}
+                          onChange={(e) => setQuestionsDone(e.target.value)}
+                          placeholder="0"
+                          className="w-full bg-transparent text-center text-emerald-400 font-bold text-sm outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setQuestionsDone((prev) => Number(prev || 0) + 1)}
+                          className="w-7 h-7 text-emerald-400 flex items-center justify-center text-sm font-bold select-none"
+                        >
+                          +
+                        </button>
+                      </div>
                     </div>
+
+                    {/* Campo Qtd. Acertos */}
                     <div className="flex-1">
-                      <label className="text-[10px] font-bold text-zinc-500 mb-1 block">Qtd. Acertos</label>
-                      <input
-                        type="number"
-                        value={questionsRight}
-                        onChange={(e) => setQuestionsRight(e.target.value)}
-                        className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-4 py-2 text-sm text-white outline-none"
-                      />
+                      <label className="text-[10px] font-bold text-zinc-500 mb-1 block">Acertos</label>
+                      <div className="flex items-center justify-between bg-zinc-900 border border-zinc-800 rounded-lg p-1.5">
+                        <button
+                          type="button"
+                          onClick={() => setQuestionsRight((prev) => Math.max(0, Number(prev || 0) - 1))}
+                          className="w-7 h-7 flex items-center justify-center text-emerald-400 text-base font-bold select-none"
+                        >
+                          -
+                        </button>
+                        <input
+                          type="number"
+                          min="0"
+                          value={questionsRight ?? ''}
+                          onChange={(e) => setQuestionsRight(e.target.value)}
+                          placeholder="0"
+                          className="w-full bg-transparent text-center text-emerald-400 font-bold text-sm outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setQuestionsRight((prev) => Number(prev || 0) + 1)}
+                          className="w-7 h-7 text-emerald-400 flex items-center justify-center text-sm font-bold select-none"
+                        >
+                          +
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="md:col-span-2 space-y-4 bg-zinc-900/50 p-6 rounded-xl border border-zinc-800/50">
+              <span className="text-xs font-bold text-zinc-400 block tracking-wider">AGENDAMENTO DE REVISÕES PERIÓDICAS</span>
+
+              <div className="flex flex-wrap gap-3">
+                {[
+                  { key: 'r24h', label: '24 horas' },
+                  { key: 'r7d', label: '7 dias' },
+                  { key: 'r15d', label: '15 dias' },
+                  { key: 'r30d', label: '30 dias' },
+                  { key: 'r60d', label: '60 dias' },
+                  { key: 'r90d', label: '90 dias' }
+                ].map((rev) => (
+                  <button
+                    key={rev.key}
+                    type="button"
+                    onClick={() => setRevisions({ ...revisions, [rev.key]: !revisions[rev.key] })}
+                    className={`px-3 py-2 rounded-lg border text-xs font-bold transition-colors select-none ${revisions[rev.key]
+                      ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400'
+                      : 'bg-zinc-950 border-zinc-800 text-zinc-500 hover:border-zinc-700'
+                      }`}
+                  >
+                    {rev.label}
+                  </button>
+                ))}
+              </div>
+              {/* Box importante para revisao em bloco */}
+              <div
+                onClick={() => setBlockRevisionChecked(!blockRevisionChecked)}
+                className={`mt-4 p-3.5 rounded-xl border transition-all cursor-pointer select-none flex items-center justify-between ${blockRevisionChecked
+                    ? 'bg-emerald-950/30 border-emerald-500/50 shadow-lg shadow-emerald-950/40'
+                    : 'bg-zinc-950 border-zinc-800 hover:border-zinc-700'
+                  }`}
+              >
+                <div className="flex items-center gap-3">
+                  <div className={`p-2 rounded-lg ${blockRevisionChecked ? 'bg-emerald-500/20 text-emerald-400' : 'bg-zinc-800 text-zinc-500'}`}>
+                    <Layers size={18} />
+                  </div>
+                  <div>
+                    <div className={`text-xs font-bold ${blockRevisionChecked ? 'text-emerald-400' : 'text-zinc-300'}`}>
+                      Agendar Revisão em Bloco
+                    </div>
+                    <div className="text-[10px] text-zinc-500">
+                      Dispara revisão automática a cada 3 tópicos desta matéria
                     </div>
                   </div>
                 </div>
 
-                <div className="md:col-span-2 space-y-4 bg-zinc-900/50 p-6 rounded-xl border border-zinc-800/50">
-                  <span className="text-xs font-bold text-zinc-400 block tracking-wider">AGENDAMENTO DE REVISÕES PERIÓDICAS</span>
-                  <div className="flex flex-wrap gap-3">
-                    {[{ key: 'r24h', label: '24 horas' }, { key: 'r7d', label: '7 dias' }, { key: 'r15d', label: '15 dias' }, { key: 'r30d', label: '30 dias' }, { key: 'r60d', label: '60 dias' }, { key: 'r90d', label: '90 dias' }].map((rev) => (
-                      <label key={rev.key} className={`flex items-center gap-2 px-3 py-2 rounded-lg border cursor-pointer transition-colors ${revisions[rev.key] ? 'bg-emerald-500/10 border-emerald-500/30' : 'bg-zinc-950 border-zinc-800 hover:border-zinc-700'}`}>
-                        <input type="checkbox" checked={revisions[rev.key]} onChange={(e) => setRevisions({ ...revisions, [rev.key]: e.target.checked })} className="hidden" />
-                        <div className={`w-3.5 h-3.5 rounded flex items-center justify-center border ${revisions[rev.key] ? 'bg-emerald-500 border-emerald-500' : 'border-zinc-600'}`}>
-                          {revisions[rev.key] && <Check size={10} className="text-zinc-950 stroke-[4]" />}
-                        </div>
-                        <span className={`text-xs font-bold ${revisions[rev.key] ? 'text-emerald-400' : 'text-zinc-500'}`}>{rev.label}</span>
-                      </label>
-                    ))}
-                  </div>
-
-                  <label className="flex items-center gap-2 cursor-pointer pt-4 border-t border-zinc-800/80">
-                    <input type="checkbox" checked={blockRevisionChecked} onChange={(e) => setBlockRevisionChecked(e.target.checked)} className="hidden" />
-                    <div className={`w-4 h-4 rounded flex items-center justify-center border ${blockRevisionChecked ? 'bg-emerald-500 border-emerald-500' : 'border-zinc-600'}`}>
-                      {blockRevisionChecked && <Check size={12} className="text-zinc-950 stroke-[4]" />}
-                    </div>
-                    <span className="text-xs font-semibold text-emerald-500">Contabilizar para Revisão em Bloco (Dispara a cada 3 tópicos desta disciplina)</span>
-                  </label>
+                {/* Toggle Switch Tático */}
+                <div className={`w-9 h-5 rounded-full p-0.5 transition-colors ${blockRevisionChecked ? 'bg-emerald-500' : 'bg-zinc-800'}`}>
+                  <div className={`w-4 h-4 rounded-full bg-zinc-950 transition-transform ${blockRevisionChecked ? 'translate-x-4' : 'translate-x-0'}`} />
                 </div>
               </div>
             </div>
           </div>
         </div>
+
+
       )}
 
       {/* MODAL: EDITOR DE TEXTO RICO */}
@@ -1477,7 +1561,7 @@ export default function App() {
           <div className="max-w-5xl w-full mx-auto flex justify-between items-center pt-6 border-t border-zinc-900">
             <span className="text-xs text-zinc-600 font-medium">Foco total no papiro. Sem distrações.</span>
             <button onClick={handleFinishStudy} className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black px-8 py-3.5 rounded-xl flex items-center gap-2 transition-all shadow-lg shadow-emerald-500/20">
-              <Trophy size={18} /> Finalizar Missão
+              <Trophy size={18} /> Finalizar missão
             </button>
           </div>
         </div>

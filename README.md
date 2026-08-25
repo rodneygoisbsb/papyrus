@@ -4,19 +4,19 @@
 
 ---
 
-## 💡 Sobre o Projeto
+## Sobre o Projeto
 
 O **Papyrus** nasceu com um propósito genuíno: **democratizar o acesso a ferramentas de estudo de alto rendimento**
 
 O projeto foi idealizado e construído para suprir uma necessidade real de familiares que precisavam de um método estruturado para serem aprovados em concursos públicos, mas não tinham recursos financeiros para arcar com as caras assinaturas das plataformas
 
-### 🤖 Desenvolvimento com Inteligência Artificial
+### Desenvolvimento com Inteligência Artificial
 
 Liderei a concepção arquitetural, a modelagem de dados e a interface do projeto, utilizando metodologias modernas de **Engenharia de Software assistida por Inteligência Artificial (AI Pair Programming)**. A IA atuou como copiloto técnico em tempo real, acelerando a escrita da API REST em Java/Spring Boot, a integração com o banco PostgreSQL e o ecossistema reativo em React + Tailwind CSS
 
 ---
 
-## ⚡ Principais Recursos
+## Principais Recursos
 
 * 🎯 **Gestão de Concursos:** Acompanhe múltiplos editais simultâneos com barra de progresso dinâmico de fechamento de tópicos
 * ⏱️ **Cronômetro & Modo Concentração:** Registro de horas líquidas com visual imersivo e sem distrações
@@ -26,7 +26,7 @@ Liderei a concepção arquitetural, a modelagem de dados e a interface do projet
 
 ---
 
-## 🛠️ Tecnologias Utilizadas
+## Tecnologias Utilizadas
 
 * **Frontend:** React.js, Vite, Tailwind CSS, Lucide Icons, Axios
 * **Backend:** Java 17, Spring Boot 3, Spring Data JPA, Hibernate
@@ -35,7 +35,7 @@ Liderei a concepção arquitetural, a modelagem de dados e a interface do projet
 
 ---
 
-## 🚀 Como Executar
+## Como Executar
 
 ### 1. Backend (Java / Spring Boot)
 
@@ -52,12 +52,10 @@ Liderei a concepção arquitetural, a modelagem de dados e a interface do projet
 
 ---
 
-## 👨‍💻 Autor e Créditos
+## Autor e Créditos
 
 * **Idealização e Condução:** [Rodney Gois](https://www.google.com/search?q=https://github.com/rodneygoisbsb)
-* **Desenvolvimento:** Construído com suporte e aceleração de Inteligência Artificial.
-
-> *"Quem não mede, não evolui"*
+* **Desenvolvimento:** Construído com suporte e aceleração de Inteligência Artificial
 
 ---
 
