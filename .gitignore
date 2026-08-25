@@ -1,0 +1,19 @@
+# Mac OS
+.DS_Store
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+node_modules/
+dist/
+
+# Backend
+backend/target/
+backend/.idea/
+target/
+.idea/
+
+# Outros
+.vscode/
+*.iml
