@@ -1,57 +1,27 @@
 import React, { useState, useEffect, useRef } from 'react';
-import {
-  LayoutDashboard,
-  Award,
-  CheckCircle2,
-  CalendarDays,
-  ListOrdered,
-  Sliders,
-  BarChart3,
-  User,
-  Settings,
-  Play,
-  Pause,
-  RotateCcw,
-  BookOpen,
-  Check,
-  Plus,
-  Flame,
-  Clock,
-  Target,
-  FileText,
-  TrendingUp,
-  ChevronLeft,
-  ChevronRight,
-  PenTool,
-  X,
-  Trophy,
-  ExternalLink,
-  AlertTriangle,
-  Minimize2,
-  Calendar,
-  Layers,
-  ArrowRight,
-  Bold,
-  Italic,
-  Underline,
-  Strikethrough,
-  List,
-  ListOrdered as ListNum,
-  Heading1,
-  Heading2,
-  AlignLeft,
-  AlignCenter,
-  Sparkles,
-  Trash2,
-  Edit2,
-  Folder,
-  ArrowUp,
-  ArrowDown
-} from 'lucide-react';
 import api from './services/api';
 
+// Layout
+import Sidebar from './components/layout/Sidebar';
+import Header from './components/layout/Header';
+
+// Tabs
+import InicioTab from './components/tabs/InicioTab';
+import ConcursosTab from './components/tabs/ConcursosTab';
+import MetasTab from './components/tabs/MetasTab';
+import QuadroSemanalTab from './components/tabs/QuadroSemanalTab';
+import EditalVerticalizadoTab from './components/tabs/EditalVerticalizadoTab';
+import PlanejamentoTab from './components/tabs/PlanejamentoTab';
+import DesempenhoTab from './components/tabs/DesempenhoTab';
+
+// Modals
+import DisciplineEditorModal from './components/modals/DisciplineEditorModal';
+import StudySessionModal from './components/modals/StudySessionModal';
+import RichTextEditorModal from './components/modals/RichTextEditorModal';
+import FocusModeModal from './components/modals/FocusModeModal';
+
 export default function App() {
-  const [activeTab, setActiveTab] = useState('concursos');
+  const [activeTab, setActiveTab] = useState('inicio');
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isFocusMode, setIsFocusMode] = useState(false);
 
@@ -65,8 +35,9 @@ export default function App() {
       edital: 'Polícia Militar do Distrito Federal',
       role: 'Cadete Policial Militar',
       targetDate: '20/12/2026',
-      badgeColor: 'bg-emerald-500',
-      colorHex: '#10B981',
+      badgeColor: 'bg-primary',
+      colorHex: '#1E60F6',
+      logoUrl: '',
       questionsTotal: 420,
       accuracy: 84
     },
@@ -76,21 +47,20 @@ export default function App() {
       edital: 'Banco do Brasil',
       role: 'Agente de Tecnologia (2026)',
       targetDate: '13/08/2026',
-      badgeColor: 'bg-teal-500',
-      colorHex: '#14B8A6',
+      badgeColor: 'bg-secondary',
+      colorHex: '#00D084',
+      logoUrl: '',
       questionsTotal: 35,
       accuracy: 78
     }
   ]);
   const [selectedPlanId, setSelectedPlanId] = useState('1');
 
-  // Disciplinas associadas por Plano
   const [disciplines, setDisciplines] = useState([
     {
       id: 'd1',
       planId: '1',
       name: 'Direito Constitucional',
-      color: '#6366F1',
       studiedTopics: 8,
       totalTopics: 22,
       questionsDone: 140,
@@ -106,7 +76,6 @@ export default function App() {
       id: 'd2',
       planId: '1',
       name: 'Língua Portuguesa',
-      color: '#EC4899',
       studiedTopics: 12,
       totalTopics: 18,
       questionsDone: 210,
@@ -122,7 +91,6 @@ export default function App() {
       id: 'd3',
       planId: '1',
       name: 'Direito Administrativo',
-      color: '#F59E0B',
       studiedTopics: 6,
       totalTopics: 20,
       questionsDone: 95,
@@ -136,7 +104,6 @@ export default function App() {
       id: 'd4',
       planId: '1',
       name: 'Raciocínio Lógico Matemático',
-      color: '#EF4444',
       studiedTopics: 4,
       totalTopics: 14,
       questionsDone: 80,
@@ -144,36 +111,9 @@ export default function App() {
         { id: 't4_1', name: '1. Proposições Simples e Compostas' },
         { id: 't4_2', name: '2. Equivalências Lógicas e Negações' }
       ]
-    },
-    {
-      id: 'd5',
-      planId: '2',
-      name: 'Conhecimentos Bancários',
-      color: '#3B82F6',
-      studiedTopics: 0,
-      totalTopics: 15,
-      questionsDone: 0,
-      topics: [
-        { id: 't5_1', name: '1. Sistema Financeiro Nacional (CMN e BACEN)' },
-        { id: 't5_2', name: '2. Mercado de Câmbio e Taxa Selic' }
-      ]
-    },
-    {
-      id: 'd6',
-      planId: '2',
-      name: 'Tecnologia da Informação',
-      color: '#10B981',
-      studiedTopics: 2,
-      totalTopics: 25,
-      questionsDone: 35,
-      topics: [
-        { id: 't6_1', name: '1. Bancos de Dados Relacionais e SQL' },
-        { id: 't6_2', name: '2. Linguagens de Programação: Java e Python' }
-      ]
     }
   ]);
 
-  // Plano ativo & Cálculos de Progresso
   const currentPlan = plans.find((p) => p.id === selectedPlanId) || plans[0];
   const currentDisciplines = disciplines.filter((d) => d.planId === currentPlan.id);
 
@@ -182,7 +122,23 @@ export default function App() {
   const progressPercentage = totalPlanTopics > 0 ? Math.round((totalPlanStudied / totalPlanTopics) * 100) : 0;
   const topicsRemaining = Math.max(0, totalPlanTopics - totalPlanStudied);
 
-  // Modais de Edição de Disciplina
+  // -------------------------------------------------------------
+  // ESTATÍSTICAS ACUMULADAS DINÂMICAS
+  // -------------------------------------------------------------
+  const [todayMinutesStudied, setTodayMinutesStudied] = useState(90);
+  const [todayQuestionsDone, setTodayQuestionsDone] = useState(35);
+
+  const [weeklyHoursStudied, setWeeklyHoursStudied] = useState(14);
+  const [weeklyHoursGoal, setWeeklyHoursGoal] = useState(25);
+  const weeklyProgressPercentage =
+    weeklyHoursGoal > 0 ? Math.min(100, Math.round((weeklyHoursStudied / weeklyHoursGoal) * 100)) : 0;
+
+  const [totalQuestionsDone, setTotalQuestionsDone] = useState(120);
+  const [totalQuestionsCorrect, setTotalQuestionsCorrect] = useState(98);
+  const overallAccuracy =
+    totalQuestionsDone > 0 ? ((totalQuestionsCorrect / totalQuestionsDone) * 100).toFixed(1) : '0.0';
+
+  // Drag & Drop Tópicos
   const [activeDisciplineEditor, setActiveDisciplineEditor] = useState(null);
   const [newTopicInput, setNewTopicInput] = useState('');
   const [draggedTopicIndex, setDraggedTopicIndex] = useState(null);
@@ -204,17 +160,18 @@ export default function App() {
     setActiveDisciplineEditor({ ...activeDisciplineEditor, topics: list });
   };
 
-  const handleDragEnd = () => {
-    setDraggedTopicIndex(null);
-  };
+  const handleDragEnd = () => setDraggedTopicIndex(null);
 
-  // Metas Diárias
+  // -------------------------------------------------------------
+  // METAS E REVISÕES DIÁRIAS
+  // -------------------------------------------------------------
   const [dailyGoals, setDailyGoals] = useState([
     {
       id: 'g1',
       topicId: 't1_1',
-      subject: 'Direito Constitucional',
-      subjectColor: '#6366F1',
+      subject: 'DIREITO CONSTITUCIONAL',
+      subjectColor: '#1E60F6',
+      borderClass: 'border-l-primary',
       topicName: 'Direitos e Garantias Fundamentais (Art. 5º)',
       importance: 'Alta Incidência',
       type: 'THEORY',
@@ -230,8 +187,9 @@ export default function App() {
     {
       id: 'g2',
       topicId: 't2_4',
-      subject: 'Língua Portuguesa',
-      subjectColor: '#EC4899',
+      subject: 'LÍNGUA PORTUGUESA',
+      subjectColor: '#00D084',
+      borderClass: 'border-l-secondary',
       topicName: 'Emprego do Sinal Indicativo de Crase',
       importance: 'Alta Incidência',
       type: 'REVISION',
@@ -244,6 +202,43 @@ export default function App() {
       pdfUrl: '#',
       errorNotes: '<p>Não usar crase antes de pronomes de tratamento.</p>',
       summaryNotes: '<p>Crase = A + A.</p>'
+    },
+    {
+      id: 'g3',
+      topicId: 't3_1',
+      subject: 'DIREITO ADMINISTRATIVO',
+      subjectColor: '#FF7A1A',
+      borderClass: 'border-l-accent',
+      topicName: 'Lei 8.112/90 - Regime Disciplinar e Responsabilidades',
+      importance: 'Alta Incidência',
+      type: 'THEORY',
+      durationMinutes: 60,
+      completed: false,
+      studyMethod: 'PDF',
+      tecUrl: 'https://www.tecconcursos.com.br',
+      videoUrl: '',
+      pdfUrl: '#',
+      errorNotes: '',
+      summaryNotes: ''
+    },
+    {
+      id: 'g4',
+      topicId: 't4_2',
+      subject: 'RACIOCÍNIO LÓGICO',
+      subjectColor: '#F43F5E',
+      borderClass: 'border-l-error',
+      topicName: 'Equivalências Lógicas e Negações de Proposições',
+      importance: 'Média Incidência',
+      type: 'REVISION',
+      revisionTag: 'Revisão 24h',
+      durationMinutes: 30,
+      completed: false,
+      studyMethod: 'Questões',
+      tecUrl: 'https://www.tecconcursos.com.br',
+      videoUrl: '',
+      pdfUrl: '#',
+      errorNotes: '',
+      summaryNotes: ''
     }
   ]);
 
@@ -254,7 +249,9 @@ export default function App() {
     { id: 't4', subject: 'DIREITO CONSTITUCIONAL', name: 'Direitos e Deveres Individuais e Coletivos (Art. 5º)', theory: true, r1: true, r2: true, r3: true, r4: false, r5: false, r6: false, lastStudied: '25/08/2026', totalQuestions: 95, correctQuestions: 82 }
   ]);
 
-  // Modais de Sessão e Editor Rico
+  // -------------------------------------------------------------
+  // ESTADOS DE MODAIS E CONTROLES
+  // -------------------------------------------------------------
   const [activeStudyModal, setActiveStudyModal] = useState(null);
   const [activeEditorModal, setActiveEditorModal] = useState(null);
   const [summaryHtml, setSummaryHtml] = useState('');
@@ -295,15 +292,12 @@ export default function App() {
     return `${hrs > 0 ? `${hrs.toString().padStart(2, '0')}:` : ''}${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
-  // -------------------------------------------------------------
-  // MANIPULAÇÃO DE DISCIPLINAS
-  // -------------------------------------------------------------
   const handleDeletePlan = (planId) => {
     if (plans.length <= 1) {
       alert('Você precisa ter pelo menos um plano cadastrado.');
       return;
     }
-    if (confirm('Tem certeza que deseja excluir este plano e todas as suas disciplinas?')) {
+    if (confirm('Tem certeza que deseja excluir este plano?')) {
       const remainingPlans = plans.filter((p) => p.id !== planId);
       setPlans(remainingPlans);
       setDisciplines(disciplines.filter((d) => d.planId !== planId));
@@ -316,7 +310,6 @@ export default function App() {
       id: 'd_' + Date.now(),
       planId: currentPlan.id,
       name: 'Nova Disciplina',
-      color: '#6366F1',
       studiedTopics: 0,
       totalTopics: 0,
       questionsDone: 0,
@@ -361,17 +354,6 @@ export default function App() {
     setNewTopicInput('');
   };
 
-  const handleMoveTopic = (index, direction) => {
-    if (!activeDisciplineEditor) return;
-    const list = [...activeDisciplineEditor.topics];
-    const targetIdx = index + direction;
-    if (targetIdx < 0 || targetIdx >= list.length) return;
-    const temp = list[index];
-    list[index] = list[targetIdx];
-    list[targetIdx] = temp;
-    setActiveDisciplineEditor({ ...activeDisciplineEditor, topics: list });
-  };
-
   const handleDeleteTopicFromEditor = (topicId) => {
     if (!activeDisciplineEditor) return;
     setActiveDisciplineEditor({
@@ -380,9 +362,6 @@ export default function App() {
     });
   };
 
-  // -------------------------------------------------------------
-  // SESSÃO DE ESTUDO & EDIÇÃO DE TEXTO
-  // -------------------------------------------------------------
   const handleOpenStudy = (goal) => {
     setActiveStudyModal(goal);
     setSummaryHtml(goal.summaryNotes || '');
@@ -396,6 +375,12 @@ export default function App() {
     setIsManualTime(false);
     setIsFocusMode(false);
     setActiveEditorModal(null);
+  };
+
+  const toggleGoalCompletion = (goalId) => {
+    setDailyGoals((prev) =>
+      prev.map((g) => (g.id === goalId ? { ...g, completed: !g.completed } : g))
+    );
   };
 
   const execCmd = (command, value = null) => {
@@ -414,7 +399,14 @@ export default function App() {
 
   const handleFinishStudy = async () => {
     if (!activeStudyModal) return;
-    const calculatedMinutes = isManualTime ? Number(manualMinutes) : Math.max(1, Math.floor(timerSeconds / 60));
+    const calculatedMinutes = isManualTime
+      ? Number(manualMinutes)
+      : timerSeconds > 0
+        ? Math.max(1, Math.floor(timerSeconds / 60))
+        : Number(manualMinutes);
+
+    const qDone = Number(questionsDone) || 0;
+    const qRight = Number(questionsRight) || 0;
     const methodsString = selectedMethods.join(', ');
 
     const selectedIntervalDays = [];
@@ -425,19 +417,25 @@ export default function App() {
     if (revisions.r60d) selectedIntervalDays.push(60);
     if (revisions.r90d) selectedIntervalDays.push(90);
 
+    setTodayMinutesStudied((prev) => prev + calculatedMinutes);
+    setTodayQuestionsDone((prev) => prev + qDone);
+    setWeeklyHoursStudied((prev) => Number((prev + calculatedMinutes / 60).toFixed(1)));
+    setTotalQuestionsDone((prev) => prev + qDone);
+    setTotalQuestionsCorrect((prev) => prev + qRight);
+
     try {
       await api.post(`/topics/${activeStudyModal.topicId}/complete`, {
         selectedIntervalDays,
         scheduleBlockRevision: blockRevisionChecked,
         actualDurationMinutes: calculatedMinutes,
-        questionsTotal: Number(questionsDone),
-        questionsCorrect: Number(questionsRight),
+        questionsTotal: qDone,
+        questionsCorrect: qRight,
         studyMethod: methodsString,
         errorNotebookNotes: errorHtml,
         summaryNotes: summaryHtml
       });
     } catch {
-      console.log('Salvo localmente');
+      console.log('Salvo no estado local');
     }
 
     setDailyGoals((prev) =>
@@ -447,8 +445,8 @@ export default function App() {
             ...g,
             completed: true,
             durationMinutes: calculatedMinutes,
-            questionsTotal: Number(questionsDone),
-            questionsCorrect: Number(questionsRight),
+            questionsTotal: qDone,
+            questionsCorrect: qRight,
             summaryNotes: summaryHtml,
             errorNotes: errorHtml,
             studyMethod: methodsString
@@ -469,1104 +467,144 @@ export default function App() {
   };
 
   return (
-    <div className="relative w-screen h-screen overflow-hidden bg-slate-950 text-slate-100 font-sans antialiased">
-
-      {/* APLICATIVO PRINCIPAL */}
+    <div className="relative w-screen h-screen overflow-hidden bg-base-100 text-base-content font-['Plus_Jakarta_Sans'] antialiased">
       <div className="flex w-full h-full">
+        {/* SIDEBAR */}
+        <Sidebar
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          isCollapsed={isSidebarCollapsed}
+          setIsCollapsed={setIsSidebarCollapsed}
+        />
 
-        {/* MENU LATERAL */}
-        <aside className={`${isSidebarCollapsed ? 'w-20' : 'w-64'} bg-slate-900 border-r border-slate-800 flex flex-col justify-between transition-all duration-300 select-none z-10 shrink-0`}>
-          <div>
-            <div className="p-4 flex items-center justify-between border-b border-slate-800">
-              <div className="flex items-center gap-3 overflow-hidden">
-                <div className="w-10 h-10 rounded-xl bg-emerald-500 flex items-center justify-center font-black text-slate-950 text-xl shadow-lg shrink-0">
-                  P
-                </div>
-                {!isSidebarCollapsed && (
-                  <div className="leading-tight">
-                    <h1 className="font-extrabold text-lg text-white whitespace-nowrap">PAPYRUS</h1>
-                    <p className="text-[10px] text-emerald-400 font-semibold uppercase whitespace-nowrap">Plataforma</p>
-                  </div>
-                )}
-              </div>
-              <button onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)} className="p-1.5 rounded-lg bg-slate-800 text-slate-400 hover:text-white transition-colors">
-                {isSidebarCollapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
-              </button>
-            </div>
+        {/* MAIN WRAPPER */}
+        <main className="flex-1 flex flex-col overflow-y-auto bg-base-100 z-0">
+          <Header
+            plans={plans}
+            selectedPlanId={selectedPlanId}
+            setSelectedPlanId={setSelectedPlanId}
+            streakDays={12}
+          />
 
-            <nav className="p-3 space-y-1">
-              {[
-                { id: 'inicio', label: 'Início', icon: LayoutDashboard },
-                { id: 'concursos', label: 'Concursos', icon: Award },
-                { id: 'metas', label: 'Metas diárias', icon: CheckCircle2 },
-                { id: 'quadro', label: 'Quadro Semanal', icon: CalendarDays },
-                { id: 'edital', label: 'Edital Verticalizado', icon: ListOrdered },
-                { id: 'planejamento', label: 'Planejamento', icon: Sliders },
-                { id: 'desempenho', label: 'Desempenho', icon: BarChart3 }
-              ].map((item) => {
-                const Icon = item.icon;
-                const isActive = activeTab === item.id;
-                return (
-                  <button
-                    key={item.id}
-                    onClick={() => setActiveTab(item.id)}
-                    className={`w-full flex items-center ${isSidebarCollapsed ? 'justify-center px-0' : 'gap-3 px-3.5'} py-2.5 rounded-xl font-medium text-sm transition-all ${isActive
-                      ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 font-bold'
-                      : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
-                      }`}
-                  >
-                    <Icon size={18} className={isActive ? 'text-emerald-400' : 'text-slate-400'} />
-                    {!isSidebarCollapsed && <span className="whitespace-nowrap">{item.label}</span>}
-                  </button>
-                );
-              })}
-            </nav>
-          </div>
-
-          <div className="p-3 border-t border-slate-800 space-y-1">
-            <button className={`w-full flex items-center ${isSidebarCollapsed ? 'justify-center px-0' : 'gap-3 px-3.5'} py-2 rounded-xl text-sm font-medium text-slate-400 hover:text-slate-200 hover:bg-slate-800/60`}>
-              <User size={18} />
-              {!isSidebarCollapsed && <span>Perfil</span>}
-            </button>
-            <button className={`w-full flex items-center ${isSidebarCollapsed ? 'justify-center px-0' : 'gap-3 px-3.5'} py-2 rounded-xl text-sm font-medium text-slate-400 hover:text-slate-200 hover:bg-slate-800/60`}>
-              <Settings size={18} />
-              {!isSidebarCollapsed && <span>Configurações</span>}
-            </button>
-          </div>
-        </aside>
-
-        {/* CONTEÚDO PRINCIPAL */}
-        <main className="flex-1 flex flex-col overflow-y-auto bg-slate-950 z-0">
-
-          <header className="h-16 border-b border-slate-800 px-8 flex items-center justify-between bg-slate-900/40 backdrop-blur-md sticky top-0 z-10 shrink-0">
-            <div className="flex items-center gap-3 text-xs">
-              <span className="uppercase font-bold text-slate-400">Plano Selecionado:</span>
-              <select
-                value={selectedPlanId}
-                onChange={(e) => setSelectedPlanId(e.target.value)}
-                className="bg-slate-800 text-emerald-400 font-bold px-3 py-1.5 rounded-lg border border-slate-700 outline-none cursor-pointer"
-              >
-                {plans.map((p) => (
-                  <option key={p.id} value={p.id}>{p.title}</option>
-                ))}
-              </select>
-            </div>
-            <div className="flex items-center gap-4 text-xs">
-              <div className="flex items-center gap-2 bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-700">
-                <Flame size={15} className="text-orange-400" />
-                <span className="font-bold text-slate-200">12 dias de constância</span>
-              </div>
-            </div>
-          </header>
-
-          <div className="p-8 max-w-7xl w-full mx-auto space-y-8">
-
-            {/* ========================================================= */}
-            {/* ABA: CONCURSOS */}
-            {/* ========================================================= */}
-            {activeTab === 'concursos' && (
-              <div className="space-y-8">
-
-                {/* Cabeçalho Limpo (Sem o botão no canto direito) */}
-                <div>
-                  <h2 className="text-2xl font-black text-white">Planos de Concurso</h2>
-                  <p className="text-xs text-slate-400">Selecione o edital para acompanhar o progresso e gerenciar suas disciplinas</p>
-                </div>
-
-                {/* Grid com o Card de Criar Novo Plano + Planos Existentes */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-
-                  {/* Card Tracejado: Criar Novo Plano */}
-                  <div
-                    onClick={() => setIsCreatePlanModalOpen(true)}
-                    className="border-2 border-dashed border-slate-800 hover:border-emerald-500/50 bg-slate-900/40 rounded-2xl p-5 flex items-center gap-4 cursor-pointer transition-all group"
-                  >
-                    <div className="w-12 h-12 rounded-xl bg-slate-800 group-hover:bg-emerald-500/20 text-slate-500 group-hover:text-emerald-400 flex items-center justify-center transition-colors">
-                      <Plus size={24} />
-                    </div>
-                    <div>
-                      <h4 className="font-extrabold text-sm text-white group-hover:text-emerald-400 transition-colors">Criar Novo Plano</h4>
-                      <p className="text-[11px] text-slate-500 mt-0.5">Adicionar novo concurso ao sistema</p>
-                    </div>
-                  </div>
-
-                  {/* Cards de Planos Existentes */}
-                  {plans.map((p) => {
-                    const isSelected = p.id === currentPlan.id;
-                    const planDiscs = disciplines.filter((d) => d.planId === p.id);
-                    const totalTopics = planDiscs.reduce((acc, d) => acc + (d.topics?.length || 0), 0);
-
-                    return (
-                      <div
-                        key={p.id}
-                        onClick={() => setSelectedPlanId(p.id)}
-                        className={`bg-slate-900 border rounded-2xl p-5 space-y-3 cursor-pointer transition-all ${isSelected
-                          ? 'border-emerald-500 ring-2 ring-emerald-500/20 shadow-lg shadow-emerald-500/10'
-                          : 'border-slate-800 hover:border-slate-700'
-                          }`}
-                      >
-                        <div className="flex justify-between items-start">
-                          <div
-                            className="w-12 h-12 rounded-xl flex items-center justify-center font-black text-slate-950 text-xl shadow"
-                            style={{ backgroundColor: p.colorHex || '#10B981' }}
-                          >
-                            {p.title.charAt(0)}
-                          </div>
-                          <span className="text-[11px] font-bold text-slate-400 bg-slate-800 px-2.5 py-1 rounded-md border border-slate-700">
-                            📅 Prova: {p.targetDate}
-                          </span>
-                        </div>
-                        <div>
-                          <h3 className="font-extrabold text-base text-white">{p.title}</h3>
-                          <p className="text-xs text-slate-400 mt-0.5">
-                            {planDiscs.length} disciplinas cadastradas • {totalTopics} tópicos no edital
-                          </p>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-
-                {/* PAINEL DO CONCURSO ATIVO */}
-                <div className="bg-slate-900 border border-slate-800 rounded-3xl p-8 space-y-8">
-
-                  {/* Topo do Plano: Info + Progresso do Edital + Questões/Desempenho */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pb-6 border-b border-slate-800">
-
-                    {/* Informações do Edital */}
-                    <div className="flex items-start gap-5">
-                      <div
-                        className="w-16 h-16 rounded-2xl flex items-center justify-center font-black text-slate-950 text-3xl shadow-lg shrink-0"
-                        style={{ backgroundColor: currentPlan.colorHex || '#10B981' }}
-                      >
-                        {currentPlan.title.charAt(0)}
-                      </div>
-                      <div className="space-y-1.5 flex-1">
-                        <div className="flex items-center justify-between">
-                          <h3 className="text-xl font-black text-white">{currentPlan.title}</h3>
-                          <button
-                            onClick={() => handleDeletePlan(currentPlan.id)}
-                            className="p-1.5 text-slate-500 hover:text-rose-400 bg-slate-800 hover:bg-slate-700 rounded-lg transition-colors"
-                            title="Excluir Plano"
-                          >
-                            <Trash2 size={15} />
-                          </button>
-                        </div>
-
-                        <p className="text-xs text-slate-400"><span className="font-semibold text-slate-300">Órgão:</span> {currentPlan.edital}</p>
-                        <p className="text-xs text-slate-400"><span className="font-semibold text-slate-300">Cargo:</span> {currentPlan.role}</p>
-
-                        <div className="pt-2">
-                          <button
-                            onClick={handleAddNewDiscipline}
-                            className="bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-400 border border-emerald-500/40 font-bold text-xs px-4 py-2 rounded-xl flex items-center gap-2 transition-colors"
-                          >
-                            <Plus size={15} /> Nova Disciplina
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Progresso de Fechamento do Edital (Barra de Progresso) */}
-                    <div className="bg-slate-950/60 border border-slate-800 rounded-2xl p-5 flex flex-col justify-between">
-                      <div>
-                        <div className="flex justify-between items-baseline mb-1">
-                          <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Progresso do Edital</span>
-                          <span className="text-2xl font-black text-emerald-400">{progressPercentage}%</span>
-                        </div>
-                        <p className="text-[11px] text-slate-400 font-medium">
-                          {totalPlanStudied} de {totalPlanTopics} tópicos estudados ({topicsRemaining} restantes)
-                        </p>
-                      </div>
-
-                      {/* Barra de Progresso */}
-                      <div className="w-full bg-slate-800 h-2.5 rounded-full mt-4 overflow-hidden border border-slate-700/50">
-                        <div
-                          className="bg-gradient-to-r from-emerald-500 to-teal-400 h-full rounded-full transition-all duration-500"
-                          style={{ width: `${progressPercentage}%` }}
-                        />
-                      </div>
-                    </div>
-
-                    {/* Estatísticas de Questões e Acerto */}
-                    <div className="bg-slate-950/60 border border-slate-800 rounded-2xl p-5 flex items-center justify-around text-center">
-                      <div>
-                        <span className="text-3xl font-black text-white block">{currentPlan.questionsTotal}</span>
-                        <span className="text-[11px] text-slate-400 font-bold uppercase tracking-wider">Questões Feitas</span>
-                      </div>
-                      <div className="w-[1px] h-10 bg-slate-800" />
-                      <div>
-                        <span className="text-3xl font-black text-teal-400 block">{currentPlan.accuracy}%</span>
-                        <span className="text-[11px] text-slate-400 font-bold uppercase tracking-wider">Desempenho</span>
-                      </div>
-                    </div>
-
-                  </div>
-
-                  {/* Grid de Disciplinas Clean com Ícones que Revelam Texto no Hover */}
-                  <div className="space-y-4">
-                    <div className="flex justify-between items-center">
-                      <h4 className="font-extrabold text-lg text-white flex items-center gap-2">
-                        <Layers size={20} className="text-emerald-400" /> Disciplinas ({currentDisciplines.length})
-                      </h4>
-                      <span className="text-xs text-slate-500">Passe o mouse nos ícones de cada card para ver as opções</span>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-                      {currentDisciplines.map((d) => (
-                        <div
-                          key={d.id}
-                          className="bg-slate-950 border border-slate-800/80 hover:border-slate-700 rounded-2xl p-5 flex flex-col justify-between shadow-sm transition-all group"
-                        >
-                          {/* Conteúdo do Card */}
-                          <div className="space-y-4">
-                            <div className="flex items-center gap-3">
-                              <div className="w-3.5 h-3.5 rounded-full shrink-0 shadow-sm" style={{ backgroundColor: d.color }} />
-                              <h5 className="font-extrabold text-base text-white truncate">{d.name}</h5>
-                            </div>
-
-                            {/* Indicadores com Números Maiores */}
-                            <div className="grid grid-cols-3 gap-2 text-center bg-slate-900/60 p-3 rounded-xl border border-slate-800/50">
-                              <div>
-                                <span className="block font-black text-2xl text-emerald-400 tracking-tight">{d.studiedTopics}</span>
-                                <span className="text-slate-400 text-[10px] font-bold uppercase tracking-wide mt-0.5 block">Estudados</span>
-                              </div>
-                              <div>
-                                <span className="block font-black text-2xl text-slate-100 tracking-tight">{d.topics?.length || 0}</span>
-                                <span className="text-slate-400 text-[10px] font-bold uppercase tracking-wide mt-0.5 block">Totais</span>
-                              </div>
-                              <div>
-                                <span className="block font-black text-2xl text-teal-400 tracking-tight">{d.questionsDone}</span>
-                                <span className="text-slate-400 text-[10px] font-bold uppercase tracking-wide mt-0.5 block">Questões</span>
-                              </div>
-                            </div>
-                          </div>
-
-                          {/* Barra de Ações Clean: Apenas Ícones com Expansão Suave no Hover (Sem Linhas) */}
-                          <div className="flex items-center justify-end gap-2 pt-4 mt-2">
-                            {/* Visualizar -> Edital Verticalizado */}
-                            <button
-                              onClick={() => setActiveTab('edital')}
-                              className="group/btn flex items-center justify-center gap-1.5 py-1.5 px-2.5 rounded-xl text-slate-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-all duration-200"
-                              title="Edital Verticalizado"
-                            >
-                              <Folder size={16} className="shrink-0" />
-                              <span className="max-w-0 overflow-hidden whitespace-nowrap opacity-0 group-hover/btn:max-w-[140px] group-hover/btn:opacity-100 text-[11px] font-bold transition-all duration-300 ease-out">
-                                Edital Verticalizado
-                              </span>
-                            </button>
-
-                            {/* Editar -> Editar Assuntos */}
-                            <button
-                              onClick={() => setActiveDisciplineEditor({ ...d })}
-                              className="group/btn flex items-center justify-center gap-1.5 py-1.5 px-2.5 rounded-xl text-slate-400 hover:text-teal-400 hover:bg-teal-500/10 transition-all duration-200"
-                              title="Editar Assuntos"
-                            >
-                              <Edit2 size={16} className="shrink-0" />
-                              <span className="max-w-0 overflow-hidden whitespace-nowrap opacity-0 group-hover/btn:max-w-[120px] group-hover/btn:opacity-100 text-[11px] font-bold transition-all duration-300 ease-out">
-                                Editar Assuntos
-                              </span>
-                            </button>
-
-                            {/* Remover */}
-                            <button
-                              onClick={() => handleDeleteDiscipline(d.id)}
-                              className="group/btn flex items-center justify-center gap-1.5 py-1.5 px-2.5 rounded-xl text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition-all duration-200"
-                              title="Remover"
-                            >
-                              <Trash2 size={16} className="shrink-0" />
-                              <span className="max-w-0 overflow-hidden whitespace-nowrap opacity-0 group-hover/btn:max-w-[80px] group-hover/btn:opacity-100 text-[11px] font-bold transition-all duration-300 ease-out">
-                                Remover
-                              </span>
-                            </button>
-                          </div>
-
-                        </div>
-                      ))}
-                    </div>
-
-                  </div>
-
-                </div>
-
-              </div>
-            )}
-
-            {/* ABA: INÍCIO */}
+          <div className="p-8 max-w-7xl w-full mx-auto space-y-7">
             {activeTab === 'inicio' && (
-              <div className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-                  <div className="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-sm">
-                    <div className="flex justify-between items-start mb-2">
-                      <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Estudo Semanal</span>
-                      <Clock size={18} className="text-emerald-400" />
-                    </div>
-                    <div className="flex items-baseline gap-2">
-                      <span className="text-3xl font-black text-white">14h</span>
-                      <span className="text-sm font-semibold text-slate-400">/ 25h meta</span>
-                    </div>
-                    <div className="w-full bg-slate-800 h-2 rounded-full mt-4 overflow-hidden">
-                      <div className="bg-emerald-500 h-full rounded-full" style={{ width: '56%' }} />
-                    </div>
-                  </div>
-
-                  <div className="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-sm">
-                    <div className="flex justify-between items-start mb-2">
-                      <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Desempenho Questões</span>
-                      <Target size={18} className="text-teal-400" />
-                    </div>
-                    <div className="flex items-baseline gap-2">
-                      <span className="text-3xl font-black text-white">81.6%</span>
-                      <span className="text-xs font-semibold text-slate-400">(98 de 120 acertos)</span>
-                    </div>
-                    <p className="text-xs text-emerald-400 mt-4 flex items-center gap-1 font-medium"><TrendingUp size={14} /> +4.2% em relação à semana anterior</p>
-                  </div>
-
-                  <div className="bg-gradient-to-br from-indigo-950/80 to-purple-950/50 border border-indigo-500/40 p-5 rounded-2xl shadow-lg">
-                    <div className="flex justify-between items-start mb-2">
-                      <span className="text-xs font-black uppercase tracking-wider text-indigo-300 flex items-center gap-1.5"><BookOpen size={16} /> Estudos de Hoje</span>
-                      <span className="bg-indigo-500/20 text-indigo-300 text-[10px] font-bold px-2 py-0.5 rounded-full border border-indigo-500/30">Ao Vivo</span>
-                    </div>
-                    <div className="grid grid-cols-2 gap-4 mt-2">
-                      <div>
-                        <p className="text-4xl font-black text-white">90<span className="text-xl font-bold text-indigo-300 ml-1">min</span></p>
-                        <span className="text-xs text-indigo-200/70 font-semibold">Líquido</span>
-                      </div>
-                      <div>
-                        <p className="text-4xl font-black text-emerald-400">35</p>
-                        <span className="text-xs text-indigo-200/70 font-semibold">Questões</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
-                  <div className="flex justify-between items-center mb-4">
-                    <h3 className="font-extrabold text-lg text-white flex items-center gap-2"><CheckCircle2 size={20} className="text-emerald-400" /> Metas de Hoje (Teoria & Revisões)</h3>
-                    <button onClick={() => setActiveTab('metas')} className="text-xs font-bold text-emerald-400 hover:underline">Ver todas as metas →</button>
-                  </div>
-
-                  <div className="space-y-3">
-                    {dailyGoals.map((goal) => (
-                      <div key={goal.id} onClick={() => handleOpenStudy(goal)} className={`p-4 rounded-xl border cursor-pointer flex justify-between items-center transition-all ${goal.completed ? 'bg-emerald-950/15 border-emerald-500/30' : 'bg-slate-800/60 border-slate-700 hover:border-slate-500'}`}>
-                        <div className="flex items-center gap-4">
-                          <div className="w-2.5 h-12 rounded-full shrink-0" style={{ backgroundColor: goal.subjectColor }} />
-                          <div>
-                            <div className="flex items-center gap-2 mb-0.5">
-                              <span className="text-xs font-black uppercase text-slate-300">{goal.subject}</span>
-                              {goal.type === 'REVISION' && <span className="bg-pink-500/20 text-pink-300 text-[10px] font-bold px-2 py-0.5 rounded-md">{goal.revisionTag}</span>}
-                              {goal.studyMethod && <span className="bg-slate-800 text-slate-400 text-[10px] font-bold px-2 py-0.5 rounded border border-slate-700">{goal.studyMethod}</span>}
-                            </div>
-                            <h4 className={`font-bold text-base text-slate-100 ${goal.completed ? 'line-through text-slate-400' : ''}`}>{goal.topicName}</h4>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-3">
-                          <span className="text-xs font-semibold text-slate-400">{goal.durationMinutes} min</span>
-                          {goal.completed ? (
-                            <span className="bg-emerald-500/20 text-emerald-300 text-xs font-bold px-3 py-1.5 rounded-lg flex items-center gap-1 border border-emerald-500/30"><Check size={14} /> Feito</span>
-                          ) : (
-                            <button className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-extrabold px-4 py-2 rounded-lg shadow-lg">Iniciar Estudo</button>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
+              <InicioTab
+                weeklyHoursStudied={weeklyHoursStudied}
+                weeklyHoursGoal={weeklyHoursGoal}
+                weeklyProgressPercentage={weeklyProgressPercentage}
+                overallAccuracy={overallAccuracy}
+                totalQuestionsCorrect={totalQuestionsCorrect}
+                totalQuestionsDone={totalQuestionsDone}
+                todayMinutesStudied={todayMinutesStudied}
+                todayQuestionsDone={todayQuestionsDone}
+                dailyGoals={dailyGoals}
+                toggleGoalCompletion={toggleGoalCompletion}
+                handleOpenStudy={handleOpenStudy}
+                setActiveTab={setActiveTab}
+              />
             )}
 
-            {/* ABA: METAS DIÁRIAS */}
+            {activeTab === 'concursos' && (
+              <ConcursosTab
+                plans={plans}
+                setPlans={setPlans}
+                currentPlan={currentPlan}
+                currentDisciplines={currentDisciplines}
+                totalPlanTopics={totalPlanTopics}
+                totalPlanStudied={totalPlanStudied}
+                topicsRemaining={topicsRemaining}
+                progressPercentage={progressPercentage}
+                handleAddNewDiscipline={handleAddNewDiscipline}
+                handleDeletePlan={handleDeletePlan}
+                setActiveTab={setActiveTab}
+                setActiveDisciplineEditor={setActiveDisciplineEditor}
+                handleDeleteDiscipline={handleDeleteDiscipline}
+              />
+            )}
+
             {activeTab === 'metas' && (
-              <div className="space-y-6">
-                <div>
-                  <h2 className="text-2xl font-black text-white">Metas Diárias de Estudo</h2>
-                  <p className="text-xs text-slate-400">Acesse cadernos de questões, vídeoaulas e registre suas sessões de estudo</p>
-                </div>
-
-                <div className="space-y-4">
-                  {dailyGoals.map((goal) => (
-                    <div
-                      key={goal.id}
-                      onClick={() => handleOpenStudy(goal)}
-                      className={`bg-slate-900 border rounded-2xl p-6 space-y-4 cursor-pointer transition-all ${goal.completed ? 'border-emerald-500/30 bg-emerald-950/10' : 'border-slate-800 hover:border-slate-700'
-                        }`}
-                    >
-                      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-slate-800 pb-4">
-                        <div>
-                          <div className="flex items-center gap-2 mb-1">
-                            <span className="bg-red-500/20 text-red-300 text-[10px] font-black px-2 py-0.5 rounded border border-red-500/30 uppercase">
-                              ! {goal.importance}
-                            </span>
-                            <span className="text-xs font-bold text-slate-300 uppercase">{goal.subject}</span>
-                            {goal.studyMethod && (
-                              <span className="bg-slate-800 text-slate-400 text-[10px] font-bold px-2 py-0.5 rounded border border-slate-700">
-                                {goal.studyMethod}
-                              </span>
-                            )}
-                          </div>
-                          <h3 className="text-lg font-black text-white">{goal.topicName}</h3>
-                        </div>
-
-                        <div className="flex items-center gap-3">
-                          <span className="text-xs font-semibold text-slate-400">{goal.durationMinutes} min</span>
-                          {goal.completed ? (
-                            <span className="bg-emerald-500/20 text-emerald-300 text-xs font-bold px-4 py-2 rounded-xl flex items-center gap-1 border border-emerald-500/30">
-                              <Check size={16} /> Meta Concluída (Clique para Editar)
-                            </span>
-                          ) : (
-                            <button className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs px-5 py-2.5 rounded-xl shadow-lg shadow-emerald-500/20 flex items-center gap-2">
-                              <Play size={15} fill="currentColor" /> Iniciar Sessão de Estudo
-                            </button>
-                          )}
-                        </div>
-                      </div>
-
-                      <div className="flex flex-wrap items-center gap-3 text-xs font-semibold">
-                        <span className="text-slate-400">Material de Apoio:</span>
-                        {goal.tecUrl && (
-                          <a
-                            href={goal.tecUrl}
-                            target="_blank"
-                            rel="noreferrer"
-                            onClick={(e) => e.stopPropagation()}
-                            className="text-teal-400 bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-lg flex items-center gap-1.5 border border-slate-700 transition-colors"
-                          >
-                            <ExternalLink size={13} /> Caderno TEC Concursos
-                          </a>
-                        )}
-                        {goal.videoUrl && (
-                          <a
-                            href={goal.videoUrl}
-                            target="_blank"
-                            rel="noreferrer"
-                            onClick={(e) => e.stopPropagation()}
-                            className="text-indigo-400 bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-lg flex items-center gap-1.5 border border-slate-700 transition-colors"
-                          >
-                            <BookOpen size={13} /> Videoaula Gran / Estratégia
-                          </a>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
+              <MetasTab dailyGoals={dailyGoals} handleOpenStudy={handleOpenStudy} />
             )}
 
-            {/* ABA: QUADRO SEMANAL */}
-            {activeTab === 'quadro' && (
-              <div className="space-y-6">
-                <div>
-                  <h2 className="text-2xl font-black text-white">Quadro Semanal de Metas</h2>
-                  <p className="text-xs text-slate-400">Distribuição visual das metas de teoria, revisão e simulados em cada dia da semana</p>
-                </div>
+            {activeTab === 'quadro' && <QuadroSemanalTab />}
 
-                <div className="grid grid-cols-1 md:grid-cols-7 gap-3">
-                  {['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'].map((day, idx) => (
-                    <div key={day} className="bg-slate-900 border border-slate-800 rounded-2xl p-4 min-h-[260px] flex flex-col justify-between space-y-4">
-                      <div>
-                        <div className="border-b border-slate-800 pb-2 mb-3">
-                          <span className="text-xs font-black uppercase text-slate-300">{day}</span>
-                        </div>
-                        {idx === 0 && (
-                          <div className="p-2.5 rounded-xl border border-indigo-500/40 bg-indigo-950/20 space-y-1">
-                            <span className="text-[10px] font-bold text-indigo-300 uppercase">Dir. Constitucional</span>
-                            <p className="text-xs font-semibold text-white">Art. 5º (Incisos I a XX)</p>
-                            <span className="text-[10px] text-slate-400 block font-mono">90 min • Teoria</span>
-                          </div>
-                        )}
-                      </div>
-                      <button className="w-full text-center text-[11px] font-bold text-slate-400 hover:text-emerald-400 py-2 border border-dashed border-slate-700 hover:border-emerald-500 rounded-xl transition-colors">
-                        + Incluir Meta
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* ABA: EDITAL VERTICALIZADO */}
             {activeTab === 'edital' && (
-              <div className="space-y-6">
-                <div>
-                  <h2 className="text-2xl font-black text-white">Edital Verticalizado & Revisões Espaçadas</h2>
-                  <p className="text-xs text-slate-400">Controle de fechamento de teoria e 6 ciclos de revisões ($R_1$ a $R_6$)</p>
-                </div>
-
-                <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-sm">
-                  <table className="w-full text-left text-xs">
-                    <thead className="bg-slate-800/80 text-slate-300 border-b border-slate-700">
-                      <tr>
-                        <th className="p-4 font-black">DISCIPLINA & TÓPICO DO EDITAL</th>
-                        <th className="p-4 text-center font-bold">TEORIA</th>
-                        <th className="p-4 text-center font-bold">R1 (24h)</th>
-                        <th className="p-4 text-center font-bold">R2 (7d)</th>
-                        <th className="p-4 text-center font-bold">R3 (15d)</th>
-                        <th className="p-4 text-center font-bold">R4 (30d)</th>
-                        <th className="p-4 text-center font-bold">R5 (60d)</th>
-                        <th className="p-4 text-center font-bold">R6 (90d)</th>
-                        <th className="p-4 text-center font-bold">ÚLTIMO ESTUDO</th>
-                        <th className="p-4 text-center font-bold">DESEMPENHO</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-800">
-                      {editalTopics.map((topic) => (
-                        <tr key={topic.id} className="hover:bg-slate-800/40 transition-colors">
-                          <td className="p-4 font-semibold text-slate-200">
-                            <span className="text-[10px] uppercase block font-bold text-emerald-400">{topic.subject}</span>
-                            {topic.name}
-                          </td>
-                          {['theory', 'r1', 'r2', 'r3', 'r4', 'r5', 'r6'].map((col) => (
-                            <td key={col} className="p-4 text-center">
-                              <input
-                                type="checkbox"
-                                checked={topic[col]}
-                                onChange={() => toggleEditalCheck(topic.id, col)}
-                                className="checkbox checkbox-xs checkbox-emerald border-slate-600 cursor-pointer"
-                              />
-                            </td>
-                          ))}
-                          <td className="p-4 text-center text-slate-400 font-mono text-[11px]">
-                            {topic.lastStudied}
-                          </td>
-                          <td className="p-4 text-center font-bold">
-                            {topic.totalQuestions > 0 ? (
-                              <span className="text-emerald-400 font-mono">
-                                {Math.round((topic.correctQuestions / topic.totalQuestions) * 100)}% ({topic.correctQuestions}/{topic.totalQuestions})
-                              </span>
-                            ) : (
-                              <span className="text-slate-600">-</span>
-                            )}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
+              <EditalVerticalizadoTab
+                editalTopics={editalTopics}
+                toggleEditalCheck={toggleEditalCheck}
+              />
             )}
 
-            {/* ABA: PLANEJAMENTO */}
-            {activeTab === 'planejamento' && (
-              <div className="bg-slate-900 border border-slate-800 rounded-2xl p-8 max-w-2xl mx-auto space-y-6">
-                <h2 className="text-2xl font-black text-white text-center">Planejamento de Estudos</h2>
-                <div className="grid grid-cols-2 gap-4">
-                  <button className="p-5 rounded-xl border-2 border-emerald-500 bg-emerald-500/10 text-left space-y-2">
-                    <Calendar size={24} className="text-emerald-400" />
-                    <h4 className="font-extrabold text-white text-sm">Cronograma Semanal</h4>
-                    <p className="text-[11px] text-slate-400">Metas fixas distribuídas por dias da semana.</p>
-                  </button>
-                  <button className="p-5 rounded-xl border border-slate-700 bg-slate-800 text-left space-y-2 hover:border-slate-500">
-                    <RotateCcw size={24} className="text-teal-400" />
-                    <h4 className="font-extrabold text-white text-sm">Ciclo de Estudos</h4>
-                    <p className="text-[11px] text-slate-400">Sequência fluida de matérias por horas estudadas.</p>
-                  </button>
-                </div>
-              </div>
-            )}
+            {activeTab === 'planejamento' && <PlanejamentoTab />}
 
-            {/* ABA: DESEMPENHO */}
-            {activeTab === 'desempenho' && (
-              <div className="space-y-6">
-                <h2 className="text-2xl font-black text-white">Painel de Desempenho</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-3">
-                    <h3 className="font-bold text-sm text-slate-300">Taxa de Acerto por Disciplina</h3>
-                    {[
-                      { name: 'Direito Constitucional', pct: 86, color: 'bg-indigo-500' },
-                      { name: 'Direito Administrativo', pct: 88, color: 'bg-amber-500' },
-                      { name: 'Língua Portuguesa', pct: 72, color: 'bg-pink-500' },
-                      { name: 'Raciocínio Lógico (RLM)', pct: 58, color: 'bg-red-500' }
-                    ].map((subj) => (
-                      <div key={subj.name} className="space-y-1">
-                        <div className="flex justify-between text-xs font-semibold">
-                          <span>{subj.name}</span>
-                          <span className="font-mono">{subj.pct}%</span>
-                        </div>
-                        <div className="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
-                          <div className={`h-full ${subj.color}`} style={{ width: `${subj.pct}%` }} />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
-
+            {activeTab === 'desempenho' && <DesempenhoTab />}
           </div>
         </main>
       </div>
 
-      {/* ========================================================= */}
-      {/* MODAL: GERENCIADOR DE TÓPICOS DA DISCIPLINA */}
-      {/* ========================================================= */}
-      {activeDisciplineEditor && (
-        <div className="absolute inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm animate-in fade-in">
-          <div className="bg-[#18181b] border border-zinc-700 rounded-3xl w-full max-w-2xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
+      {/* MODAIS GLOBAIS */}
+      <DisciplineEditorModal
+        activeDisciplineEditor={activeDisciplineEditor}
+        setActiveDisciplineEditor={setActiveDisciplineEditor}
+        newTopicInput={newTopicInput}
+        setNewTopicInput={setNewTopicInput}
+        handleAddTopicToDiscipline={handleAddTopicToDiscipline}
+        handleDeleteTopicFromEditor={handleDeleteTopicFromEditor}
+        handleDragStart={handleDragStart}
+        handleDragOver={handleDragOver}
+        handleDragEnd={handleDragEnd}
+        draggedTopicIndex={draggedTopicIndex}
+        handleDeleteDiscipline={handleDeleteDiscipline}
+        handleSaveDisciplineEditor={handleSaveDisciplineEditor}
+      />
 
-            <div className="p-6 border-b border-zinc-800 flex justify-between items-center bg-[#13141a]">
-              <h3 className="text-xl font-black text-white">{activeDisciplineEditor.name}</h3>
-              <button onClick={() => setActiveDisciplineEditor(null)} className="text-zinc-400 hover:text-white">
-                <X size={20} />
-              </button>
-            </div>
+      <StudySessionModal
+        activeStudyModal={activeStudyModal}
+        setActiveStudyModal={setActiveStudyModal}
+        isFocusMode={isFocusMode}
+        setIsFocusMode={setIsFocusMode}
+        timerSeconds={timerSeconds}
+        setTimerSeconds={setTimerSeconds}
+        setIsTimerRunning={setIsTimerRunning}
+        formatTimer={formatTimer}
+        isManualTime={isManualTime}
+        setIsManualTime={setIsManualTime}
+        manualMinutes={manualMinutes}
+        setManualMinutes={setManualMinutes}
+        handleFinishStudy={handleFinishStudy}
+        setActiveEditorModal={setActiveEditorModal}
+        selectedMethods={selectedMethods}
+        setSelectedMethods={setSelectedMethods}
+        questionsDone={questionsDone}
+        setQuestionsDone={setQuestionsDone}
+        questionsRight={questionsRight}
+        setQuestionsRight={setQuestionsRight}
+        revisions={revisions}
+        setRevisions={setRevisions}
+        blockRevisionChecked={blockRevisionChecked}
+        setBlockRevisionChecked={setBlockRevisionChecked}
+      />
 
-        <div className="p-6 overflow-y-auto space-y-6 flex-1 text-xs">
-              {/* Nome da Disciplina ocupando 100% da largura (Sem seleção de Cor) */}
-              <div>
-                <label className="text-zinc-400 font-bold block mb-1.5 uppercase">Nome da Disciplina</label>
-                <input
-                  type="text"
-                  value={activeDisciplineEditor.name}
-                  onChange={(e) => setActiveDisciplineEditor({ ...activeDisciplineEditor, name: e.target.value })}
-                  className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-2.5 text-white font-bold outline-none focus:border-emerald-500"
-                />
-              </div>
+      <RichTextEditorModal
+        activeEditorModal={activeEditorModal}
+        setActiveEditorModal={setActiveEditorModal}
+        activeStudyModal={activeStudyModal}
+        editorRef={editorRef}
+        execCmd={execCmd}
+        saveEditorContent={saveEditorContent}
+      />
 
-              <div className="space-y-3">
-                <div className="flex justify-between items-center">
-                  <span className="font-extrabold text-zinc-300 uppercase tracking-wider">Tópicos do Edital</span>
-                  <span className="text-zinc-500 font-semibold">{activeDisciplineEditor.topics.length} tópicos cadastrados</span>
-                </div>
-
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    placeholder="Digite o nome do novo tópico/assunto..."
-                    value={newTopicInput}
-                    onChange={(e) => setNewTopicInput(e.target.value)}
-                    onKeyDown={(e) => { if (e.key === 'Enter') handleAddTopicToDiscipline(); }}
-                    className="flex-1 bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-2 text-white outline-none focus:border-emerald-500"
-                  />
-                  <button
-                    type="button"
-                    onClick={handleAddTopicToDiscipline}
-                    className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black px-4 py-2 rounded-xl flex items-center gap-1.5 shadow"
-                  >
-                    <Plus size={15} /> Adicionar
-                  </button>
-                </div>
-
-                {/* Lista com Drag & Drop (arrastar e soltar suave) */}
-                <div className="border border-zinc-800 bg-zinc-950/80 rounded-2xl divide-y divide-zinc-800/80 max-h-64 overflow-y-auto">
-                  {activeDisciplineEditor.topics.length === 0 ? (
-                    <div className="p-6 text-center text-zinc-500">Nenhum tópico adicionado ainda.</div>
-                  ) : (
-                    activeDisciplineEditor.topics.map((t, idx) => (
-                      <div
-                        key={t.id}
-                        draggable
-                        onDragStart={(e) => handleDragStart(e, idx)}
-                        onDragOver={(e) => handleDragOver(e, idx)}
-                        onDragEnd={handleDragEnd}
-                        className={`p-3 flex items-center justify-between transition-colors select-none cursor-grab active:cursor-grabbing ${
-                          draggedTopicIndex === idx
-                            ? 'bg-emerald-500/10 border-emerald-500/30'
-                            : 'hover:bg-zinc-900/60'
-                        }`}
-                      >
-                        <span className="font-semibold text-zinc-200 truncate pr-4 pointer-events-none">
-                          {t.name}
-                        </span>
-
-                        <div className="flex items-center shrink-0">
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleDeleteTopicFromEditor(t.id);
-                            }}
-                            className="p-1 text-zinc-500 hover:text-rose-400 transition-colors"
-                            title="Excluir Tópico"
-                          >
-                            <Trash2 size={15} />
-                          </button>
-                        </div>
-                      </div>
-                    ))
-                  )}
-                </div>
-              </div>
-            </div>
-
-            {/* MANTENHA ESTA PARTE DO RODAPÉ INTACTA (a que aparece no print): */}
-            <div className="p-6 bg-zinc-950/60 border-t border-zinc-800 flex justify-end gap-3 rounded-b-3xl">
-              <button
-                type="button"
-                onClick={() => setActiveDisciplineEditor(null)}
-                className="px-5 py-2.5 rounded-xl border border-zinc-700 font-bold text-zinc-300 hover:bg-zinc-800"
-              >
-                Cancelar
-              </button>
-              <button
-                type="button"
-                onClick={handleSaveDisciplineEditor}
-                className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black px-6 py-2.5 rounded-xl shadow-lg flex items-center gap-2"
-              >
-                Salvar Alterações
-              </button>
-            </div>
-
-              <div className="flex gap-3">
-                <button
-                  onClick={() => setActiveDisciplineEditor(null)}
-                  className="px-4 py-2.5 rounded-xl text-xs font-bold text-zinc-400 hover:text-white"
-                >
-                  Cancelar
-                </button>
-                <button
-                  onClick={handleSaveDisciplineEditor}
-                  className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs px-6 py-2.5 rounded-xl shadow-lg shadow-emerald-500/20"
-                >
-                  Salvar Alterações
-                </button>
-              </div>
-            </div>
-
-          </div>
-      
-      )}
-
-      {/* MODAL: SESSÃO DE ESTUDO & CRONÔMETRO */}
-      {activeStudyModal && !isFocusMode && (
-        <div className="absolute inset-0 z-40 flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm">
-          <div className="bg-[#18181b] border border-zinc-800 rounded-2xl w-full max-w-4xl shadow-2xl flex flex-col max-h-[95vh] relative animate-in fade-in zoom-in-95">
-            <button onClick={() => setActiveStudyModal(null)} className="absolute top-6 right-6 text-zinc-500 hover:text-white transition-colors">
-              <X size={24} />
-            </button>
-
-            <div className="p-8 pb-6 border-b border-zinc-800 shrink-0">
-              <p className="text-emerald-500 font-bold text-xs uppercase tracking-wider">{activeStudyModal.subject}</p>
-              <h2 className="text-white font-black text-2xl mt-1 pr-8">{activeStudyModal.topicName}</h2>
-
-              <div className="flex flex-wrap items-center justify-between mt-6 gap-4">
-                <div className="flex items-center gap-4">
-                  <div className="flex items-center gap-2 text-zinc-300 bg-zinc-900 px-4 py-2 rounded-lg border border-zinc-800">
-                    <Clock size={20} className="text-zinc-500" />
-                    <span className="font-mono text-xl font-bold tracking-wider">{formatTimer(timerSeconds)}</span>
-                  </div>
-
-                  {!isManualTime && (
-                    <>
-                      <button
-                        onClick={() => { setIsTimerRunning(true); setIsFocusMode(true); }}
-                        className="h-10 px-4 flex items-center gap-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs transition-colors shadow"
-                      >
-                        <Play size={16} fill="currentColor" /> Modo Concentração
-                      </button>
-                      <button
-                        onClick={() => { setTimerSeconds(0); setIsTimerRunning(false); }}
-                        className="w-10 h-10 flex items-center justify-center rounded-full bg-zinc-800 hover:bg-zinc-700 text-zinc-400 transition-colors shadow"
-                      >
-                        <RotateCcw size={16} />
-                      </button>
-                    </>
-                  )}
-
-                  <button onClick={() => setIsManualTime(!isManualTime)} className="text-xs font-bold text-zinc-500 hover:text-emerald-400 underline ml-2 transition-colors">
-                    {isManualTime ? 'Voltar para Cronômetro' : 'Inserir Tempo Manual'}
-                  </button>
-                </div>
-
-                <button onClick={handleFinishStudy} className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black px-6 py-3 rounded-lg flex items-center gap-2 transition-colors shadow-lg shadow-emerald-500/20">
-                  <Trophy size={18} /> Finalizar Tarefa
-                </button>
-              </div>
-
-              {isManualTime && (
-                <div className="mt-4 flex items-center gap-3 bg-zinc-800/50 p-3 rounded-lg w-fit border border-zinc-700">
-                  <span className="text-xs font-bold text-zinc-300">Minutos estudados:</span>
-                  <input
-                    type="number"
-                    value={manualMinutes}
-                    onChange={(e) => setManualMinutes(e.target.value)}
-                    className="bg-zinc-900 border border-zinc-700 rounded-md w-20 px-3 py-1.5 text-emerald-400 font-mono font-bold text-base outline-none focus:border-emerald-500 text-center"
-                  />
-                  <span className="text-xs font-medium text-zinc-400">min</span>
-                </div>
-              )}
-            </div>
-
-            <div className="p-8 space-y-6 bg-[#13141a] rounded-b-2xl">
-              <div className="space-y-2">
-                <span className="text-xs font-bold text-zinc-500 uppercase tracking-wider">Anotações & Cadernos de Estudo</span>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <button
-                    onClick={() => setActiveEditorModal({ type: 'errors', title: 'Caderno de Erros' })}
-                    className="bg-[#1c1d24] border border-zinc-800 hover:border-rose-500/50 p-5 rounded-2xl flex items-center justify-between group transition-all text-left shadow-sm"
-                  >
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-400 group-hover:scale-105 transition-transform">
-                        <FileText size={22} />
-                      </div>
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <h4 className="font-extrabold text-sm text-white">Caderno de Erros</h4>
-
-                        </div>
-                        <p className="text-[11px] text-zinc-400 mt-0.5">Pegadinhas e questões erradas</p>
-                      </div>
-                    </div>
-                    <span className="text-xs font-bold text-rose-400 group-hover:translate-x-1 transition-transform">Editar →</span>
-                  </button>
-
-                  <button
-                    onClick={() => setActiveEditorModal({ type: 'summary', title: 'Resumo da Matéria' })}
-                    className="bg-[#1c1d24] border border-zinc-800 hover:border-emerald-500/50 p-5 rounded-2xl flex items-center justify-between group transition-all text-left shadow-sm"
-                  >
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 group-hover:scale-105 transition-transform">
-                        <PenTool size={22} />
-                      </div>
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <h4 className="font-extrabold text-sm text-white">Resumo da Matéria</h4>
-
-                        </div>
-                        <p className="text-[11px] text-zinc-400 mt-0.5">Pontos-chave e mnemônicos</p>
-                      </div>
-                    </div>
-                    <span className="text-xs font-bold text-emerald-400 group-hover:translate-x-1 transition-transform">Editar →</span>
-                  </button>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-3">
-                  <span className="text-xs font-bold text-zinc-500 uppercase tracking-wider">Material Utilizado</span>
-                  <div className="flex flex-wrap gap-2">
-                    {['PDF', 'Videoaula', 'Questões', 'Lei Seca', 'Resumo Próprio'].map((method) => (
-                      <button
-                        key={method}
-                        onClick={() => {
-                          setSelectedMethods((prev) =>
-                            prev.includes(method) ? prev.filter((m) => m !== method) : [...prev, method]
-                          );
-                        }}
-                        className={`text-xs font-bold px-3 py-2 rounded-lg border transition-colors ${selectedMethods.includes(method) ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30' : 'bg-zinc-900 border-zinc-800 text-zinc-500 hover:border-zinc-700'
-                          }`}
-                      >
-                        {method}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="space-y-3">
-                  <span className="text-xs font-bold text-zinc-500 uppercase tracking-wider">Desempenho em Questões</span>
-                  <div className="flex gap-4">
-                    {/* Campo Qtd. Feitas */}
-                    <div className="flex-1">
-                      <label className="text-[10px] font-bold text-zinc-500 mb-1 block">Feitas</label>
-                      <div className="flex items-center justify-between bg-zinc-900 border border-zinc-800 rounded-lg p-1.5">
-                        <button
-                          type="button"
-                          onClick={() => setQuestionsDone((prev) => Math.max(0, Number(prev || 0) - 1))}
-                          className="w-7 h-7 flex items-center justify-center text-emerald-400 text-base font-bold select-none"
-                        >
-                          -
-                        </button>
-                        <input
-                          type="number"
-                          min="0"
-                          value={questionsDone ?? ''}
-                          onChange={(e) => setQuestionsDone(e.target.value)}
-                          placeholder="0"
-                          className="w-full bg-transparent text-center text-emerald-400 font-bold text-sm outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setQuestionsDone((prev) => Number(prev || 0) + 1)}
-                          className="w-7 h-7 text-emerald-400 flex items-center justify-center text-sm font-bold select-none"
-                        >
-                          +
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* Campo Qtd. Acertos */}
-                    <div className="flex-1">
-                      <label className="text-[10px] font-bold text-zinc-500 mb-1 block">Acertos</label>
-                      <div className="flex items-center justify-between bg-zinc-900 border border-zinc-800 rounded-lg p-1.5">
-                        <button
-                          type="button"
-                          onClick={() => setQuestionsRight((prev) => Math.max(0, Number(prev || 0) - 1))}
-                          className="w-7 h-7 flex items-center justify-center text-emerald-400 text-base font-bold select-none"
-                        >
-                          -
-                        </button>
-                        <input
-                          type="number"
-                          min="0"
-                          value={questionsRight ?? ''}
-                          onChange={(e) => setQuestionsRight(e.target.value)}
-                          placeholder="0"
-                          className="w-full bg-transparent text-center text-emerald-400 font-bold text-sm outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setQuestionsRight((prev) => Number(prev || 0) + 1)}
-                          className="w-7 h-7 text-emerald-400 flex items-center justify-center text-sm font-bold select-none"
-                        >
-                          +
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="md:col-span-2 space-y-4 bg-zinc-900/50 p-6 rounded-xl border border-zinc-800/50">
-              <span className="text-xs font-bold text-zinc-400 block tracking-wider">AGENDAMENTO DE REVISÕES PERIÓDICAS</span>
-
-              <div className="flex flex-wrap gap-3">
-                {[
-                  { key: 'r24h', label: '24 horas' },
-                  { key: 'r7d', label: '7 dias' },
-                  { key: 'r15d', label: '15 dias' },
-                  { key: 'r30d', label: '30 dias' },
-                  { key: 'r60d', label: '60 dias' },
-                  { key: 'r90d', label: '90 dias' }
-                ].map((rev) => (
-                  <button
-                    key={rev.key}
-                    type="button"
-                    onClick={() => setRevisions({ ...revisions, [rev.key]: !revisions[rev.key] })}
-                    className={`px-3 py-2 rounded-lg border text-xs font-bold transition-colors select-none ${revisions[rev.key]
-                      ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400'
-                      : 'bg-zinc-950 border-zinc-800 text-zinc-500 hover:border-zinc-700'
-                      }`}
-                  >
-                    {rev.label}
-                  </button>
-                ))}
-              </div>
-              {/* Box importante para revisao em bloco */}
-              <div
-                onClick={() => setBlockRevisionChecked(!blockRevisionChecked)}
-                className={`mt-4 p-3.5 rounded-xl border transition-all cursor-pointer select-none flex items-center justify-between ${blockRevisionChecked
-                    ? 'bg-emerald-950/30 border-emerald-500/50 shadow-lg shadow-emerald-950/40'
-                    : 'bg-zinc-950 border-zinc-800 hover:border-zinc-700'
-                  }`}
-              >
-                <div className="flex items-center gap-3">
-                  <div className={`p-2 rounded-lg ${blockRevisionChecked ? 'bg-emerald-500/20 text-emerald-400' : 'bg-zinc-800 text-zinc-500'}`}>
-                    <Layers size={18} />
-                  </div>
-                  <div>
-                    <div className={`text-xs font-bold ${blockRevisionChecked ? 'text-emerald-400' : 'text-zinc-300'}`}>
-                      Agendar Revisão em Bloco
-                    </div>
-                    <div className="text-[10px] text-zinc-500">
-                      Dispara revisão automática a cada 3 tópicos desta matéria
-                    </div>
-                  </div>
-                </div>
-
-                {/* Toggle Switch Tático */}
-                <div className={`w-9 h-5 rounded-full p-0.5 transition-colors ${blockRevisionChecked ? 'bg-emerald-500' : 'bg-zinc-800'}`}>
-                  <div className={`w-4 h-4 rounded-full bg-zinc-950 transition-transform ${blockRevisionChecked ? 'translate-x-4' : 'translate-x-0'}`} />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-
-      )}
-
-      {/* MODAL: EDITOR DE TEXTO RICO */}
-      {activeEditorModal && (
-        <div className="absolute inset-0 z-50 flex items-center justify-center p-6 bg-black/90 backdrop-blur-md animate-in fade-in">
-          <div className="bg-[#18181b] border border-zinc-700 rounded-3xl w-full max-w-4xl h-[85vh] shadow-2xl flex flex-col overflow-hidden">
-            <div className="px-6 py-4 border-b border-zinc-800 flex justify-between items-center bg-[#13141a]">
-              <div className="flex items-center gap-3">
-                <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${activeEditorModal.type === 'errors' ? 'bg-rose-500/20 text-rose-400' : 'bg-emerald-500/20 text-emerald-400'}`}>
-                  {activeEditorModal.type === 'errors' ? <FileText size={20} /> : <PenTool size={20} />}
-                </div>
-                <div>
-                  <h3 className="text-base font-extrabold text-white">{activeEditorModal.title}</h3>
-                  <p className="text-[11px] text-zinc-400">{activeStudyModal?.subject} • {activeStudyModal?.topicName}</p>
-                </div>
-              </div>
-              <button onClick={() => setActiveEditorModal(null)} className="text-zinc-400 hover:text-white p-2 rounded-lg bg-zinc-900 border border-zinc-800">
-                <X size={18} />
-              </button>
-            </div>
-
-            <div className="px-6 py-2.5 bg-zinc-900 border-b border-zinc-800 flex flex-wrap items-center gap-1 text-xs select-none">
-              <button onClick={() => execCmd('bold')} className="p-2 hover:bg-zinc-800 text-zinc-300 rounded-lg"><Bold size={15} /></button>
-              <button onClick={() => execCmd('italic')} className="p-2 hover:bg-zinc-800 text-zinc-300 rounded-lg"><Italic size={15} /></button>
-              <button onClick={() => execCmd('underline')} className="p-2 hover:bg-zinc-800 text-zinc-300 rounded-lg"><Underline size={15} /></button>
-              <button onClick={() => execCmd('strikeThrough')} className="p-2 hover:bg-zinc-800 text-zinc-300 rounded-lg"><Strikethrough size={15} /></button>
-              <div className="w-[1px] h-5 bg-zinc-700 mx-1" />
-              <button onClick={() => execCmd('formatBlock', '<h1>')} className="p-2 hover:bg-zinc-800 text-zinc-300 rounded-lg"><Heading1 size={15} /></button>
-              <button onClick={() => execCmd('formatBlock', '<h2>')} className="p-2 hover:bg-zinc-800 text-zinc-300 rounded-lg"><Heading2 size={15} /></button>
-              <div className="w-[1px] h-5 bg-zinc-700 mx-1" />
-              <button onClick={() => execCmd('insertUnorderedList')} className="p-2 hover:bg-zinc-800 text-zinc-300 rounded-lg"><List size={15} /></button>
-              <button onClick={() => execCmd('insertOrderedList')} className="p-2 hover:bg-zinc-800 text-zinc-300 rounded-lg"><ListNum size={15} /></button>
-              <div className="w-[1px] h-5 bg-zinc-700 mx-1" />
-              <button onClick={() => execCmd('justifyLeft')} className="p-2 hover:bg-zinc-800 text-zinc-300 rounded-lg"><AlignLeft size={15} /></button>
-              <button onClick={() => execCmd('justifyCenter')} className="p-2 hover:bg-zinc-800 text-zinc-300 rounded-lg"><AlignCenter size={15} /></button>
-            </div>
-
-            <div
-              ref={editorRef}
-              contentEditable
-              className="flex-1 p-8 overflow-y-auto bg-[#0f1015] text-slate-100 outline-none leading-relaxed prose prose-invert max-w-none text-sm font-sans"
-              style={{ minHeight: '300px' }}
-            />
-
-            <div className="px-6 py-4 border-t border-zinc-800 flex justify-between items-center bg-[#13141a]">
-              <span className="text-xs text-zinc-500">As formatações ficam salvas no seu caderno de estudos.</span>
-              <div className="flex gap-3">
-                <button onClick={() => setActiveEditorModal(null)} className="px-5 py-2.5 rounded-xl text-xs font-bold text-zinc-400 hover:text-white">Cancelar</button>
-                <button onClick={saveEditorContent} className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs px-7 py-2.5 rounded-xl shadow-lg">Salvar e Fechar</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* MODO DE CONCENTRAÇÃO */}
-      {activeStudyModal && isFocusMode && (
-        <div className="absolute inset-0 z-50 bg-[#090a0f] flex flex-col justify-between p-12 animate-in fade-in">
-          <div className="flex justify-between items-center max-w-5xl w-full mx-auto">
-            <div>
-              <span className="text-xs font-black tracking-widest text-emerald-400 uppercase bg-emerald-950/60 border border-emerald-500/30 px-3 py-1 rounded-full">MODO CONCENTRAÇÃO</span>
-              <h1 className="text-xl md:text-2xl font-black text-white mt-2">{activeStudyModal.topicName}</h1>
-              <p className="text-xs font-bold text-zinc-400 uppercase tracking-wider">{activeStudyModal.subject}</p>
-            </div>
-            <button onClick={() => setIsFocusMode(false)} className="flex items-center gap-2 bg-zinc-900 hover:bg-zinc-800 text-zinc-300 px-4 py-2 rounded-xl text-xs font-bold border border-zinc-800 transition-colors">
-              <Minimize2 size={16} /> Voltar ao Painel
-            </button>
-          </div>
-
-          <div className="flex flex-col items-center justify-center my-auto">
-            <span className="font-mono text-7xl md:text-9xl font-black text-emerald-400 tracking-wider drop-shadow-[0_0_45px_rgba(16,185,129,0.3)]">
-              {formatTimer(timerSeconds)}
-            </span>
-            <p className="text-xs uppercase tracking-widest text-zinc-500 font-bold mt-4">Tempo Líquido em Foco</p>
-
-            <div className="flex items-center gap-4 mt-8">
-              <button onClick={() => setIsTimerRunning(!isTimerRunning)} className={`w-16 h-16 rounded-2xl flex items-center justify-center shadow-xl transition-all ${isTimerRunning ? 'bg-amber-500 text-slate-950' : 'bg-emerald-500 text-slate-950'}`}>
-                {isTimerRunning ? <Pause size={28} /> : <Play size={28} fill="currentColor" />}
-              </button>
-              <button onClick={() => { setTimerSeconds(0); setIsTimerRunning(false); }} className="w-16 h-16 rounded-2xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-400 flex items-center justify-center">
-                <RotateCcw size={22} />
-              </button>
-            </div>
-          </div>
-
-          <div className="max-w-5xl w-full mx-auto flex justify-between items-center pt-6 border-t border-zinc-900">
-            <span className="text-xs text-zinc-600 font-medium">Foco total no papiro. Sem distrações.</span>
-            <button onClick={handleFinishStudy} className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black px-8 py-3.5 rounded-xl flex items-center gap-2 transition-all shadow-lg shadow-emerald-500/20">
-              <Trophy size={18} /> Finalizar missão
-            </button>
-          </div>
-        </div>
-      )}
-
+      <FocusModeModal
+        activeStudyModal={activeStudyModal}
+        isFocusMode={isFocusMode}
+        setIsFocusMode={setIsFocusMode}
+        timerSeconds={timerSeconds}
+        setTimerSeconds={setTimerSeconds}
+        isTimerRunning={isTimerRunning}
+        setIsTimerRunning={setIsTimerRunning}
+        formatTimer={formatTimer}
+        handleFinishStudy={handleFinishStudy}
+      />
     </div>
   );
 }
