@@ -1,5 +1,3 @@
-import daisyui from "daisyui";
-
 /** @type {import('tailwindcss').Config} */
 export default {
   content: [
@@ -11,54 +9,34 @@ export default {
       fontFamily: {
         sans: ['"Plus Jakarta Sans"', 'sans-serif'],
       },
-      colors: {
-        primary: "#1E60F6",            // Azul Elétrico
-        "primary-content": "#FFFFFF",
-        secondary: "#00D084",          // Verde Menta
-        "secondary-content": "#FFFFFF",
-        accent: "#FF7A1A",             // Laranja
-        "accent-content": "#FFFFFF",
-        neutral: "#CBD5E1",            // Slate 300
-        "neutral-content": "#64748B",  // Slate 500
-        "base-100": "#FFFFFF",         // Branco Puro dos Cards e Modais
-        "base-200": "#EEF2F6",         // Fundo Geral mais forte e elegante (destaca os cards brancos)
-        "base-300": "#E2E8F0",         // Fundo de caixas internas, tags e inputs
-        "base-content": "#1E293B",     // Texto Escuro
-        info: "#0EA5E9",
-        warning: "#FF7A1A",
-        error: "#F43F5E",
-        "small-ball": "#F43F5E",
-        "badge-live": "#EF4444",               // Vermelho para fundo do Ao Vivo e tags
-        "badge-live-content": "#FFFFFF",       // Texto branco de alto contraste
-      },
     },
   },
   plugins: [
-    daisyui,
+    require('daisyui')
   ],
   daisyui: {
     themes: [
       {
-        papyrus: {
-          "primary": "#1E60F6",
+        papyrusTheme: {
+          "primary": "#2563EB",          // Royal Blue (Botões ativos e destaques)
           "primary-content": "#FFFFFF",
-          "secondary": "#00D084",
+          "secondary": "#10B981",        // Verde Menta (Revisões e acertos)
           "secondary-content": "#FFFFFF",
-          "accent": "#FF7A1A",
+          "accent": "#EA580C",           // Laranja (Variações e alertas)
           "accent-content": "#FFFFFF",
-          "neutral": "#CBD5E1",
-          "neutral-content": "#64748B",
-          "base-100": "#FFFFFF",
-          "base-200": "#EEF2F6",
-          "base-300": "#E2E8F0",
-          "base-content": "#0F172A",
-          "info": "#0EA5E9",
-          "success": "#00D084",
-          "warning": "#FF7A1A",
-          "error": "#F43F5E",
+          "neutral": "#0F223D",          // Deep Navy (Fundo estrutural da Sidebar)
+          "neutral-content": "#94A3B8",  // Slate 400 (Textos e ícones inativos da sidebar e metadados)
+          "base-100": "#FFFFFF",         // Superfície de Cards e Modais
+          "base-200": "#F8FAFC",         // Fundo Canvas geral da aplicação (Slate 50)
+          "base-300": "#E2E8F0",         // Divisores e bordas de 1px
+          "base-content": "#0F172A",     // Tipografia principal escura (Slate 900)
+          "info": "#38BDF8",             // Sky Blue (Subtítulo ESTUDOS PRO)
+          "success": "#16A34A",          // Status de sincronização
+          "warning": "#F59E0B",
+          "error": "#EF4444",
         },
       },
     ],
-    darkTheme: false,
+    darkTheme: "papyrusTheme",
   },
-};
+}

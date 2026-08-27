@@ -1,29 +1,31 @@
 package com.papiro.backend.dtos;
 
-import com.papiro.backend.enums.StudyEnums.*;
-import lombok.Builder;
-import lombok.Data;
-import java.time.LocalDate;
+import lombok.*;
 
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class DailyGoalResponseDTO {
     private String id;
     private String topicId;
-    private String subjectName;
+    private String subject;
     private String subjectColor;
     private String topicName;
-    private ImportanceLevel importance;
-    private StudyType type;
-    private int targetDurationMinutes;
+    private String importance;
+    private String type;
+    private String revisionTag;
+    private int durationMinutes;
     private int actualDurationMinutes;
     private int questionsTotal;
     private int questionsCorrect;
+    private String studyMethod;
     private boolean completed;
-    private LocalDate scheduledDate;
-    private String tecQuestionsUrl;
-    private String videoLessonUrl;
-    private String pdfMaterialUrl;
-    private String errorNotebookNotes;
+    private String scheduledDate;
+    private String targetDate;
+    private String tecUrl;
+    private String videoUrl;
+    private String pdfUrl;
+    private String errorNotes;
     private String summaryNotes;
 }

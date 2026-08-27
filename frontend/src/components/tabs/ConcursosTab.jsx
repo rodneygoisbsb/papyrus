@@ -1,197 +1,318 @@
-import React from 'react';
-import { Plus, Trash2, Folder, Edit2 } from 'lucide-react';
+import React, { useState } from 'react';
+import { Plus, Trash2, Edit3, Folder, BookOpen, X, Check, ArrowRight } from 'lucide-react';
 
 export default function ConcursosTab({
-    plans,
-    setPlans,
-    currentPlan,
-    currentDisciplines,
-    totalPlanTopics,
-    totalPlanStudied,
-    topicsRemaining,
-    progressPercentage,
-    handleAddNewDiscipline,
-    handleDeletePlan,
-    setActiveTab,
-    setActiveDisciplineEditor,
-    handleDeleteDiscipline
+    disciplines = [],
+    activeDisciplineEditor = null,
+    setActiveDisciplineEditor = () => { },
+    onOpenNewDiscipline = () => { },
+    onEditDiscipline = () => { },
+    onDeleteDiscipline = () => { },
+    onSaveDiscipline = () => { }
 }) {
+    const [newTopicText, setNewTopicText] = useState('');
+
+    // Cores semânticas oficiais para as fitas laterais de identificação
+    const availableColors = [
+        { label: 'Azul (Constitucional)', hex: '#2563EB' },
+        { label: 'Laranja (Administrativo)', hex: '#EA580C' },
+        { label: 'Verde (Português)', hex: '#16A34A' },
+        { label: 'Roxo (Penal)', hex: '#7C3AED' },
+        { label: 'Carmesim (Raciocínio Lógico)', hex: '#E11D48' },
+        { label: 'Ciano (Legislação)', hex: '#0891B2' }
+    ];
+
+    // Adiciona novo tópico na lista do modal
+    const handleAddTopic = () => {
+        if (!newTopicText.trim()) return;
+        const newTopic = {
+            id: `t_temp_${Date.now()}`,
+            name: newTopicText.trim(),
+            theoryCompleted: false
+        };
+        setActiveDisciplineEditor((prev) => ({
+            ...prev,
+            topics: [...(prev?.topics || []), newTopic]
+        }));
+        setNewTopicText('');
+    };
+
+    // Remove tópico da lista no modal
+    const handleRemoveTopic = (topicId) => {
+        setActiveDisciplineEditor((prev) => ({
+            ...prev,
+            topics: (prev?.topics || []).filter((t) => t.id !== topicId)
+        }));
+    };
+
     return (
-        <div className="space-y-6 animate-in fade-in duration-200">
-            <div>
-                <div
-                    onClick={() => alert('Em breve integração com novo plano!')}
-                    className="bg-base-100 rounded-3xl p-4 flex items-center gap-3 cursor-pointer transition-all group w-fit pr-6 shadow-sm hover:shadow-md border border-base-300/60"
+        <div className="space-y-6 font-['Plus_Jakarta_Sans'] text-base-content animate-in fade-in duration-200">
+
+            {/* 1. CABEÇALHO DA SEÇÃO DE CONCURSOS */}
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-base-100 p-6 rounded-3xl border border-base-300/70 shadow-xs">
+                <div>
+                    <div className="flex items-center gap-2 mb-1">
+                        <BookOpen size={20} className="text-primary" />
+                        <h2 className="text-xl font-bold tracking-tight text-base-content">
+                            Disciplinas do Concurso
+                        </h2>
+                    </div>
+                    <p className="text-xs text-neutral-content">
+                        Adicione matérias e monte o edital verticalizado do seu concurso.
+                    </p>
+                </div>
+
+                <button
+                    type="button"
+                    onClick={onOpenNewDiscipline}
+                    className="btn btn-primary text-primary-content font-bold gap-2 rounded-xl shadow-xs"
                 >
-                    <div className="w-9 h-9 rounded-2xl bg-primary/10 group-hover:bg-primary text-primary group-hover:text-primary-content flex items-center justify-center transition-colors shrink-0">
-                        <Plus size={18} />
-                    </div>
-                    <div>
-                        <h4 className="font-extrabold text-xs text-base-content group-hover:text-primary transition-colors">Criar Novo Plano</h4>
-                        <p className="text-[10px] text-neutral-content">Adicionar novo concurso</p>
-                    </div>
-                </div>
+                    <Plus size={16} /> Nova Disciplina
+                </button>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 items-stretch">
-                <div className="lg:col-span-2 bg-base-100 border border-base-300/60 rounded-3xl p-7 relative shadow-sm flex flex-col md:flex-row gap-6 items-center justify-between">
-                    <div className="flex flex-col md:flex-row gap-6 items-center w-full">
-                        <div className="relative group/logo shrink-0">
-                            <input
-                                type="file"
-                                accept="image/*"
-                                id="logo-upload-input"
-                                className="hidden"
-                                onChange={(e) => {
-                                    const file = e.target.files[0];
-                                    if (file) {
-                                        const imageUrl = URL.createObjectURL(file);
-                                        setPlans(plans.map((p) => (p.id === currentPlan.id ? { ...p, logoUrl: imageUrl } : p)));
-                                    }
-                                }}
-                            />
-                            <label
-                                htmlFor="logo-upload-input"
-                                className="w-32 h-32 md:w-36 md:h-36 rounded-2xl flex flex-col items-center justify-center font-black text-primary-content text-4xl shadow-inner cursor-pointer overflow-hidden relative bg-primary shadow-md shadow-primary/20"
-                                style={{ backgroundColor: currentPlan.logoUrl ? 'transparent' : (currentPlan.colorHex || '#1E60F6') }}
-                            >
-                                {currentPlan.logoUrl ? (
-                                    <img src={currentPlan.logoUrl} alt="Logo do Concurso" className="w-full h-full object-cover" />
-                                ) : (
-                                    <span>{currentPlan.title.charAt(0)}</span>
-                                )}
-                                <div className="absolute inset-0 bg-primary/80 opacity-0 group-hover/logo:opacity-100 flex flex-col items-center justify-center text-white transition-opacity text-center p-2">
-                                    <span className="text-[10px] font-bold uppercase tracking-wider text-white">Alterar Logo</span>
-                                </div>
-                            </label>
-                        </div>
-
-                        <div className="flex-1 w-full space-y-2">
-                            <h3 className="text-3xl font-black text-base-content">{currentPlan.title}</h3>
-                            <div className="space-y-1 pt-1 text-xs text-neutral-content">
-                                <p><span className="font-bold text-base-content">Data da Prova:</span> {currentPlan.targetDate}</p>
-                                <p><span className="font-bold text-base-content">Cargo:</span> {currentPlan.role}</p>
-                                <p><span className="font-bold text-base-content">Total de Matérias:</span> {currentDisciplines.length} disciplinas ({totalPlanTopics} tópicos)</p>
-                            </div>
-                        </div>
+            {/* 2. GRID DE DISCIPLINAS CADASTRADAS */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {(!disciplines || disciplines.length === 0) ? (
+                    <div className="col-span-full p-12 text-center bg-base-100 border border-base-300/60 rounded-3xl text-neutral-content space-y-3">
+                        <Folder size={36} className="mx-auto text-neutral-content/40" />
+                        <p className="text-sm font-semibold text-base-content">
+                            Nenhuma disciplina cadastrada ainda.
+                        </p>
+                        <p className="text-xs text-neutral-content max-w-sm mx-auto">
+                            Clique no botão <b>"+ Nova Disciplina"</b> acima para cadastrar Direito Constitucional, Português ou qualquer outra matéria.
+                        </p>
                     </div>
-
-                    <div className="absolute bottom-6 right-6 flex items-center gap-2 z-10">
-                        <button
-                            type="button"
-                            onClick={handleAddNewDiscipline}
-                            className="bg-primary/10 hover:bg-primary/20 text-primary font-bold text-xs px-4 py-2.5 rounded-xl flex items-center gap-1.5 transition-colors cursor-pointer"
+                ) : (
+                    disciplines.map((disc) => (
+                        <div
+                            key={disc.id}
+                            className="bg-base-100 border border-base-300/70 rounded-3xl p-6 shadow-xs flex flex-col justify-between hover:shadow-sm transition-all border-l-[6px]"
+                            style={{ borderLeftColor: disc.colorHex || '#2563EB' }}
                         >
-                            <Plus size={14} /> Nova Disciplina
-                        </button>
-                        <button
-                            type="button"
-                            onClick={() => handleDeletePlan(currentPlan.id)}
-                            className="p-2.5 text-error hover:bg-error/20 bg-error/10 rounded-xl transition-all cursor-pointer flex items-center justify-center"
-                            title="Excluir Plano"
-                        >
-                            <Trash2 size={16} />
-                        </button>
-                    </div>
-                </div>
-
-                <div className="flex flex-col justify-between gap-4">
-                    <div className="bg-base-100 border border-base-300/60 rounded-3xl p-6 flex flex-col justify-between shadow-sm flex-1">
-                        <div>
-                            <div className="flex justify-between items-baseline mb-1">
-                                <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-content">Progresso do Edital</span>
-                                <span className="text-xl font-black text-primary">{progressPercentage}%</span>
-                            </div>
-                            <p className="text-[11px] text-neutral-content">
-                                {totalPlanStudied} de {totalPlanTopics} tópicos estudados ({topicsRemaining} restantes)
-                            </p>
-                        </div>
-                        <div className="w-full bg-base-300 h-2.5 rounded-full mt-3 overflow-hidden">
-                            <div className="bg-primary h-full rounded-full transition-all duration-500" style={{ width: `${progressPercentage}%` }} />
-                        </div>
-                    </div>
-
-                    <div className="bg-base-100 border border-base-300/60 rounded-3xl p-6 flex items-center justify-around text-center shadow-sm flex-1">
-                        <div>
-                            <span className="text-2xl font-black text-base-content block">{currentPlan.questionsTotal}</span>
-                            <span className="text-[10px] text-neutral-content font-bold uppercase tracking-wider">Questões Feitas</span>
-                        </div>
-                        <div className="w-[1px] h-10 bg-base-300" />
-                        <div>
-                            <span className="text-2xl font-black text-secondary block">{currentPlan.accuracy}%</span>
-                            <span className="text-[10px] text-neutral-content font-bold uppercase tracking-wider">Desempenho</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div className="space-y-4 pt-4">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-                    {currentDisciplines.map((d) => {
-                        const total = d.topics?.length || 0;
-                        return (
-                            <div
-                                key={d.id}
-                                className="relative overflow-hidden bg-base-100 border border-base-300/60 rounded-3xl p-6 flex flex-col justify-between shadow-sm hover:shadow-md transition-all group"
-                            >
-                                <div className="absolute top-0 left-0 right-0 h-1.5 bg-primary" />
-                                <div className="space-y-4 pt-1">
-                                    <h5 className="font-extrabold text-base text-base-content truncate">{d.name}</h5>
-                                    <div className="grid grid-cols-3 gap-2 text-center bg-base-200/80 p-3.5 rounded-2xl">
-                                        <div>
-                                            <span className="block font-black text-2xl text-primary tracking-tight">{d.studiedTopics}</span>
-                                            <span className="text-neutral-content text-[10px] font-bold uppercase tracking-wide mt-0.5 block">Estudados</span>
-                                        </div>
-                                        <div>
-                                            <span className="block font-black text-2xl text-base-content tracking-tight">{total}</span>
-                                            <span className="text-neutral-content text-[10px] font-bold uppercase tracking-wide mt-0.5 block">Totais</span>
-                                        </div>
-                                        <div>
-                                            <span className="block font-black text-2xl text-secondary tracking-tight">{d.questionsDone}</span>
-                                            <span className="text-neutral-content text-[10px] font-bold uppercase tracking-wide mt-0.5 block">Questões</span>
-                                        </div>
+                            <div>
+                                {/* Nome da Matéria e Ações */}
+                                <div className="flex justify-between items-start gap-2">
+                                    <h3 className="font-bold text-base tracking-tight text-base-content uppercase truncate">
+                                        {disc.name}
+                                    </h3>
+                                    <div className="flex items-center gap-1 shrink-0">
+                                        <button
+                                            type="button"
+                                            onClick={() => onEditDiscipline(disc)}
+                                            className="btn btn-ghost btn-xs btn-square text-neutral-content hover:text-primary rounded-lg"
+                                            title="Editar Disciplina"
+                                        >
+                                            <Edit3 size={15} />
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => onDeleteDiscipline(disc.id)}
+                                            className="btn btn-ghost btn-xs btn-square text-neutral-content hover:text-error rounded-lg"
+                                            title="Excluir Disciplina"
+                                        >
+                                            <Trash2 size={15} />
+                                        </button>
                                     </div>
                                 </div>
 
-                                <div className="flex items-center justify-end gap-1.5 pt-4 mt-2 relative z-20">
-                                    <button
-                                        type="button"
-                                        onClick={() => setActiveTab('edital')}
-                                        className="group/btn flex items-center gap-1.5 py-1.5 px-3 rounded-xl text-primary hover:bg-primary/10 transition-all duration-300 cursor-pointer overflow-hidden select-none"
-                                    >
-                                        <Folder size={18} className="shrink-0 text-primary" />
-                                        <span className="max-w-0 overflow-hidden whitespace-nowrap opacity-0 group-hover/btn:max-w-[150px] group-hover/btn:opacity-100 text-xs font-bold text-primary transition-all duration-300 ease-out">
-                                            Edital Verticalizado
+                                {/* Métricas da Disciplina */}
+                                <div className="grid grid-cols-3 gap-2 bg-base-200/40 border border-base-300/50 p-3 rounded-2xl my-4 text-center">
+                                    <div>
+                                        <span className="text-xl font-bold text-primary block leading-none tabular-nums">
+                                            {disc.studiedTopics || 0}
                                         </span>
-                                    </button>
-
-                                    <button
-                                        type="button"
-                                        onClick={() => setActiveDisciplineEditor({ ...d })}
-                                        className="group/btn flex items-center gap-1.5 py-1.5 px-3 rounded-xl text-info hover:bg-info/10 transition-all duration-300 cursor-pointer overflow-hidden select-none"
-                                    >
-                                        <Edit2 size={18} className="shrink-0 text-info" />
-                                        <span className="max-w-0 overflow-hidden whitespace-nowrap opacity-0 group-hover/btn:max-w-[130px] group-hover/btn:opacity-100 text-xs font-bold text-info transition-all duration-300 ease-out">
-                                            Editar Assuntos
+                                        <span className="text-[10px] text-neutral-content uppercase font-semibold mt-1 block">
+                                            Estudados
                                         </span>
-                                    </button>
-
-                                    <button
-                                        type="button"
-                                        onClick={() => handleDeleteDiscipline(d.id)}
-                                        className="group/btn flex items-center gap-1.5 py-1.5 px-3 rounded-xl text-error hover:bg-error/15 transition-all duration-300 cursor-pointer overflow-hidden select-none"
-                                    >
-                                        <Trash2 size={18} className="shrink-0 text-error" />
-                                        <span className="max-w-0 overflow-hidden whitespace-nowrap opacity-0 group-hover/btn:max-w-[80px] group-hover/btn:opacity-100 text-xs font-bold text-error transition-all duration-300 ease-out">
-                                            Remover
+                                    </div>
+                                    <div>
+                                        <span className="text-xl font-bold text-base-content block leading-none tabular-nums">
+                                            {disc.totalTopics || disc.topics?.length || 0}
                                         </span>
-                                    </button>
+                                        <span className="text-[10px] text-neutral-content uppercase font-semibold mt-1 block">
+                                            Totais
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <span className="text-xl font-bold text-[#16A34A] block leading-none tabular-nums">
+                                            {disc.questionsDone || 0}
+                                        </span>
+                                        <span className="text-[10px] text-neutral-content uppercase font-semibold mt-1 block">
+                                            Questões
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
-                        );
-                    })}
-                </div>
+
+                            {/* Rodapé do Card */}
+                            <div className="pt-3 flex justify-between items-center text-xs text-neutral-content border-t border-base-300/60 font-medium">
+                                <span className="flex items-center gap-1.5">
+                                    <Folder size={14} className="text-primary" />
+                                    {disc.topics?.length || 0} tópicos no edital
+                                </span>
+                                <button
+                                    type="button"
+                                    onClick={() => onEditDiscipline(disc)}
+                                    className="text-primary font-semibold hover:underline flex items-center gap-0.5 text-[11px]"
+                                >
+                                    Ver tópicos <ArrowRight size={12} />
+                                </button>
+                            </div>
+                        </div>
+                    ))
+                )}
             </div>
+
+            {/* 3. MODAL DE CRIAÇÃO / EDIÇÃO DE DISCIPLINA */}
+            {activeDisciplineEditor && (
+                <div className="modal modal-open bg-black/40 backdrop-blur-xs">
+                    <div className="modal-box max-w-xl bg-base-100 rounded-3xl border border-base-300/80 shadow-2xl p-6 space-y-5 font-['Plus_Jakarta_Sans']">
+
+                        {/* Topo do Modal */}
+                        <div className="flex justify-between items-center pb-3 border-b border-base-300/60">
+                            <div className="flex items-center gap-2">
+                                <BookOpen size={18} className="text-primary" />
+                                <h3 className="font-bold text-base text-base-content">
+                                    {activeDisciplineEditor.id ? 'Editar Disciplina' : 'Nova Disciplina'}
+                                </h3>
+                            </div>
+                            <button
+                                type="button"
+                                onClick={() => setActiveDisciplineEditor(null)}
+                                className="btn btn-ghost btn-xs btn-square rounded-full text-neutral-content hover:text-base-content"
+                            >
+                                <X size={16} />
+                            </button>
+                        </div>
+
+                        {/* Input Nome da Matéria */}
+                        <div className="space-y-1.5">
+                            <label className="text-xs font-bold uppercase tracking-wider text-neutral-content">
+                                Nome da Matéria
+                            </label>
+                            <input
+                                type="text"
+                                placeholder="Ex: DIREITO PROCESSUAL PENAL"
+                                value={activeDisciplineEditor.name || ''}
+                                onChange={(e) =>
+                                    setActiveDisciplineEditor((prev) => ({ ...prev, name: e.target.value }))
+                                }
+                                className="input input-bordered w-full bg-base-200/40 focus:bg-base-100 rounded-xl text-sm font-semibold"
+                                autoFocus
+                            />
+                        </div>
+
+                        {/* Seletor de Cores da Fita */}
+                        <div className="space-y-1.5">
+                            <label className="text-xs font-bold uppercase tracking-wider text-neutral-content">
+                                Cor de Identificação
+                            </label>
+                            <div className="flex items-center gap-2.5 flex-wrap">
+                                {availableColors.map((cor) => (
+                                    <button
+                                        key={cor.hex}
+                                        type="button"
+                                        onClick={() =>
+                                            setActiveDisciplineEditor((prev) => ({ ...prev, colorHex: cor.hex }))
+                                        }
+                                        className={`w-7 h-7 rounded-full transition-transform cursor-pointer border-2 ${activeDisciplineEditor.colorHex === cor.hex
+                                                ? 'scale-110 border-base-content shadow-xs ring-2 ring-primary/40'
+                                                : 'border-transparent opacity-80 hover:opacity-100'
+                                            }`}
+                                        style={{ backgroundColor: cor.hex }}
+                                        title={cor.label}
+                                    />
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Inclusão de Tópicos do Edital */}
+                        <div className="space-y-2 pt-2 border-t border-base-300/60">
+                            <div className="flex justify-between items-center">
+                                <label className="text-xs font-bold uppercase tracking-wider text-neutral-content">
+                                    Assuntos / Tópicos do Edital
+                                </label>
+                                <span className="text-xs font-semibold text-primary">
+                                    {activeDisciplineEditor.topics?.length || 0} adicionados
+                                </span>
+                            </div>
+
+                            {/* Campo para digitar o assunto */}
+                            <div className="flex gap-2">
+                                <input
+                                    type="text"
+                                    placeholder="Ex: Inquérito Policial (Art. 4º ao 23)"
+                                    value={newTopicText}
+                                    onChange={(e) => setNewTopicText(e.target.value)}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter') {
+                                            e.preventDefault();
+                                            handleAddTopic();
+                                        }
+                                    }}
+                                    className="input input-bordered flex-1 bg-base-200/40 focus:bg-base-100 rounded-xl text-sm"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={handleAddTopic}
+                                    className="btn btn-primary text-primary-content font-bold rounded-xl px-4 shrink-0"
+                                >
+                                    <Plus size={16} /> Adicionar
+                                </button>
+                            </div>
+
+                            {/* Lista com Rolagem dos Tópicos Adicionados */}
+                            <div className="max-h-40 overflow-y-auto space-y-1.5 pr-1 mt-2">
+                                {(!activeDisciplineEditor.topics || activeDisciplineEditor.topics.length === 0) ? (
+                                    <p className="text-xs text-neutral-content italic py-3 text-center bg-base-200/20 rounded-xl border border-dashed border-base-300">
+                                        Nenhum tópico adicionado. Digite o assunto e clique em "Adicionar" (ou tecle Enter).
+                                    </p>
+                                ) : (
+                                    activeDisciplineEditor.topics.map((topic, index) => (
+                                        <div
+                                            key={topic.id || index}
+                                            className="flex items-center justify-between p-2.5 rounded-xl bg-base-200/50 border border-base-300/60 text-xs font-medium"
+                                        >
+                                            <span className="truncate pr-2">
+                                                <b className="text-primary mr-2">{index + 1}.</b> {topic.name}
+                                            </span>
+                                            <button
+                                                type="button"
+                                                onClick={() => handleRemoveTopic(topic.id)}
+                                                className="text-neutral-content hover:text-error transition-colors p-1"
+                                                title="Remover Tópico"
+                                            >
+                                                <Trash2 size={14} />
+                                            </button>
+                                        </div>
+                                    ))
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Ações Inferiores */}
+                        <div className="flex justify-end gap-2 pt-4 border-t border-base-300/60">
+                            <button
+                                type="button"
+                                onClick={() => setActiveDisciplineEditor(null)}
+                                className="btn btn-sm btn-ghost rounded-xl"
+                            >
+                                Cancelar
+                            </button>
+                            <button
+                                type="button"
+                                onClick={onSaveDiscipline}
+                                className="btn btn-sm btn-primary text-primary-content font-bold px-5 rounded-xl shadow-xs"
+                            >
+                                Salvar Disciplina
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            )}
+
         </div>
     );
 }
