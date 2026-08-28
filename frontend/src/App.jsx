@@ -240,28 +240,31 @@ export default function App() {
   return (
     <div className="min-h-screen bg-[#F8FAFC] flex font-['Plus_Jakarta_Sans'] text-base-content antialiased">
 
-      {/* 1. SIDEBAR FIXA E ANCORADA (h-screen sticky com tipografia text-sm) */}
-      <aside className="w-64 bg-base-100 border-r border-base-300/60 flex flex-col justify-between p-5 shrink-0 h-screen sticky top-0 z-40 hidden md:flex">
+      {/* 1. SIDEBAR RETRÁTIL BRANCA (bg-base-100 COM EXPANSÃO NO HOVER) */}
+      <aside className="group/sidebar w-20 hover:w-64 bg-base-100 border-r border-base-300/60 flex flex-col justify-between p-4 shrink-0 h-screen sticky top-0 z-40 hidden md:flex font-['Plus_Jakarta_Sans'] transition-all duration-300 ease-in-out overflow-x-hidden shadow-xs">
 
         {/* BLOCO SUPERIOR: LOGO + NAVEGAÇÃO PRINCIPAL */}
         <div className="space-y-6">
 
-          {/* Logo Papyrus */}
-          <div className="flex items-center gap-3 px-2 py-1">
-            <div className="w-10 h-10 rounded-2xl bg-primary flex items-center justify-center text-primary-content font-black text-xl shadow-xs">
+          {/* Logo Papyrus (Ícone centralizado no repouso + Texto com Fade-in no Hover) */}
+          <div className="flex items-center gap-3 px-1 py-1">
+            <div className="w-11 h-11 rounded-2xl bg-primary flex items-center justify-center text-primary-content font-black text-xl shadow-xs shrink-0">
               P
             </div>
-            <div>
+            <div className="opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-200 whitespace-nowrap overflow-hidden">
               <h1 className="font-extrabold text-base tracking-tight leading-none text-base-content">
                 Papyrus
               </h1>
               <span className="text-[10px] uppercase font-bold tracking-widest text-primary block mt-1">
-                Estudos PRO
+                Papirando todo dia
               </span>
             </div>
           </div>
 
-          {/* Menu de Navegação com Tipografia Ampla (text-sm font-semibold) */}
+          {/* Divisor Semântico */}
+          <div className="h-px bg-base-300/60 w-full" />
+
+          {/* Menu de Navegação Vertical */}
           <nav className="space-y-1.5">
             {[
               { id: 'inicio', icon: LayoutDashboard, label: 'Início' },
@@ -271,39 +274,51 @@ export default function App() {
               { id: 'edital', icon: ListTodo, label: 'Edital Verticalizado' },
               { id: 'planejamento', icon: Sliders, label: 'Planejamento' },
               { id: 'desempenho', icon: BarChart3, label: 'Desempenho' }
-            ].map((item) => (
-              <button
-                key={item.id}
-                type="button"
-                onClick={() => setActiveTab(item.id)}
-                className={`w-full flex items-center gap-3.5 px-4 py-3 rounded-2xl text-sm font-semibold transition-all cursor-pointer ${activeTab === item.id
-                  ? 'bg-primary text-primary-content shadow-xs font-bold'
-                  : 'text-neutral-content hover:bg-base-200/70 hover:text-base-content'
-                  }`}
-              >
-                <item.icon size={19} />
-                <span>{item.label}</span>
-              </button>
-            ))}
+            ].map((item) => {
+              const isActive = activeTab === item.id;
+              return (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => setActiveTab(item.id)}
+                  title={item.label}
+                  className={`w-full min-h-[44px] flex items-center gap-3.5 px-3.5 py-2.5 rounded-2xl text-sm font-semibold transition-all duration-150 ease-out cursor-pointer active:scale-[0.98] ${isActive
+                    ? 'bg-primary text-primary-content shadow-xs font-bold'
+                    : 'text-neutral-content hover:bg-base-200/70 hover:text-base-content'
+                    }`}
+                >
+                  <item.icon size={20} className="shrink-0" />
+                  <span className="truncate opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-200 whitespace-nowrap">
+                    {item.label}
+                  </span>
+                </button>
+              );
+            })}
           </nav>
         </div>
 
-        {/* BLOCO INFERIOR: PERFIL E CONFIGURAÇÕES SEMPRE VISÍVEIS NA BASE */}
+        {/* BLOCO INFERIOR: PERFIL E CONFIGURAÇÕES SEMPRE FIXADOS */}
         <div className="pt-4 border-t border-base-300/60 space-y-1">
           <button
             type="button"
-            className="w-full flex items-center gap-3.5 px-4 py-2.5 rounded-2xl text-sm font-semibold text-neutral-content hover:bg-base-200/70 hover:text-base-content transition-all cursor-pointer"
+            title="Perfil"
+            className="w-full min-h-[44px] flex items-center gap-3.5 px-3.5 py-2.5 rounded-2xl text-sm font-semibold text-neutral-content hover:bg-base-200/70 hover:text-base-content transition-all duration-150 ease-out cursor-pointer active:scale-[0.98]"
           >
-            <User size={18} />
-            <span>Perfil</span>
+            <User size={20} className="shrink-0" />
+            <span className="truncate opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-200 whitespace-nowrap">
+              Perfil
+            </span>
           </button>
 
           <button
             type="button"
-            className="w-full flex items-center gap-3.5 px-4 py-2.5 rounded-2xl text-sm font-semibold text-neutral-content hover:bg-base-200/70 hover:text-base-content transition-all cursor-pointer"
+            title="Configurações"
+            className="w-full min-h-[44px] flex items-center gap-3.5 px-3.5 py-2.5 rounded-2xl text-sm font-semibold text-neutral-content hover:bg-base-200/70 hover:text-base-content transition-all duration-150 ease-out cursor-pointer active:scale-[0.98]"
           >
-            <Settings size={18} />
-            <span>Configurações</span>
+            <Settings size={20} className="shrink-0" />
+            <span className="truncate opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-200 whitespace-nowrap">
+              Configurações
+            </span>
           </button>
         </div>
 
