@@ -10,33 +10,36 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1")
-@RequiredArgsConstructor
+@RequestMapping("/api/disciplines")
 @CrossOrigin(origins = "*")
+@RequiredArgsConstructor
 public class DisciplineController {
 
         private final DisciplineService disciplineService;
 
-        @GetMapping("/plans/{planId}/disciplines")
-        public ResponseEntity<List<DisciplineDTO>> getDisciplinesByPlan(@PathVariable Long planId) {
-                return ResponseEntity.ok(disciplineService.getDisciplinesByPlan(planId));
+        @GetMapping
+        public ResponseEntity<List<DisciplineDTO>> getDisciplinesByPlan(@RequestParam String planId) {
+                List<DisciplineDTO> disciplines = disciplineService.getDisciplinesByPlan(planId);
+                return ResponseEntity.ok(disciplines);
         }
 
-        @PostMapping("/plans/{planId}/disciplines")
+        @PostMapping
         public ResponseEntity<DisciplineDTO> createDiscipline(
-                        @PathVariable Long planId,
+                        @RequestParam String planId,
                         @RequestBody SaveDisciplineRequest request) {
-                return ResponseEntity.ok(disciplineService.createDiscipline(planId, request));
+                DisciplineDTO created = disciplineService.createDiscipline(planId, request);
+                return ResponseEntity.ok(created);
         }
 
-        @PutMapping("/disciplines/{id}")
+        @PutMapping("/{id}")
         public ResponseEntity<DisciplineDTO> updateDiscipline(
                         @PathVariable Long id,
                         @RequestBody SaveDisciplineRequest request) {
-                return ResponseEntity.ok(disciplineService.updateDiscipline(id, request));
+                DisciplineDTO updated = disciplineService.updateDiscipline(id, request);
+                return ResponseEntity.ok(updated);
         }
 
-        @DeleteMapping("/disciplines/{id}")
+        @DeleteMapping("/{id}")
         public ResponseEntity<Void> deleteDiscipline(@PathVariable Long id) {
                 disciplineService.deleteDiscipline(id);
                 return ResponseEntity.noContent().build();

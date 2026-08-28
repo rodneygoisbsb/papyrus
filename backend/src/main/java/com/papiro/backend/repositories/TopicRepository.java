@@ -2,7 +2,6 @@ package com.papiro.backend.repositories;
 
 import com.papiro.backend.models.Topic;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -11,6 +10,5 @@ import java.util.List;
 public interface TopicRepository extends JpaRepository<Topic, String> {
     List<Topic> findBySubjectId(Long subjectId);
 
-    @Modifying
     void deleteBySubjectId(Long subjectId);
 }

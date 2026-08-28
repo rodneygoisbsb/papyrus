@@ -17,7 +17,7 @@ export default {
   daisyui: {
     themes: [
       {
-        papyrusTheme: {
+        papyrus: {
           "primary": "#2563EB",          // Royal Blue (Botões ativos e destaques)
           "primary-content": "#FFFFFF",
           "secondary": "#10B981",        // Verde Menta (Revisões e acertos)

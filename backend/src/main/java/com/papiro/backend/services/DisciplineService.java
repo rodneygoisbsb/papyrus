@@ -4,8 +4,10 @@ import com.papiro.backend.dtos.DisciplineDTO;
 import com.papiro.backend.dtos.DisciplineDTO.SaveDisciplineRequest;
 import com.papiro.backend.dtos.DisciplineDTO.TopicDTO;
 import com.papiro.backend.models.Subject;
+import com.papiro.backend.models.StudyPlan;
 import com.papiro.backend.models.Topic;
 import com.papiro.backend.repositories.SubjectRepository;
+import com.papiro.backend.repositories.StudyPlanRepository;
 import com.papiro.backend.repositories.TopicRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,9 +23,10 @@ public class DisciplineService {
 
     private final SubjectRepository subjectRepository;
     private final TopicRepository topicRepository;
+    private final StudyPlanRepository studyPlanRepository;
 
     @Transactional(readOnly = true)
-    public List<DisciplineDTO> getDisciplinesByPlan(Long planId) {
+    public List<DisciplineDTO> getDisciplinesByPlan(String planId) {
         List<Subject> subjects = subjectRepository.findByPlanId(planId);
 
         return subjects.stream().map(subject -> {
@@ -51,16 +54,19 @@ public class DisciplineService {
     }
 
     @Transactional
-    public DisciplineDTO createDiscipline(Long planId, SaveDisciplineRequest request) {
+    public DisciplineDTO createDiscipline(String planId, SaveDisciplineRequest request) {
+        StudyPlan studyPlan = studyPlanRepository.findById(planId)
+                .orElseThrow(() -> new IllegalArgumentException("Plano de estudos não encontrado: " + planId));
+
         Subject subject = Subject.builder()
-                .planId(planId)
+                .studyPlan(studyPlan)
                 .name(request.name())
                 .colorHex(request.colorHex() != null ? request.colorHex() : "#2563EB")
                 .build();
 
         Subject savedSubject = subjectRepository.save(subject);
-
         List<TopicDTO> createdTopics = new ArrayList<>();
+
         if (request.topics() != null) {
             for (TopicDTO t : request.topics()) {
                 Topic topic = Topic.builder()
@@ -98,6 +104,7 @@ public class DisciplineService {
         }
         subjectRepository.save(subject);
 
+        // Limpa os tópicos antigos e recria com os novos dados enviados
         topicRepository.deleteBySubjectId(disciplineId);
 
         List<TopicDTO> updatedTopics = new ArrayList<>();

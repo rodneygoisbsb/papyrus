@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "tb_topics")
+@Table(name = "tb_topic")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -18,16 +18,19 @@ public class Topic {
     @Column(nullable = false)
     private String name;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "subject_id", nullable = false)
+    private Subject subject;
+
     @Builder.Default
+    @Column(name = "theory_completed")
     private boolean theoryCompleted = false;
 
     @Builder.Default
+    @Column(name = "questions_total")
     private Integer questionsTotal = 0;
 
     @Builder.Default
+    @Column(name = "questions_correct")
     private Integer questionsCorrect = 0;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "subject_id")
-    private Subject subject;
 }

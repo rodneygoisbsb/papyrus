@@ -1,10 +1,7 @@
 package com.papiro.backend.controllers;
 
-import com.papiro.backend.dtos.DashboardMetricsDTO;
 import com.papiro.backend.models.StudyPlan;
-import com.papiro.backend.models.Subject;
-import com.papiro.backend.models.Topic;
-import com.papiro.backend.services.StudyPlanService;
+import com.papiro.backend.repositories.StudyPlanRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,30 +9,27 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api")
-@RequiredArgsConstructor
+@RequestMapping("/api/plans")
 @CrossOrigin(origins = "*")
+@RequiredArgsConstructor
 public class StudyPlanController {
 
-    private final StudyPlanService studyPlanService;
+    private final StudyPlanRepository studyPlanRepository;
 
-    @GetMapping("/dashboard")
-    public ResponseEntity<DashboardMetricsDTO> getDashboard() {
-        return ResponseEntity.ok(studyPlanService.getDashboardData());
+    // DTO Record imutável
+    public record StudyPlanResponse(String id, String name) {
+        public static StudyPlanResponse fromEntity(StudyPlan plan) {
+            return new StudyPlanResponse(plan.getId(), plan.getName());
+        }
     }
 
-    @GetMapping("/plans")
-    public ResponseEntity<List<StudyPlan>> getAllPlans() {
-        return ResponseEntity.ok(studyPlanService.getAllPlans());
-    }
+    @GetMapping
+    public ResponseEntity<List<StudyPlanResponse>> getAllPlans() {
+        List<StudyPlanResponse> plans = studyPlanRepository.findAll()
+                .stream()
+                .map(StudyPlanResponse::fromEntity)
+                .toList();
 
-    @GetMapping("/plans/{planId}/subjects")
-    public ResponseEntity<List<Subject>> getSubjectsByPlan(@PathVariable String planId) {
-        return ResponseEntity.ok(studyPlanService.getSubjectsByPlan(planId));
-    }
-
-    @GetMapping("/subjects/{subjectId}/topics")
-    public ResponseEntity<List<Topic>> getTopicsBySubject(@PathVariable String subjectId) {
-        return ResponseEntity.ok(studyPlanService.getTopicsBySubject(subjectId));
+        return ResponseEntity.ok(plans);
     }
 }
