@@ -1,17 +1,69 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap");
+@import "tailwindcss";
 
+/* ============================================================
+   PLUGIN DAISYUI v5 — Tailwind v4
+   ============================================================ */
+@plugin "daisyui" {
+  themes: papyrusLight --default;
+}
+
+/* ============================================================
+   TEMA PAPYRUS LIGHT — Design System Completo
+   ============================================================ */
+@plugin "daisyui/theme" {
+  name: "papyrusLight";
+  default: true;
+
+  /* Ações Primárias */
+  --color-primary:           oklch(49.1% 0.262 264.1);   /* #2563EB Royal Blue */
+  --color-primary-content:   oklch(100%  0     0);        /* #FFFFFF */
+
+  /* Revisões e Acertos */
+  --color-secondary:         oklch(69.6% 0.170 162.5);   /* #10B981 Verde Menta */
+  --color-secondary-content: oklch(100%  0     0);        /* #FFFFFF */
+
+  /* Alertas e Variações */
+  --color-accent:            oklch(60.6% 0.207  37.1);   /* #EA580C Laranja */
+  --color-accent-content:    oklch(100%  0     0);        /* #FFFFFF */
+
+  /* Estrutural */
+  --color-neutral:           oklch(20.2% 0.053 249.4);   /* #0F223D Deep Navy */
+  --color-neutral-content:   oklch(64.0% 0.028 241.0);   /* #94A3B8 Slate 400 — textos secundários */
+
+  /* Superfícies */
+  --color-base-100:          oklch(100%  0     0);        /* #FFFFFF Cards e Modais */
+  --color-base-200:          oklch(98.7% 0.003 236.3);   /* #F8FAFC Canvas geral (Slate 50) */
+  --color-base-300:          oklch(91.7% 0.013 240.9);   /* #E2E8F0 Divisores e bordas */
+  --color-base-content:      oklch(16.6% 0.032 253.9);   /* #0F172A Tipografia principal (Slate 900) */
+
+  /* Estados */
+  --color-info:              oklch(74.7% 0.147 211.9);   /* #38BDF8 Sky Blue */
+  --color-info-content:      oklch(100%  0     0);
+  --color-success:           oklch(53.4% 0.157 150.1);   /* #16A34A Verde */
+  --color-success-content:   oklch(100%  0     0);
+  --color-warning:           oklch(76.8% 0.159  73.0);   /* #F59E0B Âmbar */
+  --color-warning-content:   oklch(100%  0     0);
+  --color-error:             oklch(62.8% 0.218  25.3);   /* #EF4444 Vermelho */
+  --color-error-content:     oklch(100%  0     0);
+}
+
+/* ============================================================
+   BASE GLOBAL
+   ============================================================ */
 @layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scroll-behavior: smooth;
+  }
 
-    /* Resets globais estruturais e tipografia padrão do Papyrus */
-    html {
-        @apply antialiased scroll-smooth;
-    }
-
-    body {
-        @apply bg-base-200 text-base-content font-sans min-h-screen;
-        margin: 0;
-        padding: 0;
-    }
+  body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background-color: var(--color-base-200);
+    color: var(--color-base-content);
+    min-height: 100svh;
+    margin: 0;
+    padding: 0;
+  }
 }
