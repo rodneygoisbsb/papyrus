@@ -22,6 +22,11 @@ import {
  * Componente de Contador Numérico com Animação Fluida (requestAnimationFrame)
  * Mantém tipografia Plus Jakarta Sans e alinhamento tabular (tabular-nums).
  */
+
+/**
+ * Componente de Contador Numérico com Animação Fluida (requestAnimationFrame)
+ * 100% blindado contra variáveis órfãs.
+ */
 function AnimatedCounter({ value, duration = 700, decimals = 0, padZeros = 0 }) {
     const [displayValue, setDisplayValue] = useState(Number(value) || 0);
     const prevValueRef = useRef(Number(value) || 0);
@@ -41,7 +46,6 @@ function AnimatedCounter({ value, duration = 700, decimals = 0, padZeros = 0 }) 
             const elapsedTime = currentTime - startTime;
             const progress = Math.min(elapsedTime / duration, 1);
 
-            // Curva matemática Ease-Out Cubic
             const easeProgress = 1 - Math.pow(1 - progress, 3);
             const currentNumber = startVal + (endVal - startVal) * easeProgress;
 

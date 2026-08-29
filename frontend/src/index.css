@@ -4,15 +4,14 @@
 
 @layer base {
 
-    /* Força a tipografia limpa e o contraste absoluto em toda a aplicação */
-    html,
+    /* Resets globais estruturais e tipografia padrão do Papyrus */
+    html {
+        @apply antialiased scroll-smooth;
+    }
+
     body {
-        background-color: #E2E8F0;
-        /* Cor de fundo cinza neutro oficial */
-        color: #0F172A;
-        /* Grafite super escuro para eliminar qualquer letra lavada */
-        font-family: 'Plus Jakarta Sans', sans-serif;
-        min-height: 100vh;
-        -webkit-font-smoothing: antialiased;
+        @apply bg-base-200 text-base-content font-sans min-h-screen;
+        margin: 0;
+        padding: 0;
     }
 }

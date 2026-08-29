@@ -20,22 +20,29 @@ import {
 import InicioTab from './components/tabs/InicioTab';
 import ConcursosTab from './components/tabs/ConcursosTab';
 
-// Instância segura da API com fallback
+// Instância segura da API com baseURL alinhada ao Spring Boot (/api/v1)
 const api = axios.create({
   baseURL: 'http://localhost:8080/api/v1',
   timeout: 4000
 });
 
 export default function App() {
-  // 1. ESTADOS DE NAVEGAÇÃO E PLANO ATIVO
+  // 1. ESTADOS DE NAVEGAÇÃO E PLANO ATIVO (Lembrando o último selecionado no LocalStorage)
   const [activeTab, setActiveTab] = useState('inicio');
-  const [selectedPlanId, setSelectedPlanId] = useState(1);
-  const [isPlanDropdownOpen, setIsPlanDropdownOpen] = useState(false);
 
-  const [planosDisponiveis] = useState([
-    { id: 1, nome: 'PM-DF Oficial' },
-    { id: 2, nome: 'Polícia Federal - Agente' }
-  ]);
+  const [selectedPlanId, setSelectedPlanId] = useState(() => {
+    return localStorage.getItem('papyrus_last_plan') || 'bb-ti-2023';
+  });
+
+  const [isPlanDropdownOpen, setIsPlanDropdownOpen] = useState(false);
+  const [planosDisponiveis, setPlanosDisponiveis] = useState([]);
+
+  // Toda vez que o usuário trocar de plano, salvamos a escolha no LocalStorage
+  const handleSelectPlan = (planId) => {
+    setSelectedPlanId(planId);
+    localStorage.setItem('papyrus_last_plan', planId);
+    setIsPlanDropdownOpen(false);
+  };
 
   // 2. ESTADOS DE MÉTRICAS E PRODUTIVIDADE (SOFT KPIS)
   const [weeklyHoursStudied, setWeeklyHoursStudied] = useState(14);
@@ -54,8 +61,8 @@ export default function App() {
   const [dailyGoals, setDailyGoals] = useState([
     {
       id: 'g1',
-      subject: 'DIREITO CONSTITUCIONAL',
-      topicName: 'Direitos e Garantias Fundamentais (Art. 5º)',
+      subject: 'BANCO DE DADOS',
+      topicName: 'Modelagem conceitual de dados (a abordagem entidade-relacionamento)',
       type: 'THEORY',
       durationMinutes: 60,
       completed: false,
@@ -65,8 +72,8 @@ export default function App() {
     },
     {
       id: 'g2',
-      subject: 'DIREITO ADMINISTRATIVO',
-      topicName: 'Lei 8.112/90 – Regime Disciplinar e Responsabilidades',
+      subject: 'LÍNGUA PORTUGUESA',
+      topicName: 'Compreensão e interpretação de textos',
       type: 'THEORY',
       durationMinutes: 60,
       completed: false,
@@ -76,8 +83,8 @@ export default function App() {
     },
     {
       id: 'g3',
-      subject: 'LÍNGUA PORTUGUESA',
-      topicName: 'Emprego do Sinal Indicativo de Crase',
+      subject: 'FERRAMENTAS E LINGUAGENS',
+      topicName: 'Python 3.9.X aplicada para IA/ML e Analytics',
       type: 'THEORY',
       durationMinutes: 60,
       completed: false,
@@ -88,63 +95,50 @@ export default function App() {
   ]);
 
   // 4. ESTADOS DAS DISCIPLINAS (ABA CONCURSOS)
-  const [disciplines, setDisciplines] = useState([
-    {
-      id: 1,
-      name: 'DIREITO CONSTITUCIONAL',
-      colorHex: '#2563EB',
-      studiedTopics: 8,
-      totalTopics: 5,
-      questionsDone: 140,
-      topics: [
-        { id: 't1', name: 'Direitos e Garantias Fundamentais (Art. 5º)', theoryCompleted: true },
-        { id: 't2', name: 'Organização dos Poderes', theoryCompleted: false }
-      ]
-    },
-    {
-      id: 2,
-      name: 'LÍNGUA PORTUGUESA',
-      colorHex: '#16A34A',
-      studiedTopics: 12,
-      totalTopics: 5,
-      questionsDone: 210,
-      topics: [
-        { id: 't3', name: 'Emprego da Crase', theoryCompleted: true },
-        { id: 't4', name: 'Pontuação e Sintaxe', theoryCompleted: false }
-      ]
-    },
-    {
-      id: 3,
-      name: 'DIREITO ADMINISTRATIVO',
-      colorHex: '#EA580C',
-      studiedTopics: 6,
-      totalTopics: 3,
-      questionsDone: 95,
-      topics: [
-        { id: 't5', name: 'Lei 8.112/90 - Regime Disciplinar', theoryCompleted: true }
-      ]
-    }
-  ]);
-
+  const [disciplines, setDisciplines] = useState([]);
   const [activeDisciplineEditor, setActiveDisciplineEditor] = useState(null);
 
-  // 5. CARREGAMENTO REATIVO DO BANCO DE DADOS (SPRING BOOT)
-  const carregarDisciplinasDoBanco = async (planId = 1) => {
+  // 5. CARREGAMENTO REATIVO DOS PLANOS DO BANCO DE DADOS
+  useEffect(() => {
+    const carregarPlanos = async () => {
+      try {
+        const response = await api.get('/plans');
+        if (response.data && Array.isArray(response.data) && response.data.length > 0) {
+          const planosFormatados = response.data.map(p => ({
+            id: p.id,
+            nome: p.name
+          }));
+          setPlanosDisponiveis(planosFormatados);
+          if (!planosFormatados.some(p => p.id === selectedPlanId)) {
+            setSelectedPlanId(planosFormatados[0].id);
+          }
+        }
+      } catch (error) {
+        console.warn('Backend offline ao buscar planos, mantendo padrão local.', error.message);
+      }
+    };
+    carregarPlanos();
+  }, []);
+
+  // 6. CARREGAMENTO REATIVO DAS DISCIPLINAS DO PLANO SELECIONADO
+  const carregarDisciplinasDoBanco = async (planId) => {
     try {
       const response = await api.get(`/plans/${planId}/disciplines`);
-      if (response.data && Array.isArray(response.data) && response.data.length > 0) {
+      if (response.data && Array.isArray(response.data)) {
         setDisciplines(response.data);
       }
     } catch (error) {
-      console.warn('Backend offline ou sem dados cadastrados. Mantendo dados locais.', error.message);
+      console.warn('Backend offline ou sem disciplinas para este plano. Usando fallback local.', error.message);
     }
   };
 
   useEffect(() => {
-    carregarDisciplinasDoBanco(selectedPlanId);
+    if (selectedPlanId) {
+      carregarDisciplinasDoBanco(selectedPlanId);
+    }
   }, [selectedPlanId]);
 
-  // 6. SALVAR OU EDITAR DISCIPLINA NO POSTGRESQL / LOCAL
+  // 7. SALVAR OU EDITAR DISCIPLINA NO POSTGRESQL / LOCAL
   const handleSaveDisciplineEditor = async () => {
     if (!activeDisciplineEditor || !activeDisciplineEditor.name?.trim()) return;
 
@@ -199,12 +193,12 @@ export default function App() {
     }
   };
 
-  // 7. EXCLUIR DISCIPLINA
+  // 8. EXCLUIR DISCIPLINA
   const handleDeleteDiscipline = async (discId) => {
     if (!confirm('Deseja realmente remover esta disciplina e seus tópicos?')) return;
 
     try {
-      if (typeof discId === 'number') {
+      if (typeof discId === 'number' || typeof discId === 'string') {
         await api.delete(`/disciplines/${discId}`);
       }
       setDisciplines((prev) => prev.filter((d) => d.id !== discId));
@@ -214,7 +208,7 @@ export default function App() {
     }
   };
 
-  // 8. ALTERNAR CONCLUSÃO DE META (REATIVIDADE DE TEMPO E HORAS)
+  // 9. ALTERNAR CONCLUSÃO DE META (REATIVIDADE DE TEMPO E HORAS)
   const toggleGoalCompletion = (goalId) => {
     setDailyGoals((prevGoals) =>
       prevGoals.map((g) => {
@@ -237,16 +231,17 @@ export default function App() {
     );
   };
 
+  // Nome do plano seguro com fallback
+  const planoAtualNome = Array.isArray(planosDisponiveis)
+    ? (planosDisponiveis.find((p) => p.id === selectedPlanId)?.nome || 'Selecionar Plano')
+    : 'Selecionar Plano';
+
   return (
-    <div className="min-h-screen bg-[#F8FAFC] flex font-['Plus_Jakarta_Sans'] text-base-content antialiased">
+    <div className="min-h-screen bg-base-200/40 flex font-['Plus_Jakarta_Sans'] text-base-content antialiased">
 
-      {/* 1. SIDEBAR RETRÁTIL BRANCA (bg-base-100 COM EXPANSÃO NO HOVER) */}
+      {/* 1. SIDEBAR RETRÁTIL BRANCA */}
       <aside className="group/sidebar w-20 hover:w-64 bg-base-100 border-r border-base-300/60 flex flex-col justify-between p-4 shrink-0 h-screen sticky top-0 z-40 hidden md:flex font-['Plus_Jakarta_Sans'] transition-all duration-300 ease-in-out overflow-x-hidden shadow-xs">
-
-        {/* BLOCO SUPERIOR: LOGO + NAVEGAÇÃO PRINCIPAL */}
         <div className="space-y-6">
-
-          {/* Logo Papyrus (Ícone centralizado no repouso + Texto com Fade-in no Hover) */}
           <div className="flex items-center gap-3 px-1 py-1">
             <div className="w-11 h-11 rounded-2xl bg-primary flex items-center justify-center text-primary-content font-black text-xl shadow-xs shrink-0">
               P
@@ -261,10 +256,8 @@ export default function App() {
             </div>
           </div>
 
-          {/* Divisor Semântico */}
           <div className="h-px bg-base-300/60 w-full" />
 
-          {/* Menu de Navegação Vertical */}
           <nav className="space-y-1.5">
             {[
               { id: 'inicio', icon: LayoutDashboard, label: 'Início' },
@@ -297,7 +290,6 @@ export default function App() {
           </nav>
         </div>
 
-        {/* BLOCO INFERIOR: PERFIL E CONFIGURAÇÕES SEMPRE FIXADOS */}
         <div className="pt-4 border-t border-base-300/60 space-y-1">
           <button
             type="button"
@@ -321,63 +313,50 @@ export default function App() {
             </span>
           </button>
         </div>
-
       </aside>
 
       {/* 2. ÁREA PRINCIPAL DE CONTEÚDO */}
       <div className="flex-1 flex flex-col min-w-0">
 
-        {/* HEADER SUPERIOR COM DROPDOWN CONTROLADO */}
         <header className="bg-base-100/80 backdrop-blur-md border-b border-base-300/60 px-6 py-3.5 flex justify-between items-center sticky top-0 z-30">
-
-          {/* SELETOR DE PLANO COM ALINHAMENTO HORIZONTAL */}
           <div className="flex items-center gap-2.5">
             <span className="text-xs uppercase tracking-wider font-bold text-neutral-content hidden sm:inline">
               PLANO SELECIONADO:
             </span>
 
             <div className="relative">
-              {/* Botão Gatilho (Abre apenas no clique) */}
               <button
                 type="button"
                 onClick={() => setIsPlanDropdownOpen(!isPlanDropdownOpen)}
                 className="flex items-center gap-2 bg-base-200/60 hover:bg-base-200 text-primary font-bold text-xs sm:text-sm px-3.5 py-1.5 rounded-xl border border-base-300/70 transition-all cursor-pointer shadow-2xs"
               >
-                <span>
-                  {planosDisponiveis.find((p) => p.id === selectedPlanId)?.nome || 'Selecionar Plano'}
-                </span>
+                <span className="truncate max-w-[220px]">{planoAtualNome}</span>
                 <ChevronDown
                   size={14}
-                  className={`transition-transform duration-200 ${isPlanDropdownOpen ? 'rotate-180' : ''}`}
+                  className={`transition-transform duration-200 shrink-0 ${isPlanDropdownOpen ? 'rotate-180' : ''}`}
                 />
               </button>
 
-              {/* Menu Flutuante (Renderiza somente se isPlanDropdownOpen === true) */}
               {isPlanDropdownOpen && (
                 <>
-                  {/* Backdrop invisível para fechar ao clicar fora */}
                   <div
                     className="fixed inset-0 z-40"
                     onClick={() => setIsPlanDropdownOpen(false)}
                   />
-
                   {/* Caixa de Opções Flutuante */}
-                  <ul className="absolute left-0 mt-2 w-60 bg-base-100 border border-base-300/70 rounded-2xl shadow-xl p-1.5 z-50 animate-in fade-in zoom-in-95 duration-150 space-y-1">
-                    {planosDisponiveis.map((plano) => (
+                  <ul className="absolute left-0 mt-2 w-80 bg-base-100 border border-base-300/70 rounded-2xl shadow-xl p-1.5 z-50 animate-in fade-in zoom-in-95 duration-150 space-y-1">
+                    {Array.isArray(planosDisponiveis) && planosDisponiveis.map((plano) => (
                       <li key={plano.id}>
                         <button
                           type="button"
-                          onClick={() => {
-                            setSelectedPlanId(plano.id);
-                            setIsPlanDropdownOpen(false);
-                          }}
+                          onClick={() => handleSelectPlan(plano.id)}
                           className={`w-full text-left px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all flex items-center justify-between cursor-pointer ${selectedPlanId === plano.id
-                            ? 'bg-primary text-primary-content font-bold shadow-2xs'
-                            : 'text-base-content hover:bg-base-200/70'
+                              ? 'bg-primary text-primary-content font-bold shadow-2xs'
+                              : 'text-base-content hover:bg-base-200'
                             }`}
                         >
-                          <span>{plano.nome}</span>
-                          {selectedPlanId === plano.id && <Check size={14} />}
+                          <span className="truncate">{plano.nome}</span>
+                          {selectedPlanId === plano.id && <Check size={14} className="shrink-0 ml-2" />}
                         </button>
                       </li>
                     ))}
@@ -387,18 +366,13 @@ export default function App() {
             </div>
           </div>
 
-          {/* BADGE DE CONSTÂNCIA */}
           <div className="badge badge-lg bg-blue-50 text-primary border border-blue-200/80 font-bold text-xs gap-1.5 py-3 px-3.5 rounded-full shadow-2xs">
             <Flame size={15} className="text-primary fill-primary" />
             <span>12 dias de constância</span>
           </div>
-
         </header>
 
-        {/* CORPO DINÂMICO DAS TELAS */}
         <main className="p-6 max-w-7xl w-full mx-auto flex-1">
-
-          {/* ABA 1: INÍCIO (DASHBOARD) */}
           {activeTab === 'inicio' && (
             <InicioTab
               weeklyHoursStudied={weeklyHoursStudied}
@@ -418,7 +392,6 @@ export default function App() {
             />
           )}
 
-          {/* ABA 2: CONCURSOS (CRUD DE DISCIPLINAS E EDITAL) */}
           {activeTab === 'concursos' && (
             <ConcursosTab
               disciplines={disciplines}
@@ -438,7 +411,6 @@ export default function App() {
             />
           )}
 
-          {/* FALLBACK VISUAL PARA DEMAIS ABAS EM DESENVOLVIMENTO */}
           {activeTab !== 'inicio' && activeTab !== 'concursos' && (
             <div className="bg-base-100 border border-base-300/70 p-12 rounded-3xl shadow-xs text-center space-y-4">
               <Layers size={40} className="mx-auto text-primary" />
@@ -457,7 +429,6 @@ export default function App() {
               </button>
             </div>
           )}
-
         </main>
       </div>
 
