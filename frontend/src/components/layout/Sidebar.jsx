@@ -1,4 +1,5 @@
-import React from 'react';
+// src/components/layout/Sidebar.jsx
+import React, { useState } from 'react';
 import {
     LayoutDashboard,
     Award,
@@ -9,88 +10,158 @@ import {
     BarChart3,
     User,
     Settings,
-    ChevronLeft,
-    ChevronRight
 } from 'lucide-react';
 
-export default function Sidebar({ activeTab, setActiveTab, isCollapsed, setIsCollapsed }) {
-    const menuItems = [
-        { id: 'inicio', label: 'Início', icon: LayoutDashboard },
-        { id: 'concursos', label: 'Concursos', icon: Award },
-        { id: 'metas', label: 'Metas diárias', icon: CheckCircle2 },
-        { id: 'quadro', label: 'Quadro Semanal', icon: CalendarDays },
-        { id: 'edital', label: 'Edital Verticalizado', icon: ListOrdered },
-        { id: 'planejamento', label: 'Planejamento', icon: Sliders },
-        { id: 'desempenho', label: 'Desempenho', icon: BarChart3 }
-    ];
+const MENU = [
+    { id: 'inicio', label: 'Início', icon: LayoutDashboard },
+    { id: 'concursos', label: 'Concursos', icon: Award },
+    { id: 'metas', label: 'Metas diárias', icon: CheckCircle2 },
+    { id: 'quadro', label: 'Quadro Semanal', icon: CalendarDays },
+    { id: 'edital', label: 'Edital Verticalizado', icon: ListOrdered },
+    { id: 'planejamento', label: 'Planejamento', icon: Sliders },
+    { id: 'desempenho', label: 'Desempenho', icon: BarChart3 },
+];
+
+const BOTTOM = [
+    { label: 'Perfil', icon: User },
+    { label: 'Configurações', icon: Settings },
+];
+
+const ITEM_H = 40;
+const ITEM_GAP = 4;
+
+export default function Sidebar({ activeTab, setActiveTab }) {
+    const [expanded, setExpanded] = useState(false);
+    const [hoveredIdx, setHoveredIdx] = useState(null);
 
     return (
         <aside
-            className={`${isCollapsed ? 'w-20' : 'w-64'
-                } bg-base-100 border-r border-base-300/80 flex flex-col justify-between transition-all duration-300 select-none z-10 shrink-0`}
+            onMouseEnter={() => setExpanded(true)}
+            onMouseLeave={() => { setExpanded(false); setHoveredIdx(null); }}
+            className={[
+                expanded ? 'w-60' : 'w-[68px]',
+                'h-screen bg-white border-r border-slate-100',
+                'flex flex-col justify-between',
+                'shrink-0 sticky top-0 z-40',
+                'transition-[width] duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]',
+                'overflow-hidden select-none hidden md:flex',
+                'shadow-[2px_0_20px_rgba(0,0,0,0.04)]',
+            ].join(' ')}
         >
-            <div>
-                <div className="p-5 flex items-center justify-between">
-                    <div className="flex items-center gap-3 overflow-hidden">
-                        <div className="w-10 h-10 rounded-2xl bg-primary flex items-center justify-center font-black text-primary-content text-xl shadow-md shadow-primary/20 shrink-0">
-                            P
-                        </div>
-                        {!isCollapsed && (
-                            <div className="leading-tight">
-                                <h1 className="font-black text-lg text-base-content whitespace-nowrap tracking-tight">Papyrus</h1>
-                                <p className="text-[10px] text-primary font-bold uppercase tracking-wider whitespace-nowrap">Estudos PRO</p>
-                            </div>
-                        )}
-                    </div>
-                    <button
-                        type="button"
-                        onClick={() => setIsCollapsed(!isCollapsed)}
-                        className="btn btn-ghost btn-xs btn-circle border border-base-300 text-neutral-content hover:text-base-content cursor-pointer"
+            {/* ── TOPO ─────────────────────────────────────────────── */}
+            <div className="flex flex-col flex-1 overflow-hidden">
+
+                {/* Logo */}
+                <div className="flex items-center gap-3 px-[14px] py-5 border-b border-slate-100 shrink-0">
+                    <div
+                        className="w-10 h-10 rounded-xl flex items-center justify-center font-black text-white text-base shrink-0 shadow-lg"
+                        style={{
+                            background: 'var(--color-primary)',
+                            boxShadow: '0 4px 14px rgba(var(--color-primary) / 0.35)',
+                        }}
                     >
-                        {isCollapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
-                    </button>
+                        P
+                    </div>
+
+                    <div
+                        className="overflow-hidden whitespace-nowrap"
+                        style={{
+                            maxWidth: expanded ? '140px' : '0',
+                            opacity: expanded ? 1 : 0,
+                            transition: 'max-width 280ms cubic-bezier(0.4,0,0.2,1), opacity 220ms ease',
+                        }}
+                    >
+                        <h1 className="font-black text-sm text-slate-800 tracking-tight leading-none">Papyrus</h1>
+                        <p className="text-[9px] font-bold uppercase tracking-[0.12em] mt-0.5 text-blue-600">
+                            Estudos PRO
+                        </p>
+                    </div>
                 </div>
 
-                <nav className="p-3 space-y-1.5">
-                    {menuItems.map((item) => {
-                        const Icon = item.icon;
-                        const isActive = activeTab === item.id;
+                {/* Navegação */}
+                <nav
+                    className="p-3 flex-1 overflow-y-auto overflow-x-hidden relative"
+                    style={{ display: 'flex', flexDirection: 'column', gap: `${ITEM_GAP}px` }}
+                    onMouseLeave={() => setHoveredIdx(null)}
+                >
+                    {/* Pill deslizante de hover */}
+                    {hoveredIdx !== null && (
+                        <span
+                            aria-hidden
+                            className="absolute left-3 right-3 pointer-events-none rounded-xl bg-slate-100 transition-all duration-150 ease-out"
+                            style={{
+                                top: `${12 + hoveredIdx * (ITEM_H + ITEM_GAP)}px`,
+                                height: `${ITEM_H}px`,
+                            }}
+                        />
+                    )}
+
+                    {MENU.map(({ id, label, icon: Icon }, idx) => {
+                        const active = activeTab === id;
                         return (
                             <button
-                                key={item.id}
+                                key={id}
                                 type="button"
-                                onClick={() => setActiveTab(item.id)}
-                                className={`w-full flex items-center ${isCollapsed ? 'justify-center px-0' : 'gap-3.5 px-4'
-                                    } py-3 rounded-2xl font-semibold text-sm transition-all cursor-pointer ${isActive
-                                        ? 'bg-primary text-primary-content font-bold shadow-sm'
-                                        : 'text-neutral-content hover:text-base-content hover:bg-base-200'
-                                    }`}
+                                title={!expanded ? label : undefined}
+                                onClick={() => setActiveTab(id)}
+                                onMouseEnter={() => setHoveredIdx(idx)}
+                                style={{ height: `${ITEM_H}px` }}
+                                className={[
+                                    'relative z-10 w-full flex items-center rounded-xl',
+                                    'text-sm font-semibold transition-all duration-150 cursor-pointer active:scale-95',
+                                    expanded ? 'gap-3 px-3' : 'justify-center px-0',
+                                    active
+                                        ? 'bg-primary text-primary-content shadow-sm'
+                                        : 'text-slate-400 hover:text-slate-700',
+                                ].join(' ')}
                             >
                                 <Icon size={18} className="shrink-0" />
-                                {!isCollapsed && <span className="whitespace-nowrap">{item.label}</span>}
+
+                                <span
+                                    className="whitespace-nowrap overflow-hidden"
+                                    style={{
+                                        maxWidth: expanded ? '160px' : '0',
+                                        opacity: expanded ? 1 : 0,
+                                        transition: 'max-width 280ms cubic-bezier(0.4,0,0.2,1), opacity 180ms ease 60ms',
+                                    }}
+                                >
+                                    {label}
+                                </span>
                             </button>
                         );
                     })}
                 </nav>
             </div>
 
-            <div className="p-3 space-y-1 border-t border-base-300/60">
-                <button
-                    type="button"
-                    className={`w-full flex items-center ${isCollapsed ? 'justify-center px-0' : 'gap-3.5 px-4'
-                        } py-2.5 rounded-2xl text-sm font-semibold text-neutral-content hover:text-base-content hover:bg-base-200 cursor-pointer transition-colors`}
-                >
-                    <User size={18} className="shrink-0" />
-                    {!isCollapsed && <span>Perfil</span>}
-                </button>
-                <button
-                    type="button"
-                    className={`w-full flex items-center ${isCollapsed ? 'justify-center px-0' : 'gap-3.5 px-4'
-                        } py-2.5 rounded-2xl text-sm font-semibold text-neutral-content hover:text-base-content hover:bg-base-200 cursor-pointer transition-colors`}
-                >
-                    <Settings size={18} className="shrink-0" />
-                    {!isCollapsed && <span>Configurações</span>}
-                </button>
+            {/* ── RODAPÉ ───────────────────────────────────────────── */}
+            <div className="px-3 pb-4 pt-3 border-t border-slate-100 flex flex-col gap-1 shrink-0">
+                {BOTTOM.map(({ label, icon: Icon }) => (
+                    <button
+                        key={label}
+                        type="button"
+                        title={!expanded ? label : undefined}
+                        style={{ height: `${ITEM_H}px` }}
+                        className={[
+                            'w-full flex items-center rounded-xl',
+                            'text-sm font-semibold text-slate-400',
+                            'hover:text-slate-700 hover:bg-slate-100',
+                            'cursor-pointer transition-all duration-150 active:scale-95',
+                            expanded ? 'gap-3 px-3' : 'justify-center px-0',
+                        ].join(' ')}
+                    >
+                        <Icon size={18} className="shrink-0" />
+                        <span
+                            className="whitespace-nowrap overflow-hidden text-slate-500"
+                            style={{
+                                maxWidth: expanded ? '160px' : '0',
+                                opacity: expanded ? 1 : 0,
+                                transition: 'max-width 280ms cubic-bezier(0.4,0,0.2,1), opacity 180ms ease 60ms',
+                            }}
+                        >
+                            {label}
+                        </span>
+                    </button>
+                ))}
             </div>
         </aside>
     );

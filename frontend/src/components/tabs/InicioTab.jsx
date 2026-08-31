@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import RegisterStudyModal from '../modals/RegisterStudyModal';
 import {
     Clock,
     Target,
@@ -14,7 +15,8 @@ import {
     Calendar,
     Play,
     Pause,
-    RefreshCw
+    RefreshCw,
+    PenLine
 } from 'lucide-react';
 
 /**
@@ -86,6 +88,9 @@ export default function InicioTab({
     handleOpenStudy = () => { },
     setActiveTab = () => { }
 }) {
+    // 0. ESTADO DO MODAL DE REGISTRO DE ESTUDO
+    const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
+
     // 1. ESTADO DO TIMER DE CICLOS (POMODORO)
     const [pomodoroSeconds, setPomodoroSeconds] = useState(25 * 60);
     const [isPomodoroRunning, setIsPomodoroRunning] = useState(false);
@@ -354,13 +359,23 @@ export default function InicioTab({
                                 <Target size={18} className="text-primary" />
                                 <h2 className="text-base font-bold tracking-tight text-base-content">Metas de Hoje</h2>
                             </div>
-                            <button
-                                type="button"
-                                onClick={() => setActiveTab('metas')}
-                                className="text-xs font-semibold text-primary hover:underline flex items-center gap-1 cursor-pointer focus-visible:ring-2 focus-visible:ring-primary rounded-md"
-                            >
-                                Ver todas as metas →
-                            </button>
+                            <div className="flex items-center gap-3">
+                                <button
+                                    type="button"
+                                    onClick={() => setIsRegisterModalOpen(true)}
+                                    className="flex items-center gap-1.5 text-xs font-bold text-primary-content bg-primary hover:bg-primary/90 active:scale-95 px-3 py-1.5 rounded-xl shadow-xs transition-all cursor-pointer"
+                                >
+                                    <PenLine size={13} />
+                                    Registrar Estudo
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setActiveTab('metas')}
+                                    className="text-xs font-semibold text-primary hover:underline flex items-center gap-1 cursor-pointer focus-visible:ring-2 focus-visible:ring-primary rounded-md"
+                                >
+                                    Ver todas →
+                                </button>
+                            </div>
                         </div>
 
                         <div className="space-y-3">
@@ -698,6 +713,17 @@ export default function InicioTab({
                 </div>
 
             </section>
+
+            {/* Modal de Registro de Estudo */}
+            <RegisterStudyModal
+                isOpen={isRegisterModalOpen}
+                onClose={() => setIsRegisterModalOpen(false)}
+                initialTime={{ hours: 0, minutes: 0 }}
+                onSave={(dados) => {
+                    console.log('Estudo registrado:', dados);
+                    setIsRegisterModalOpen(false);
+                }}
+            />
 
         </div>
     );

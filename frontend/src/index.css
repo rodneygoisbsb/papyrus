@@ -16,36 +16,52 @@
   default: true;
 
   /* Ações Primárias */
-  --color-primary:           oklch(49.1% 0.262 264.1);   /* #2563EB Royal Blue */
-  --color-primary-content:   oklch(100%  0     0);        /* #FFFFFF */
+  --color-primary: oklch(49.1% 0.262 264.1);
+  /* #2563EB Royal Blue */
+  --color-primary-content: oklch(100% 0 0);
+  /* #FFFFFF */
 
   /* Revisões e Acertos */
-  --color-secondary:         oklch(69.6% 0.170 162.5);   /* #10B981 Verde Menta */
-  --color-secondary-content: oklch(100%  0     0);        /* #FFFFFF */
+  --color-secondary: oklch(69.6% 0.170 162.5);
+  /* #10B981 Verde Menta */
+  --color-secondary-content: oklch(100% 0 0);
+  /* #FFFFFF */
 
   /* Alertas e Variações */
-  --color-accent:            oklch(60.6% 0.207  37.1);   /* #EA580C Laranja */
-  --color-accent-content:    oklch(100%  0     0);        /* #FFFFFF */
+  --color-accent: oklch(60.6% 0.207 37.1);
+  /* #EA580C Laranja */
+  --color-accent-content: oklch(100% 0 0);
+  /* #FFFFFF */
 
   /* Estrutural */
-  --color-neutral:           oklch(20.2% 0.053 249.4);   /* #0F223D Deep Navy */
-  --color-neutral-content:   oklch(64.0% 0.028 241.0);   /* #94A3B8 Slate 400 — textos secundários */
+  --color-neutral: oklch(20.2% 0.053 249.4);
+  /* #0F223D Deep Navy */
+  --color-neutral-content: oklch(64.0% 0.028 241.0);
+  /* #94A3B8 Slate 400 — textos secundários */
 
   /* Superfícies */
-  --color-base-100:          oklch(100%  0     0);        /* #FFFFFF Cards e Modais */
-  --color-base-200:          oklch(98.7% 0.003 236.3);   /* #F8FAFC Canvas geral (Slate 50) */
-  --color-base-300:          oklch(91.7% 0.013 240.9);   /* #E2E8F0 Divisores e bordas */
-  --color-base-content:      oklch(16.6% 0.032 253.9);   /* #0F172A Tipografia principal (Slate 900) */
+  --color-base-100: oklch(100% 0 0);
+  /* #FFFFFF Cards e Modais */
+  --color-base-200: oklch(98.7% 0.003 236.3);
+  /* #F8FAFC Canvas geral (Slate 50) */
+  --color-base-300: oklch(91.7% 0.013 240.9);
+  /* #E2E8F0 Divisores e bordas */
+  --color-base-content: oklch(16.6% 0.032 253.9);
+  /* #0F172A Tipografia principal (Slate 900) */
 
   /* Estados */
-  --color-info:              oklch(74.7% 0.147 211.9);   /* #38BDF8 Sky Blue */
-  --color-info-content:      oklch(100%  0     0);
-  --color-success:           oklch(53.4% 0.157 150.1);   /* #16A34A Verde */
-  --color-success-content:   oklch(100%  0     0);
-  --color-warning:           oklch(76.8% 0.159  73.0);   /* #F59E0B Âmbar */
-  --color-warning-content:   oklch(100%  0     0);
-  --color-error:             oklch(62.8% 0.218  25.3);   /* #EF4444 Vermelho */
-  --color-error-content:     oklch(100%  0     0);
+  --color-info: oklch(74.7% 0.147 211.9);
+  /* #38BDF8 Sky Blue */
+  --color-info-content: oklch(100% 0 0);
+  --color-success: oklch(53.4% 0.157 150.1);
+  /* #16A34A Verde */
+  --color-success-content: oklch(100% 0 0);
+  --color-warning: oklch(76.8% 0.159 73.0);
+  /* #F59E0B Âmbar */
+  --color-warning-content: oklch(100% 0 0);
+  --color-error: oklch(62.8% 0.218 25.3);
+  /* #EF4444 Vermelho */
+  --color-error-content: oklch(100% 0 0);
 }
 
 /* ============================================================

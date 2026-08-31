@@ -1,10 +1,4 @@
-import axios from 'axios';
-
-const api = axios.create({
-  baseURL: 'http://localhost:8080/api/v1',
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
-
-export default api;
+// src/services/api.js
+// Backend desativado — frontend em modo local/mock.
+// Quando o backend estiver pronto, restaure a configuração do axios aqui.
+export default null;
