@@ -1,29 +1,28 @@
 // src/App.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Layers } from 'lucide-react';
 
 // 1. Layout Base
-import Sidebar from './components/layout/Sidebar';
-import Header from './components/layout/Header';
+import MainLayout from './components/layout/MainLayout';
 
 // 2. Telas / Abas
-import InicioTab from './components/tabs/InicioTab';
-import ConcursosTab from './components/tabs/ConcursosTab';
+import InicioPage from './pages/Inicio';
+import ConcursosPage from './pages/ConcursosPage';
 
-// 3. Modais Globais
-import RegisterStudyModal from './components/modals/RegisterStudyModal';
+// 3. Hooks personalizados
+import { useLocalStorage } from './hooks/useLocalStorage';
 
 export default function App() {
   // 1. NAVEGAÇÃO E PLANOS
-  const [activeTab, setActiveTab] = useState('inicio');
-  const [selectedPlanId, setSelectedPlanId] = useState(1);
+  const [activeTab, setActiveTab] = useLocalStorage('@papyrus:activeTab', 'inicio');
+  const [selectedPlanId, setSelectedPlanId] = useLocalStorage('@papyrus:selectedPlanId', 1);
   const [planosDisponiveis] = useState([
     { id: 1, nome: 'PM-DF Oficial' },
     { id: 2, nome: 'Polícia Federal - Agente' }
   ]);
 
   // 2. MÉTRICAS E PRODUTIVIDADE (KPIS)
-  const [weeklyHoursStudied, setWeeklyHoursStudied] = useState(14);
+  const [weeklyHoursStudied, setWeeklyHoursStudied] = useLocalStorage('@papyrus:weeklyHoursStudied', 14);
   const [weeklyHoursGoal] = useState(25);
   const [weeklyProgressPercentage] = useState(56);
   const [overallAccuracy] = useState('81.7');
@@ -31,37 +30,12 @@ export default function App() {
   const [totalQuestionsDone] = useState(120);
   const [weeklyAccuracyVariation] = useState(4.2);
 
-  const [todayMinutesStudied, setTodayMinutesStudied] = useState(90);
-  const [todayQuestionsDone, setTodayQuestionsDone] = useState(35);
-  const [todayQuestionsCorrect, setTodayQuestionsCorrect] = useState(29);
-
-  // 3. CRONÔMETRO GLOBAL & MODAL
-  const [timerSeconds, setTimerSeconds] = useState(0);
-  const [isTimerRunning, setIsTimerRunning] = useState(false);
-  const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
-
-  useEffect(() => {
-    let interval = null;
-    if (isTimerRunning) {
-      interval = setInterval(() => setTimerSeconds((prev) => prev + 1), 1000);
-    }
-    return () => clearInterval(interval);
-  }, [isTimerRunning]);
-
-  const formatStopwatch = (totalSec) => {
-    const hrs = Math.floor(totalSec / 3600);
-    const mins = Math.floor((totalSec % 3600) / 60);
-    const secs = totalSec % 60;
-    return `${String(hrs).padStart(2, '0')}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
-  };
-
-  const handleStopAndRegister = () => {
-    setIsTimerRunning(false);
-    setIsRegisterModalOpen(true);
-  };
+  const [todayMinutesStudied, setTodayMinutesStudied] = useLocalStorage('@papyrus:todayMinutesStudied', 90);
+  const [todayQuestionsDone, setTodayQuestionsDone] = useLocalStorage('@papyrus:todayQuestionsDone', 35);
+  const [todayQuestionsCorrect, setTodayQuestionsCorrect] = useLocalStorage('@papyrus:todayQuestionsCorrect', 29);
 
   // 4. METAS DIÁRIAS
-  const [dailyGoals, setDailyGoals] = useState([
+  const [dailyGoals, setDailyGoals] = useLocalStorage('@papyrus:dailyGoals', [
     {
       id: 'g1',
       subject: 'DIREITO CONSTITUCIONAL',
@@ -120,7 +94,7 @@ export default function App() {
   };
 
   // 5. DISCIPLINAS (ABA CONCURSOS)
-  const [disciplines, setDisciplines] = useState([
+  const [disciplines, setDisciplines] = useLocalStorage('@papyrus:disciplines', [
     {
       id: 1,
       name: 'DIREITO CONSTITUCIONAL',
@@ -193,94 +167,65 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-base-200 flex font-sans text-base-content antialiased">
-      {/* 1. SIDEBAR MODULAR */}
-      <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
-
-      {/* 2. ÁREA CENTRAL DE CONTEÚDO (HEADER + MAIN) */}
-      <div className="flex-1 flex flex-col min-w-0">
-
-        {/* HEADER GLOBAL (Agora posicionado corretamente no topo da coluna de conteúdo) */}
-        <Header
-          planosDisponiveis={planosDisponiveis}
-          selectedPlanId={selectedPlanId}
-          setSelectedPlanId={setSelectedPlanId}
-          timerSeconds={timerSeconds}
-          isTimerRunning={isTimerRunning}
-          setIsTimerRunning={setIsTimerRunning}
-          formatStopwatch={formatStopwatch}
-          handleStopAndRegister={handleStopAndRegister}
-          streakDays={12}
+    <MainLayout
+      activeTab={activeTab}
+      setActiveTab={setActiveTab}
+      planosDisponiveis={planosDisponiveis}
+      selectedPlanId={selectedPlanId}
+      setSelectedPlanId={setSelectedPlanId}
+      streakDays={12}
+    >
+      {activeTab === 'inicio' && (
+        <InicioPage
+          weeklyHoursStudied={weeklyHoursStudied}
+          weeklyHoursGoal={weeklyHoursGoal}
+          weeklyProgressPercentage={weeklyProgressPercentage}
+          overallAccuracy={overallAccuracy}
+          totalQuestionsCorrect={totalQuestionsCorrect}
+          totalQuestionsDone={totalQuestionsDone}
+          weeklyAccuracyVariation={weeklyAccuracyVariation}
+          todayMinutesStudied={todayMinutesStudied}
+          todayQuestionsDone={todayQuestionsDone}
+          todayQuestionsCorrect={todayQuestionsCorrect}
+          dailyGoals={dailyGoals}
+          toggleGoalCompletion={toggleGoalCompletion}
+          handleOpenStudy={() => { }}
+          setActiveTab={setActiveTab}
         />
+      )}
 
-        {/* CORPO DINÂMICO DAS TELAS */}
-        <main className="p-6 max-w-7xl w-full mx-auto flex-1">
-          {activeTab === 'inicio' && (
-            <InicioTab
-              weeklyHoursStudied={weeklyHoursStudied}
-              weeklyHoursGoal={weeklyHoursGoal}
-              weeklyProgressPercentage={weeklyProgressPercentage}
-              overallAccuracy={overallAccuracy}
-              totalQuestionsCorrect={totalQuestionsCorrect}
-              totalQuestionsDone={totalQuestionsDone}
-              weeklyAccuracyVariation={weeklyAccuracyVariation}
-              todayMinutesStudied={todayMinutesStudied}
-              todayQuestionsDone={todayQuestionsDone}
-              todayQuestionsCorrect={todayQuestionsCorrect}
-              dailyGoals={dailyGoals}
-              toggleGoalCompletion={toggleGoalCompletion}
-              handleOpenStudy={() => { }}
-              setActiveTab={setActiveTab}
-            />
-          )}
+      {activeTab === 'concursos' && (
+        <ConcursosPage
+          disciplines={disciplines}
+          activeDisciplineEditor={activeDisciplineEditor}
+          setActiveDisciplineEditor={setActiveDisciplineEditor}
+          onOpenNewDiscipline={() =>
+            setActiveDisciplineEditor({ id: null, name: '', colorHex: '#2563EB', topics: [] })
+          }
+          onEditDiscipline={(disc) => setActiveDisciplineEditor({ ...disc })}
+          onDeleteDiscipline={handleDeleteDiscipline}
+          onSaveDiscipline={handleSaveDisciplineEditor}
+        />
+      )}
 
-          {activeTab === 'concursos' && (
-            <ConcursosTab
-              disciplines={disciplines}
-              activeDisciplineEditor={activeDisciplineEditor}
-              setActiveDisciplineEditor={setActiveDisciplineEditor}
-              onOpenNewDiscipline={() =>
-                setActiveDisciplineEditor({ id: null, name: '', colorHex: '#2563EB', topics: [] })
-              }
-              onEditDiscipline={(disc) => setActiveDisciplineEditor({ ...disc })}
-              onDeleteDiscipline={handleDeleteDiscipline}
-              onSaveDiscipline={handleSaveDisciplineEditor}
-            />
-          )}
-
-          {activeTab !== 'inicio' && activeTab !== 'concursos' && (
-            <div className="bg-base-100 border border-base-300/70 p-12 rounded-3xl shadow-xs text-center space-y-4">
-              <Layers size={40} className="mx-auto text-primary" />
-              <h3 className="text-lg font-bold text-base-content capitalize">
-                Aba {activeTab}
-              </h3>
-              <p className="text-xs text-neutral-content max-w-md mx-auto">
-                Esta aba está integrada ao ecossistema Papyrus e pronta para receber os próximos módulos.
-              </p>
-              <button
-                type="button"
-                onClick={() => setActiveTab('inicio')}
-                className="btn btn-sm btn-primary text-primary-content font-bold rounded-xl cursor-pointer"
-              >
-                Voltar para o Início
-              </button>
-            </div>
-          )}
-        </main>
-      </div>
-
-      {/* 3. MODAL GLOBAL DE REGISTRO */}
-      <RegisterStudyModal
-        isOpen={isRegisterModalOpen}
-        onClose={() => setIsRegisterModalOpen(false)}
-        recordedTime={formatStopwatch(timerSeconds)}
-        onSave={(dados) => {
-          console.info('Sessão registrada com sucesso:', dados);
-          setIsRegisterModalOpen(false);
-          setTimerSeconds(0);
-          setIsTimerRunning(false);
-        }}
-      />
-    </div>
+      {activeTab !== 'inicio' && activeTab !== 'concursos' && (
+        <div className="bg-base-100 border border-base-300/70 p-12 rounded-3xl shadow-xs text-center space-y-4 flex flex-col items-center justify-center h-full min-h-[400px]">
+          <Layers size={40} className="text-primary" />
+          <h3 className="text-lg font-bold text-base-content capitalize">
+            Aba {activeTab}
+          </h3>
+          <p className="text-xs text-neutral-content max-w-md">
+            Esta aba está integrada ao ecossistema Papyrus e pronta para receber os próximos módulos.
+          </p>
+          <button
+            type="button"
+            onClick={() => setActiveTab('inicio')}
+            className="btn btn-sm btn-primary text-primary-content font-bold rounded-xl cursor-pointer mt-2"
+          >
+            Voltar para o Início
+          </button>
+        </div>
+      )}
+    </MainLayout>
   );
 }

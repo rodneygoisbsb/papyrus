@@ -1,22 +1,17 @@
 // src/components/layout/Header.jsx
 import React, { useState } from 'react';
-import { Flame, Play, Pause, Square, ChevronDown, Check } from 'lucide-react';
+import { Flame, ChevronDown, Check } from 'lucide-react';
+import StudyTimer from './StudyTimer';
 
 export default function Header({
     planosDisponiveis = [],
     selectedPlanId,
     setSelectedPlanId,
-    timerSeconds = 0,
-    isTimerRunning = false,
-    setIsTimerRunning,
-    formatStopwatch,
-    handleStopAndRegister,
     streakDays = 0,
 }) {
     const [isPlanOpen, setIsPlanOpen] = useState(false);
 
     const planoAtivo = planosDisponiveis.find((p) => p.id === selectedPlanId);
-    const tempoFormatado = formatStopwatch ? formatStopwatch(timerSeconds) : '00:00:00';
 
     return (
         <header className="h-[68px] px-7 flex items-center justify-between bg-base-100 border-b border-base-300/60 sticky top-0 z-30 shrink-0 shadow-sm">
@@ -64,41 +59,8 @@ export default function Header({
             {/* DIREITA: Cronômetro + Streak */}
             <div className="flex items-center gap-3">
 
-                {/* Cronômetro — pílula */}
-                <div className="join rounded-full bg-base-100 border border-base-300 shadow-sm p-0.5 flex items-center">
-                    <div className="flex items-center gap-1.5 px-3 py-1">
-                        <span className={`w-1.5 h-1.5 rounded-full shrink-0 transition-colors ${isTimerRunning ? 'bg-success animate-pulse' : 'bg-base-300'}`} />
-                        <span
-                            className="font-bold text-sm text-base-content tabular-nums tracking-tight"
-                            style={{ fontFeatureSettings: "'tnum' on" }}
-                        >
-                            {tempoFormatado}
-                        </span>
-                    </div>
-
-                    <button
-                        type="button"
-                        onClick={() => setIsTimerRunning?.(!isTimerRunning)}
-                        className={`btn btn-circle btn-xs join-item shrink-0 border-0 shadow-none ${isTimerRunning
-                            ? 'bg-warning/10 text-warning hover:bg-warning/20'
-                            : 'bg-primary text-primary-content hover:bg-primary/90'
-                            }`}
-                        title={isTimerRunning ? 'Pausar' : 'Iniciar'}
-                    >
-                        {isTimerRunning ? <Pause size={12} /> : <Play size={12} fill="currentColor" />}
-                    </button>
-
-                    {timerSeconds > 0 && (
-                        <button
-                            type="button"
-                            onClick={handleStopAndRegister}
-                            className="btn btn-circle btn-xs join-item shrink-0 bg-base-200 text-neutral-content hover:bg-base-300 border-0 shadow-none mr-0.5"
-                            title="Parar e registrar"
-                        >
-                            <Square size={11} fill="currentColor" />
-                        </button>
-                    )}
-                </div>
+                {/* Cronômetro Oficial (Isolado e Reativo) */}
+                <StudyTimer />
 
                 {/* Badge streak */}
                 <div className="flex items-center gap-1.5 bg-orange-50 border border-orange-200 text-accent font-bold text-xs rounded-full px-3.5 py-1.5 shadow-2xs">

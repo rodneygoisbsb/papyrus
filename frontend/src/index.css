@@ -1,11 +1,16 @@
 @import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap");
 @import "tailwindcss";
 
+@theme {
+  --font-sans: 'Plus Jakarta Sans', sans-serif;
+}
+
 /* ============================================================
    PLUGIN DAISYUI v5 — Tailwind v4
    ============================================================ */
 @plugin "daisyui" {
-  themes: papyrusLight --default;
+  themes: papyrusLight --defaul, papyrusDark;
+  ;
 }
 
 /* ============================================================
@@ -65,6 +70,60 @@
 }
 
 /* ============================================================
+   TEMA PAPYRUS DARK — Alta Performance & Foco Noturno
+   ============================================================ */
+@plugin "daisyui/theme" {
+  name: "papyrusDark";
+
+  /* Ação Primária: Mesmo Matiz (264.1°), com Luminosidade Elevada (70%) */
+  --color-primary: oklch(70.0% 0.190 264.1);
+  /* #5E94FF Electric Royal Blue */
+  --color-primary-content: oklch(12.0% 0.035 264.1);
+  /* #050E22 Fundo escuro para contraste */
+
+  /* Revisões e Acertos */
+  --color-secondary: oklch(75.0% 0.150 162.5);
+  /* #34D399 Menta Luminoso */
+  --color-secondary-content: oklch(12.0% 0.030 162.5);
+
+  /* Alertas e Streak */
+  --color-accent: oklch(70.0% 0.180 37.1);
+  /* #FB923C Âmbar/Laranja */
+  --color-accent-content: oklch(12.0% 0.030 37.1);
+
+  /* Estrutural */
+  --color-neutral: oklch(16.0% 0.030 255.0);
+  /* #0D1627 */
+  --color-neutral-content: oklch(65.0% 0.025 250.0);
+  /* #8FA0BA Slate Suave */
+
+  /* Superfícies Escuras em Camadas */
+  --color-base-100: oklch(18.5% 0.028 255.0);
+  /* #111C30 Cards e controles */
+  --color-base-200: oklch(13.5% 0.025 255.0);
+  /* #0B1120 Fundo geral/Canvas */
+  --color-base-300: oklch(25.0% 0.030 255.0);
+  /* #1E2B45 Bordas e divisores */
+  --color-base-content: oklch(96.0% 0.005 255.0);
+  /* #F8FAFC Tipografia de alta leitura */
+
+  /* Estados */
+  --color-info: oklch(76.0% 0.130 211.9);
+  /* #5EEAD4 Sky/Cyan */
+  --color-info-content: oklch(12.0% 0.030 211.9);
+  --color-success: oklch(70.0% 0.160 150.1);
+  /* #4ADE80 */
+  --color-success-content: oklch(12.0% 0.030 150.1);
+  --color-warning: oklch(80.0% 0.150 73.0);
+  /* #FBBF24 */
+  --color-warning-content: oklch(12.0% 0.030 73.0);
+  --color-error: oklch(68.0% 0.200 25.3);
+  /* #F87171 */
+  --color-error-content: oklch(12.0% 0.030 25.3);
+}
+
+
+/* ============================================================
    BASE GLOBAL
    ============================================================ */
 @layer base {
@@ -75,7 +134,7 @@
   }
 
   body {
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: var(--font-sans);
     background-color: var(--color-base-200);
     color: var(--color-base-content);
     min-height: 100svh;

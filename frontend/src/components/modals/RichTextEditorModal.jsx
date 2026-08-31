@@ -14,16 +14,19 @@ import {
     AlignLeft,
     AlignCenter
 } from 'lucide-react';
+import { useRichTextEditor } from '../../hooks/useRichTextEditor';
 
 export default function RichTextEditorModal({
-    activeEditorModal,
-    setActiveEditorModal,
+    isOpen,
+    onClose,
     activeStudyModal,
-    editorRef,
-    execCmd,
-    saveEditorContent
+    onSave,
+    title = 'Anotações',
+    type = 'notes' // 'notes' ou 'errors'
 }) {
-    if (!activeEditorModal) return null;
+    const { editorRef, execCmd, saveEditorContent } = useRichTextEditor(onSave);
+
+    if (!isOpen) return null;
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/40 backdrop-blur-md animate-in fade-in">
@@ -31,13 +34,13 @@ export default function RichTextEditorModal({
                 <div className="px-6 py-4 border-b border-base-300 flex justify-between items-center bg-base-100 shrink-0">
                     <div className="flex items-center gap-3">
                         <div
-                            className={`w-9 h-9 rounded-2xl flex items-center justify-center ${activeEditorModal.type === 'errors' ? 'bg-error/15 text-error' : 'bg-primary/15 text-primary'
+                            className={`w-9 h-9 rounded-2xl flex items-center justify-center ${type === 'errors' ? 'bg-error/15 text-error' : 'bg-primary/15 text-primary'
                                 }`}
                         >
-                            {activeEditorModal.type === 'errors' ? <FileText size={20} /> : <PenTool size={20} />}
+                            {type === 'errors' ? <FileText size={20} /> : <PenTool size={20} />}
                         </div>
                         <div>
-                            <h3 className="text-base font-extrabold text-base-content">{activeEditorModal.title}</h3>
+                            <h3 className="text-base font-extrabold text-base-content">{title}</h3>
                             <p className="text-[11px] text-neutral-content">
                                 {activeStudyModal?.subject} • {activeStudyModal?.topicName}
                             </p>
@@ -45,7 +48,7 @@ export default function RichTextEditorModal({
                     </div>
                     <button
                         type="button"
-                        onClick={() => setActiveEditorModal(null)}
+                        onClick={onClose}
                         className="btn btn-ghost btn-xs btn-circle text-neutral-content hover:text-base-content"
                     >
                         <X size={18} />
@@ -100,7 +103,7 @@ export default function RichTextEditorModal({
                     <div className="flex gap-3">
                         <button
                             type="button"
-                            onClick={() => setActiveEditorModal(null)}
+                            onClick={onClose}
                             className="text-xs font-bold text-neutral-content hover:text-base-content px-4 py-2.5 transition-colors cursor-pointer"
                         >
                             Cancelar

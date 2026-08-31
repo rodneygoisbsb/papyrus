@@ -1,20 +1,24 @@
 import React from 'react';
 import { X, Plus, Trash2 } from 'lucide-react';
+import { useDisciplineEditor } from '../../hooks/useDisciplineEditor';
 
 export default function DisciplineEditorModal({
     activeDisciplineEditor,
     setActiveDisciplineEditor,
-    newTopicInput,
-    setNewTopicInput,
-    handleAddTopicToDiscipline,
-    handleDeleteTopicFromEditor,
-    handleDragStart,
-    handleDragOver,
-    handleDragEnd,
-    draggedTopicIndex,
     handleDeleteDiscipline,
     handleSaveDisciplineEditor
 }) {
+    const {
+        newTopicText,
+        setNewTopicText,
+        handleAddTopic,
+        handleRemoveTopic,
+        draggedTopicIndex,
+        handleDragStart,
+        handleDragOver,
+        handleDragEnd
+    } = useDisciplineEditor(activeDisciplineEditor, setActiveDisciplineEditor);
+
     if (!activeDisciplineEditor) return null;
 
     return (
@@ -46,7 +50,7 @@ export default function DisciplineEditorModal({
                         <div className="flex justify-between items-center">
                             <span className="font-extrabold text-base-content uppercase tracking-wider">Tópicos do Edital</span>
                             <span className="text-neutral-content font-semibold">
-                                {activeDisciplineEditor.topics.length} tópicos cadastrados
+                                {activeDisciplineEditor.topics?.length || 0} tópicos cadastrados
                             </span>
                         </div>
 
@@ -54,16 +58,16 @@ export default function DisciplineEditorModal({
                             <input
                                 type="text"
                                 placeholder="Digite o nome do novo tópico/assunto..."
-                                value={newTopicInput}
-                                onChange={(e) => setNewTopicInput(e.target.value)}
+                                value={newTopicText}
+                                onChange={(e) => setNewTopicText(e.target.value)}
                                 onKeyDown={(e) => {
-                                    if (e.key === 'Enter') handleAddTopicToDiscipline();
+                                    if (e.key === 'Enter') handleAddTopic();
                                 }}
                                 className="input flex-1 bg-base-200 text-base-content outline-none text-xs rounded-2xl border border-base-300"
                             />
                             <button
                                 type="button"
-                                onClick={handleAddTopicToDiscipline}
+                                onClick={handleAddTopic}
                                 className="btn btn-primary btn-sm text-white font-bold px-4 py-2 rounded-2xl flex items-center gap-1.5 shadow-sm border-none"
                             >
                                 <Plus size={15} /> Adicionar
@@ -71,7 +75,7 @@ export default function DisciplineEditorModal({
                         </div>
 
                         <div className="bg-base-200 rounded-3xl divide-y divide-base-300 max-h-64 overflow-y-auto p-1 border border-base-300">
-                            {activeDisciplineEditor.topics.length === 0 ? (
+                            {!activeDisciplineEditor.topics || activeDisciplineEditor.topics.length === 0 ? (
                                 <div className="p-6 text-center text-neutral-content">Nenhum tópico adicionado ainda.</div>
                             ) : (
                                 activeDisciplineEditor.topics.map((t, idx) => (
@@ -91,7 +95,7 @@ export default function DisciplineEditorModal({
                                                 type="button"
                                                 onClick={(e) => {
                                                     e.stopPropagation();
-                                                    handleDeleteTopicFromEditor(t.id);
+                                                    handleRemoveTopic(t.id);
                                                 }}
                                                 className="btn btn-ghost btn-xs btn-circle text-neutral-content hover:text-error transition-colors"
                                                 title="Excluir Tópico"

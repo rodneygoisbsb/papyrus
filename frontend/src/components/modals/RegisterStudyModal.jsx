@@ -1,108 +1,48 @@
 // src/components/modals/RegisterStudyModal.jsx
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import {
-    X,
-    BookOpen,
-    Clock,
-    Sparkles,
-    ChevronRight,
-    Layers,
-    FileWarning,
-    PenLine,
-    Minus,
-    Plus,
-    CalendarCheck2
+    X, BookOpen, Clock, Sparkles, ChevronRight,
+    FileWarning, PenLine, Minus, Plus, CalendarCheck2
 } from 'lucide-react';
+import { useRegisterStudyForm } from '../../hooks/useRegisterStudyForm';
+import { STUDY_MATERIALS, REVISION_CYCLES } from '../../utils/studyConstants';
 
 export default function RegisterStudyModal({
     isOpen,
     onClose,
     initialTime = { hours: 0, minutes: 0 },
+    recordedTime = null,
     onSave
 }) {
-    // ─── Estados ─────────────────────────────────────────────────
-    const [disciplina, setDisciplina] = useState('');
-    const [topico, setTopico] = useState('');
-    const [tipoEstudo, setTipoEstudo] = useState('Teoria');
-    const [horas, setHoras] = useState(initialTime.hours ?? 0);
-    const [minutos, setMinutos] = useState(initialTime.minutes ?? 0);
-
-    const [materiais, setMateriais] = useState({
-        pdf: false, videoaula: false, questoes: false,
-        leiSeca: false, resumoProprio: false,
-    });
-
-    const [questoesFeitas, setQuestoesFeitas] = useState(0);
-    const [acertos, setAcertos] = useState(0);
-    const [revisoes, setRevisoes] = useState([]);
-    const [agendarEmBloco, setAgendarEmBloco] = useState(false);
-    const [isSaving, setIsSaving] = useState(false);
-
-    useEffect(() => {
-        if (isOpen) {
-            setHoras(initialTime.hours ?? 0);
-            setMinutos(initialTime.minutes ?? 0);
-            setDisciplina('');
-            setTopico('');
-            setTipoEstudo('Teoria');
-            setMateriais({ pdf: false, videoaula: false, questoes: false, leiSeca: false, resumoProprio: false });
-            setQuestoesFeitas(0);
-            setAcertos(0);
-            setRevisoes([]);
-            setAgendarEmBloco(false);
-            setIsSaving(false);
-        }
-    }, [isOpen]);
+    const {
+        disciplina, setDisciplina,
+        topico, setTopico,
+        tipoEstudo, setTipoEstudo,
+        horas,
+        minutos,
+        materiais,
+        questoesFeitas,
+        acertos,
+        revisoes,
+        agendarEmBloco, setAgendarEmBloco,
+        isSaving,
+        adicionarTempo,
+        alternarCiclo,
+        alternarMaterial,
+        incrementarQuestoes,
+        incrementarAcertos,
+        handleSalvar,
+        taxaAcertos
+    } = useRegisterStudyForm({ isOpen, recordedTime, initialTime, onSave: (data) => {
+        onSave?.(data);
+        onClose();
+    }});
 
     if (!isOpen) return null;
 
-    // ─── Helpers ─────────────────────────────────────────────────
-    const adicionarTempo = (m) => {
-        const total = horas * 60 + minutos + m;
-        setHoras(Math.floor(total / 60));
-        setMinutos(total % 60);
-    };
-
-    const alternarCiclo = (ciclo) =>
-        setRevisoes((p) => p.includes(ciclo) ? p.filter((c) => c !== ciclo) : [...p, ciclo]);
-
-    const alternarMaterial = (k) =>
-        setMateriais((p) => ({ ...p, [k]: !p[k] }));
-
-    const taxa = questoesFeitas > 0 ? Math.round((acertos / questoesFeitas) * 100) : 0;
-
-    const handleSalvar = () => {
-        setIsSaving(true);
-        setTimeout(() => {
-            onSave?.({ disciplina, topico, tipoEstudo, horas, minutos, materiais, questoesFeitas, acertos, taxa, revisoes, agendarEmBloco });
-            setIsSaving(false);
-            onClose();
-        }, 380);
-    };
-
-    const MATERIAIS = [
-        { id: 'pdf', label: 'PDF' },
-        { id: 'videoaula', label: 'Videoaula' },
-        { id: 'questoes', label: 'Questões' },
-        { id: 'leiSeca', label: 'Lei Seca' },
-        { id: 'resumoProprio', label: 'Resumo Próprio' },
-    ];
-
-    const CICLOS = [
-        { id: '24h', label: '24 horas' },
-        { id: '7d', label: '7 dias' },
-        { id: '15d', label: '15 dias' },
-        { id: '30d', label: '30 dias' },
-        { id: '60d', label: '60 dias' },
-        { id: '90d', label: '90 dias' },
-    ];
-
-    /* ─────────────────────────────────────────────────────────── */
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm p-4 animate-in fade-in duration-150">
             <div className="bg-white w-full max-w-3xl rounded-2xl shadow-[0_24px_80px_-12px_rgba(0,0,0,0.18)] flex flex-col max-h-[92vh] overflow-hidden border border-slate-200/80">
-
-                {/* ══ CABEÇALHO com fundo gradiente sutil ════════════════ */}
                 <header className="px-8 pt-7 pb-5 flex items-start justify-between border-b border-slate-100 shrink-0 bg-gradient-to-r from-blue-50/60 via-white to-white">
                     <div className="flex items-center gap-4">
                         <div className="w-11 h-11 rounded-xl bg-blue-600 text-white flex items-center justify-center shrink-0 shadow-md shadow-blue-500/30">
@@ -126,10 +66,7 @@ export default function RegisterStudyModal({
                     </button>
                 </header>
 
-                {/* ══ CORPO ══════════════════════════════════════════════ */}
                 <div className="px-8 py-6 overflow-y-auto flex-1 space-y-6 bg-slate-50/40">
-
-                    {/* ── Disciplina & Assunto — fundo branco elevado ───── */}
                     <div className="bg-white rounded-2xl border border-slate-200 p-5 space-y-4 shadow-sm">
                         <div>
                             <label className="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">
@@ -166,7 +103,6 @@ export default function RegisterStudyModal({
                         </div>
                     </div>
 
-                    {/* ── Tipo de estudo + Tempo — fundo azul suave ─────── */}
                     <div className="bg-blue-50/70 rounded-2xl border border-blue-100 p-5 space-y-3">
                         <div className="flex items-center justify-between gap-4 flex-wrap">
                             <div className="flex items-center gap-3">
@@ -203,7 +139,6 @@ export default function RegisterStudyModal({
                             </div>
                         </div>
 
-                        {/* Display do cronômetro */}
                         <div className="flex items-center justify-between px-4 py-3.5 bg-white rounded-xl border border-blue-100 shadow-sm">
                             <div className="flex items-center gap-2.5 text-blue-500">
                                 <Clock size={16} />
@@ -221,7 +156,6 @@ export default function RegisterStudyModal({
                         </div>
                     </div>
 
-                    {/* ── Anotações — fundo branco com ícones coloridos ─── */}
                     <div className="bg-white rounded-2xl border border-slate-200 p-5 space-y-3 shadow-sm">
                         <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
                             Anotações & Cadernos
@@ -262,17 +196,14 @@ export default function RegisterStudyModal({
                         </div>
                     </div>
 
-                    {/* ── Material + Desempenho ─────────────────────────── */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-
-                        {/* Material Utilizado */}
                         <div className="bg-white rounded-2xl border border-slate-200 p-5 space-y-3 shadow-sm">
                             <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
                                 Material utilizado
                             </p>
                             <div className="flex flex-wrap gap-2">
-                                {MATERIAIS.map(({ id, label }) => {
-                                    const on = materiais[id];
+                                {STUDY_MATERIALS.map(({ id, label }) => {
+                                    const on = materiais.includes(id);
                                     return (
                                         <button
                                             key={id}
@@ -290,7 +221,6 @@ export default function RegisterStudyModal({
                             </div>
                         </div>
 
-                        {/* Desempenho */}
                         <div className="bg-white rounded-2xl border border-slate-200 p-5 space-y-3 shadow-sm">
                             <div className="flex items-center justify-between">
                                 <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
@@ -298,7 +228,7 @@ export default function RegisterStudyModal({
                                 </p>
                                 <span className="flex items-center gap-1 text-[11px] font-bold text-emerald-600 bg-emerald-50 border border-emerald-200 rounded-full px-2 py-0.5">
                                     <Sparkles size={10} />
-                                    Taxa: {taxa}%
+                                    Taxa: {taxaAcertos}%
                                 </span>
                             </div>
                             <div className="grid grid-cols-2 gap-3">
@@ -306,15 +236,15 @@ export default function RegisterStudyModal({
                                     {
                                         label: 'Feitas',
                                         value: questoesFeitas,
-                                        onDec: () => setQuestoesFeitas((v) => Math.max(0, v - 1)),
-                                        onInc: () => setQuestoesFeitas((v) => v + 1),
+                                        onDec: () => incrementarQuestoes(-1),
+                                        onInc: () => incrementarQuestoes(1),
                                         numClass: 'text-slate-800',
                                     },
                                     {
                                         label: 'Acertos',
                                         value: acertos,
-                                        onDec: () => setAcertos((v) => Math.max(0, v - 1)),
-                                        onInc: () => setAcertos((v) => Math.min(questoesFeitas, v + 1)),
+                                        onDec: () => incrementarAcertos(-1),
+                                        onInc: () => acertos < questoesFeitas && incrementarAcertos(1),
                                         numClass: 'text-emerald-600',
                                     },
                                 ].map(({ label, value, onDec, onInc, numClass }) => (
@@ -340,14 +270,13 @@ export default function RegisterStudyModal({
                         </div>
                     </div>
 
-                    {/* ── Revisões Periódicas ───────────────────────────── */}
                     <div className="bg-white rounded-2xl border border-slate-200 p-5 space-y-4 shadow-sm">
                         <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
                             Agendamento de revisões periódicas
                         </p>
 
                         <div className="flex flex-wrap gap-2">
-                            {CICLOS.map(({ id, label }) => {
+                            {REVISION_CYCLES.map(({ id, label }) => {
                                 const on = revisoes.includes(id);
                                 return (
                                     <button
@@ -365,7 +294,6 @@ export default function RegisterStudyModal({
                             })}
                         </div>
 
-                        {/* ── Agendar em Bloco — com estado visual ativo ── */}
                         <div
                             role="button"
                             tabIndex={0}
@@ -377,7 +305,6 @@ export default function RegisterStudyModal({
                                 }`}
                         >
                             <div className="flex items-center gap-3">
-                                {/* Ícone muda de estado */}
                                 <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-colors duration-200 ${agendarEmBloco
                                     ? 'bg-blue-500/40'
                                     : 'bg-white border border-slate-200'
@@ -397,7 +324,6 @@ export default function RegisterStudyModal({
                                 </div>
                             </div>
 
-                            {/* Toggle pill CSS puro */}
                             <div className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 shrink-0 ${agendarEmBloco ? 'bg-white/30' : 'bg-slate-300'}`}>
                                 <span className={`inline-block h-4 w-4 rounded-full transition-all duration-200 shadow-sm ${agendarEmBloco
                                     ? 'translate-x-6 bg-white'
@@ -409,7 +335,6 @@ export default function RegisterStudyModal({
 
                 </div>
 
-                {/* ══ RODAPÉ ══════════════════════════════════════════════ */}
                 <footer className="px-8 py-5 border-t border-slate-100 bg-white flex items-center justify-end gap-3 shrink-0">
                     <button
                         type="button"
