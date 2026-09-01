@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import RegisterStudyModal from '../../components/modals/RegisterStudyModal';
 import TopKpiCards from './components/TopKpiCards';
 import DailyGoalsList from './components/DailyGoalsList';
-import StudyHeatmap from './components/StudyHeatmap';
-import PomodoroCard from './components/PomodoroCard';
+import DailyRevisionsList from './components/DailyRevisionsList';
+import WeeklyStudyChartCard from './components/WeeklyStudyChartCard';
+import MonthlyHeatmapCard from './components/MonthlyHeatmapCard';
+import TodaySessionsCard from './components/TodaySessionsCard';
 
 export default function InicioPage({
     weeklyHoursStudied = 14,
@@ -39,19 +41,32 @@ export default function InicioPage({
             {/* 2. CORPO PRINCIPAL: GRID 12 COLUNAS */}
             <section className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start w-full">
                 
-                {/* COLUNA ESQUERDA (8 COLS): METAS & REVISÕES */}
-                <DailyGoalsList
-                    dailyGoals={dailyGoals}
-                    toggleGoalCompletion={toggleGoalCompletion}
-                    handleOpenStudy={handleOpenStudy}
-                    setIsRegisterModalOpen={setIsRegisterModalOpen}
-                    setActiveTab={setActiveTab}
-                />
+                {/* COLUNA ESQUERDA (8 COLS): REVISÕES & GRÁFICOS */}
+                <div className="lg:col-span-8 space-y-6 w-full min-w-0">
 
-                {/* COLUNA DIREITA (4 COLS): CONSTÂNCIA & TIMER POMODORO */}
+                    <DailyRevisionsList 
+                        revisions={dailyGoals.filter(g => g.type === 'REVISION')} 
+                        toggleRevisionCompletion={toggleGoalCompletion}
+                        onStartFocusSession={handleOpenStudy}
+                        onOpenRegisterModal={() => setIsRegisterModalOpen(true)}
+                    />
+
+                    <DailyGoalsList 
+                        dailyGoals={dailyGoals}
+                        toggleGoalCompletion={toggleGoalCompletion}
+                        handleOpenStudy={handleOpenStudy}
+                        setIsRegisterModalOpen={setIsRegisterModalOpen}
+                        setActiveTab={setActiveTab}
+                        isCompact={true}
+                    />
+
+                    <TodaySessionsCard />
+                </div>
+
+                {/* COLUNA DIREITA (4 COLS): CONSTÂNCIA & GRÁFICO SEMANAL */}
                 <div className="lg:col-span-4 space-y-6 w-full min-w-0">
-                    <StudyHeatmap />
-                    <PomodoroCard />
+                    <MonthlyHeatmapCard />
+                    <WeeklyStudyChartCard />
                 </div>
 
             </section>

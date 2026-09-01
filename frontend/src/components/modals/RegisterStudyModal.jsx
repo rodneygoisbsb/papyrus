@@ -12,6 +12,7 @@ export default function RegisterStudyModal({
     onClose,
     initialTime = { hours: 0, minutes: 0 },
     recordedTime = null,
+    initialData = null,
     onSave
 }) {
     const {
@@ -33,7 +34,7 @@ export default function RegisterStudyModal({
         incrementarAcertos,
         handleSalvar,
         taxaAcertos
-    } = useRegisterStudyForm({ isOpen, recordedTime, initialTime, onSave: (data) => {
+    } = useRegisterStudyForm({ isOpen, recordedTime, initialTime, initialData, onSave: (data) => {
         onSave?.(data);
         onClose();
     }});
@@ -72,34 +73,25 @@ export default function RegisterStudyModal({
                             <label className="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">
                                 Disciplina
                             </label>
-                            <select
+                            <input
+                                type="text"
+                                placeholder="Qual matéria você estudou?"
                                 value={disciplina}
                                 onChange={(e) => setDisciplina(e.target.value)}
-                                className="select w-full bg-slate-50 text-slate-700 font-medium rounded-xl border border-slate-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500/15 text-sm h-11 transition-all"
-                            >
-                                <option value="">Selecione uma disciplina...</option>
-                                <option>Direito Constitucional</option>
-                                <option>Direito Administrativo</option>
-                                <option>Língua Portuguesa</option>
-                                <option>Banco de Dados</option>
-                                <option>Engenharia de Software</option>
-                            </select>
+                                className="input w-full bg-slate-50 text-slate-700 font-medium rounded-xl border border-slate-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500/15 text-sm h-11 transition-all"
+                            />
                         </div>
                         <div>
                             <label className="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">
                                 Assunto / Tópico
                             </label>
-                            <select
+                            <input
+                                type="text"
+                                placeholder="Qual assunto / tópico?"
                                 value={topico}
                                 onChange={(e) => setTopico(e.target.value)}
-                                className="select w-full bg-slate-50 text-slate-700 font-medium rounded-xl border border-slate-200 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/15 text-sm h-11 transition-all"
-                            >
-                                <option value="">Selecione um assunto...</option>
-                                <option>Controle Concentrado de Constitucionalidade</option>
-                                <option>Lei 8.112/90 — Regime Disciplinar</option>
-                                <option>Emprego do Sinal Indicativo de Crase</option>
-                                <option>Modelagem Entidade-Relacionamento</option>
-                            </select>
+                                className="input w-full bg-slate-50 text-slate-700 font-medium rounded-xl border border-slate-200 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/15 text-sm h-11 transition-all"
+                            />
                         </div>
                     </div>
 

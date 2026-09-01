@@ -1,6 +1,6 @@
 import React from 'react';
 import RegisterStudyModal from '../modals/RegisterStudyModal';
-import ZenFocusModal from './ZenFocusModal';
+import ZenFocusModal from '../modals/ZenFocusModal';
 import { useStudyTimer } from '../../hooks/useStudyTimer';
 import { formatTimeDisplay, secondsToTimeString } from '../../utils/timeFormatters';
 import {
@@ -18,6 +18,7 @@ export default function StudyTimer({ disciplines = [], onSaveStudy = () => { } }
         isRunning,
         isFullscreen,
         isModalOpen,
+        activeContext,
         setIsFullscreen,
         setIsModalOpen,
         togglePlay,
@@ -107,6 +108,7 @@ export default function StudyTimer({ disciplines = [], onSaveStudy = () => { } }
                     isOpen={isModalOpen}
                     onClose={() => setIsModalOpen(false)}
                     recordedTime={secondsToTimeString(seconds)}
+                    initialData={activeContext}
                     onSave={handleSaveSession}
                 />
             )}

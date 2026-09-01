@@ -7,6 +7,7 @@ export function useStudyTimer(onSaveStudy) {
     const [isRunning, setIsRunning] = useState(false);
     const [isFullscreen, setIsFullscreen] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [activeContext, setActiveContext] = useState(null);
 
     useEffect(() => {
         let interval = null;
@@ -18,6 +19,18 @@ export function useStudyTimer(onSaveStudy) {
         return () => clearInterval(interval);
     }, [isRunning]);
 
+    useEffect(() => {
+        const handleOpenZenFocus = (e) => {
+            const goal = e.detail;
+            setActiveContext(goal || null);
+            setSeconds(0);
+            setIsFullscreen(true);
+            setIsRunning(true);
+        };
+        window.addEventListener('papyrus:open-zen-focus', handleOpenZenFocus);
+        return () => window.removeEventListener('papyrus:open-zen-focus', handleOpenZenFocus);
+    }, []);
+
     const togglePlay = () => setIsRunning((prev) => !prev);
 
     const handleReset = () => {
@@ -27,6 +40,7 @@ export function useStudyTimer(onSaveStudy) {
 
     const handleOpenRegister = () => {
         setIsRunning(false);
+        setActiveContext(null);
         setIsModalOpen(true);
     };
 
@@ -53,6 +67,7 @@ export function useStudyTimer(onSaveStudy) {
         isRunning,
         isFullscreen,
         isModalOpen,
+        activeContext,
         setIsFullscreen,
         setIsModalOpen,
         togglePlay,

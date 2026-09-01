@@ -8,6 +8,7 @@ import MainLayout from './components/layout/MainLayout';
 // 2. Telas / Abas
 import InicioPage from './pages/Inicio';
 import ConcursosPage from './pages/ConcursosPage';
+import MetasPage from './pages/MetasPage';
 
 // 3. Hooks personalizados
 import { useLocalStorage } from './hooks/useLocalStorage';
@@ -34,7 +35,7 @@ export default function App() {
   const [todayQuestionsDone, setTodayQuestionsDone] = useLocalStorage('@papyrus:todayQuestionsDone', 35);
   const [todayQuestionsCorrect, setTodayQuestionsCorrect] = useLocalStorage('@papyrus:todayQuestionsCorrect', 29);
 
-  // 4. METAS DIÁRIAS
+  // 4. METAS DIÁRIAS E REVISOES DO DIA
   const [dailyGoals, setDailyGoals] = useLocalStorage('@papyrus:dailyGoals', [
     {
       id: 'g1',
@@ -68,6 +69,24 @@ export default function App() {
       tecUrl: 'https://www.tecconcursos.com.br',
       videoUrl: 'https://youtube.com',
       pdfUrl: '#'
+    },
+    {
+      id: 'r1',
+      subject: 'DIREITO ADMINISTRATIVO',
+      topicName: 'Lei 8.112/90 – Agentes Públicos',
+      type: 'REVISION',
+      durationMinutes: 60,
+      completed: false,
+      revisionTag: '7 Dias'
+    },
+    {
+      id: 'r2',
+      subject: 'LÍNGUA PORTUGUESA',
+      topicName: 'Pontuação',
+      type: 'REVISION',
+      durationMinutes: 60,
+      completed: false,
+      revisionTag: '1 Dia'
     }
   ]);
 
@@ -166,6 +185,10 @@ export default function App() {
     setDisciplines((prev) => prev.filter((d) => d.id !== discId));
   };
 
+  const handleOpenStudy = (goal) => {
+    window.dispatchEvent(new CustomEvent('papyrus:open-zen-focus', { detail: goal }));
+  };
+
   return (
     <MainLayout
       activeTab={activeTab}
@@ -189,7 +212,7 @@ export default function App() {
           todayQuestionsCorrect={todayQuestionsCorrect}
           dailyGoals={dailyGoals}
           toggleGoalCompletion={toggleGoalCompletion}
-          handleOpenStudy={() => { }}
+          handleOpenStudy={handleOpenStudy}
           setActiveTab={setActiveTab}
         />
       )}
@@ -208,7 +231,17 @@ export default function App() {
         />
       )}
 
-      {activeTab !== 'inicio' && activeTab !== 'concursos' && (
+      {activeTab === 'metas' && (
+        <MetasPage 
+          dailyGoals={dailyGoals}
+          toggleGoalCompletion={toggleGoalCompletion}
+          handleOpenStudy={() => {}}
+          setIsRegisterModalOpen={() => {}}
+          setActiveTab={setActiveTab}
+        />
+      )}
+
+      {activeTab !== 'inicio' && activeTab !== 'concursos' && activeTab !== 'metas' && (
         <div className="bg-base-100 border border-base-300/70 p-12 rounded-3xl shadow-xs text-center space-y-4 flex flex-col items-center justify-center h-full min-h-[400px]">
           <Layers size={40} className="text-primary" />
           <h3 className="text-lg font-bold text-base-content capitalize">

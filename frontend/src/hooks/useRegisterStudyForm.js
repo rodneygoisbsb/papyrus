@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { calculateAccuracyRate, addTimeToDuration } from '../utils/studyCalculations';
 
-export function useRegisterStudyForm({ isOpen, recordedTime, initialTime, onSave }) {
+export function useRegisterStudyForm({ isOpen, recordedTime, initialTime, initialData, onSave }) {
     const [disciplina, setDisciplina] = useState('');
     const [topico, setTopico] = useState('');
     const [tipoEstudo, setTipoEstudo] = useState('Teoria');
@@ -16,9 +16,14 @@ export function useRegisterStudyForm({ isOpen, recordedTime, initialTime, onSave
 
     useEffect(() => {
         if (isOpen) {
-            setDisciplina('');
-            setTopico('');
-            setTipoEstudo('Teoria');
+            setDisciplina(initialData?.subject || '');
+            setTopico(initialData?.topicName || initialData?.topicoNome || '');
+            
+            let tipo = 'Teoria';
+            if (initialData?.type === 'REVISION') tipo = 'Revisão';
+            if (initialData?.type === 'QUESTIONS') tipo = 'Questões';
+            setTipoEstudo(tipo);
+
             setMateriais([]);
             setQuestoesFeitas(0);
             setAcertos(0);

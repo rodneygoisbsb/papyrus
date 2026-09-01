@@ -7,7 +7,7 @@ export const STUDY_MATERIALS = [
 ];
 
 export const REVISION_CYCLES = [
-    { id: '24h', label: '24 horas' },
+    { id: '24h', label: '1 Dia' },
     { id: '7d', label: '7 dias' },
     { id: '15d', label: '15 dias' },
     { id: '30d', label: '30 dias' },
