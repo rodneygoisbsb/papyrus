@@ -2,6 +2,15 @@ import React from 'react';
 import { Target, PenLine, RotateCcw, CheckCircle2, Circle, Clock, ExternalLink, Video, FileText } from 'lucide-react';
 import { getSubjectAccent } from '../../../utils/studyCalculations';
 
+interface DailyGoalsListProps {
+    dailyGoals?: any[];
+    toggleGoalCompletion?: (id: string) => void;
+    handleOpenStudy?: (goal: any) => void;
+    setIsRegisterModalOpen?: (val: boolean) => void;
+    setActiveTab?: (tab: string) => void;
+    isCompact?: boolean;
+}
+
 export default function DailyGoalsList({
     dailyGoals = [],
     toggleGoalCompletion = () => { },
@@ -9,7 +18,7 @@ export default function DailyGoalsList({
     setIsRegisterModalOpen,
     setActiveTab,
     isCompact = false
-}) {
+}: DailyGoalsListProps) {
     const safeGoals = Array.isArray(dailyGoals) ? dailyGoals : [];
     const regularMetas = safeGoals.filter((g) => g?.type !== 'REVISION');
     const revisoesMetas = safeGoals.filter((g) => g?.type === 'REVISION');

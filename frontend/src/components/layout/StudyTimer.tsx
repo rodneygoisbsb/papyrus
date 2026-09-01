@@ -18,10 +18,12 @@ export default function StudyTimer({ disciplines = [], onSaveStudy = () => { } }
         isRunning,
         isFullscreen,
         isModalOpen,
+        activeContext,
         handleToggleTimer: togglePlay,
         handleReset,
         handleOpenFocus,
         handleCloseFocus,
+        handleOpenManualRegister,
         handleOpenSaveModal: handleOpenRegister,
         handleCloseSaveModal,
         handleSaveSession,
@@ -31,7 +33,6 @@ export default function StudyTimer({ disciplines = [], onSaveStudy = () => { } }
     const setIsFullscreen = (val: boolean) => val ? handleOpenFocus() : handleCloseFocus();
     const setIsModalOpen = (val: boolean) => val ? handleOpenRegister() : handleCloseSaveModal();
     const handleFinalizarMissao = handleOpenRegister;
-    const activeContext = {};
 
     return (
         <>
@@ -42,7 +43,7 @@ export default function StudyTimer({ disciplines = [], onSaveStudy = () => { } }
                 {/* BOTÃO 1: REGISTRAR ESTUDO (Abre Modal Rápido) */}
                 <button
                     type="button"
-                    onClick={handleOpenRegister}
+                    onClick={handleOpenManualRegister}
                     className="w-7 h-7 rounded-xl flex items-center justify-center bg-primary/10 hover:bg-primary text-primary hover:text-primary-content transition-all cursor-pointer shadow-2xs"
                     title="Registrar Estudo"
                 >

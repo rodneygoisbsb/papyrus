@@ -33,6 +33,9 @@ export function useRegisterStudyForm({ isOpen, recordedTime, initialTime, initia
     const [agendarEmBloco, setAgendarEmBloco] = useState<boolean>(false);
     const [isSaving, setIsSaving] = useState<boolean>(false);
 
+    // Usar um ref para evitar que a inicialização rode múltiplas vezes se as props mudarem a referência (como objetos anônimos)
+    const [hasInitialized, setHasInitialized] = useState(false);
+
     useEffect(() => {
         if (isOpen) {
             setDisciplina(initialData?.subject || '');
@@ -70,7 +73,9 @@ export function useRegisterStudyForm({ isOpen, recordedTime, initialTime, initia
                 setMinutos(0);
             }
         }
-    }, [isOpen, recordedTime, initialTime, initialData]);
+        // Queremos rodar isso apenas quando o modal for aberto ou os dados iniciais passados explicitamente mudarem.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isOpen]); // Dependências reduzidas para evitar resets indevidos
 
     const adicionarTempo = (minsToAdd: number) => {
         const { hours, minutes } = addTimeToDuration(horas, minutos, minsToAdd);

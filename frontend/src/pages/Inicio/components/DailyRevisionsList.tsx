@@ -2,12 +2,19 @@ import React from 'react';
 import { RefreshCw, ExternalLink, Video, FileText, Play, Check } from 'lucide-react';
 import { getSubjectAccent } from '../../../utils/studyCalculations';
 
+interface DailyRevisionsListProps {
+    revisions?: any[];
+    toggleRevisionCompletion?: (id: string) => void;
+    onStartFocusSession?: (goal: any) => void;
+    onOpenRegisterModal?: () => void;
+}
+
 export default function DailyRevisionsList({
     revisions = [],
     toggleRevisionCompletion = () => { },
     onStartFocusSession = () => { },
     onOpenRegisterModal = () => { },
-}) {
+}: DailyRevisionsListProps) {
     const totalMinutes = revisions.reduce((acc, rev) => acc + (rev.durationMinutes || 0), 0);
     const isHeavyLoad = totalMinutes > 180;
     const pendingRevisions = revisions.filter(r => !r.completed);

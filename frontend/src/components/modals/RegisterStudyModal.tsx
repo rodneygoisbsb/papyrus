@@ -147,12 +147,12 @@ export default function RegisterStudyModal({
                                     Duração registrada
                                 </span>
                             </div>
-                            <span className="text-2xl font-bold text-slate-800 tracking-tight tabular-nums"
+                            <span className="text-2xl font-medium text-slate-700 tracking-tight tabular-nums"
                                 style={{ fontFeatureSettings: "'tnum' on" }}>
                                 {String(horas).padStart(2, '0')}
-                                <span className="text-base text-slate-400 font-normal mx-1">h</span>
+                                <span className="text-sm text-slate-400 font-normal mx-1">h</span>
                                 {String(minutos).padStart(2, '0')}
-                                <span className="text-base text-slate-400 font-normal ml-1">min</span>
+                                <span className="text-sm text-slate-400 font-normal ml-1">min</span>
                             </span>
                         </div>
                     </div>

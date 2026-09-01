@@ -7,6 +7,7 @@ export interface UseStudyTimerOptions {
 
 export function useStudyTimer(options?: UseStudyTimerOptions) {
   const [seconds, setSeconds] = useLocalStorage<number>('@papyrus:timerSeconds', 0);
+  const [activeContext, setActiveContext] = useLocalStorage<Record<string, any> | null>('@papyrus:activeContext', null);
   const [isRunning, setIsRunning] = useState<boolean>(false);
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -25,6 +26,23 @@ export function useStudyTimer(options?: UseStudyTimerOptions) {
     };
   }, [isRunning, setSeconds]);
 
+  useEffect(() => {
+    const handleOpenFocus = (e: Event) => {
+      const customEvent = e as CustomEvent;
+      const goal = customEvent.detail;
+      
+      setActiveContext(goal);
+      setSeconds(0);
+      setIsRunning(true);
+      // setIsFullscreen(true); // Opcional: abre a tela cheia. O usuário pediu para "abrir o cronometro e comecar a contabilizar"
+      // Se não abrirmos o fullscreen, ele só começa a rodar no header. Vamos abrir o fullscreen por padrão se era "zen-focus"
+      setIsFullscreen(true);
+    };
+
+    window.addEventListener('papyrus:open-zen-focus', handleOpenFocus);
+    return () => window.removeEventListener('papyrus:open-zen-focus', handleOpenFocus);
+  }, [setActiveContext, setSeconds]);
+
   const handleToggleTimer = () => {
     setIsRunning((prev) => !prev);
   };
@@ -40,6 +58,14 @@ export function useStudyTimer(options?: UseStudyTimerOptions) {
 
   const handleCloseFocus = () => {
     setIsFullscreen(false);
+  };
+
+  const handleOpenManualRegister = () => {
+    setActiveContext(null);
+    setSeconds(0);
+    setIsRunning(false);
+    setIsFullscreen(false);
+    setIsModalOpen(true);
   };
 
   const handleOpenSaveModal = () => {
@@ -62,6 +88,7 @@ export function useStudyTimer(options?: UseStudyTimerOptions) {
     setIsModalOpen(false);
     setSeconds(0);
     setIsRunning(false);
+    setActiveContext(null);
   };
 
   return {
@@ -69,10 +96,12 @@ export function useStudyTimer(options?: UseStudyTimerOptions) {
     isRunning,
     isFullscreen,
     isModalOpen,
+    activeContext,
     handleToggleTimer,
     handleReset,
     handleOpenFocus,
     handleCloseFocus,
+    handleOpenManualRegister,
     handleOpenSaveModal,
     handleCloseSaveModal,
     handleSaveSession,
