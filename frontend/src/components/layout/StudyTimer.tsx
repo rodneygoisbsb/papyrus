@@ -18,16 +18,20 @@ export default function StudyTimer({ disciplines = [], onSaveStudy = () => { } }
         isRunning,
         isFullscreen,
         isModalOpen,
-        activeContext,
-        setIsFullscreen,
-        setIsModalOpen,
-        togglePlay,
+        handleToggleTimer: togglePlay,
         handleReset,
-        handleOpenRegister,
-        handleStop,
-        handleFinalizarMissao,
+        handleOpenFocus,
+        handleCloseFocus,
+        handleOpenSaveModal: handleOpenRegister,
+        handleCloseSaveModal,
         handleSaveSession,
-    } = useStudyTimer(onSaveStudy);
+    } = useStudyTimer({ onSaveStudy });
+
+    const handleStop = handleOpenRegister;
+    const setIsFullscreen = (val: boolean) => val ? handleOpenFocus() : handleCloseFocus();
+    const setIsModalOpen = (val: boolean) => val ? handleOpenRegister() : handleCloseSaveModal();
+    const handleFinalizarMissao = handleOpenRegister;
+    const activeContext = {};
 
     return (
         <>

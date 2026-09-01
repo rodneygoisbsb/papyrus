@@ -7,14 +7,23 @@ import {
 import { useRegisterStudyForm } from '../../hooks/useRegisterStudyForm';
 import { STUDY_MATERIALS, REVISION_CYCLES } from '../../utils/studyConstants';
 
+interface RegisterStudyModalProps {
+    isOpen: boolean;
+    onClose: () => void;
+    initialTime?: { hours: number; minutes: number };
+    recordedTime?: string;
+    initialData?: Record<string, any>;
+    onSave?: (data: any) => void;
+}
+
 export default function RegisterStudyModal({
     isOpen,
     onClose,
     initialTime = { hours: 0, minutes: 0 },
-    recordedTime = null,
-    initialData = null,
+    recordedTime,
+    initialData,
     onSave
-}) {
+}: RegisterStudyModalProps) {
     const {
         disciplina, setDisciplina,
         topico, setTopico,
