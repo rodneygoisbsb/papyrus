@@ -1,11 +1,11 @@
-import { useRef } from 'react';
+import { useRef, RefObject } from 'react';
 
-export function useRichTextEditor(onSave) {
-    const editorRef = useRef(null);
+export function useRichTextEditor(onSave?: (content: string) => void) {
+    const editorRef = useRef<HTMLDivElement>(null);
 
-    const execCmd = (command, value = null) => {
+    const execCmd = (command: string, value: string | null = null) => {
         if (!editorRef.current) return;
-        document.execCommand(command, false, value);
+        document.execCommand(command, false, value ?? undefined);
         editorRef.current.focus();
     };
 

@@ -2,7 +2,7 @@
  * Calcula a porcentagem do progresso semanal em relação à meta.
  * Limita entre 0 e 100 e retorna um inteiro.
  */
-export const calculateWeeklyProgress = (hoursStudied, goalHours) => {
+export const calculateWeeklyProgress = (hoursStudied: number, goalHours: number): number => {
     if (!goalHours || goalHours <= 0) return 0;
     return Math.min(100, Math.max(0, Math.round((hoursStudied / goalHours) * 100)));
 };
@@ -10,7 +10,7 @@ export const calculateWeeklyProgress = (hoursStudied, goalHours) => {
 /**
  * Recebe o nome de uma matéria e retorna a classe Tailwind (DaisyUI) de borda correspondente.
  */
-export const getSubjectAccent = (subjectName = '') => {
+export const getSubjectAccent = (subjectName: string = ''): { border: string } => {
     const upper = (subjectName || '').toUpperCase();
     if (upper.includes('CONSTITUCIONAL')) return { border: 'border-l-primary' };
     if (upper.includes('ADMINISTRATIVO')) return { border: 'border-l-accent' };
@@ -23,7 +23,7 @@ export const getSubjectAccent = (subjectName = '') => {
 /**
  * Retorna as classes Tailwind para os níveis (0 a 4) do Heatmap (matriz de constância).
  */
-export const getHeatmapLevelColor = (level) => {
+export const getHeatmapLevelColor = (level: number): string => {
     switch (level) {
         case 1: return 'bg-primary/15 border border-primary/25';
         case 2: return 'bg-primary/40';
@@ -36,15 +36,20 @@ export const getHeatmapLevelColor = (level) => {
 /**
  * Retorna a porcentagem de acertos arredondada.
  */
-export const calculateAccuracyRate = (correct, total) => {
+export const calculateAccuracyRate = (correct: number, total: number): number => {
     if (!total || total <= 0) return 0;
     return Math.round((correct / total) * 100);
 };
 
+export interface Duration {
+    hours: number;
+    minutes: number;
+}
+
 /**
  * Soma minutos a um objeto de horas e minutos e retorna o novo total formatado.
  */
-export const addTimeToDuration = (currentHours, currentMinutes, minutesToAdd) => {
+export const addTimeToDuration = (currentHours: number, currentMinutes: number, minutesToAdd: number): Duration => {
     const totalMinutes = (Number(currentHours) * 60) + Number(currentMinutes) + minutesToAdd;
     return {
         hours: Math.floor(totalMinutes / 60),

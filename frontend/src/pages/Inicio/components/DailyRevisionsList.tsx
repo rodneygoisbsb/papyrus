@@ -4,9 +4,9 @@ import { getSubjectAccent } from '../../../utils/studyCalculations';
 
 export default function DailyRevisionsList({
     revisions = [],
-    toggleRevisionCompletion = () => {},
-    onStartFocusSession = () => {},
-    onOpenRegisterModal = () => {},
+    toggleRevisionCompletion = () => { },
+    onStartFocusSession = () => { },
+    onOpenRegisterModal = () => { },
 }) {
     const totalMinutes = revisions.reduce((acc, rev) => acc + (rev.durationMinutes || 0), 0);
     const isHeavyLoad = totalMinutes > 180;
@@ -19,7 +19,7 @@ export default function DailyRevisionsList({
                 <div className="flex items-center gap-2">
                     <RefreshCw size={18} className="text-secondary" />
                     <h2 className="text-sm font-bold text-base-content">Revisões do Dia</h2>
-                    
+
                     <span className="badge badge-sm bg-blue-50 text-primary border-primary/20 font-bold ml-1">
                         {pendingRevisions.length} pendentes
                     </span>
@@ -31,7 +31,7 @@ export default function DailyRevisionsList({
                     )}
                 </div>
 
-                <button 
+                <button
                     onClick={onOpenRegisterModal}
                     className="btn btn-sm btn-primary rounded-xl px-3.5 gap-1 font-bold text-xs"
                 >
@@ -49,25 +49,24 @@ export default function DailyRevisionsList({
                     revisions.map((rev) => {
                         const accent = getSubjectAccent(rev.subject);
                         return (
-                            <div 
-                                key={rev.id} 
+                            <div
+                                key={rev.id}
                                 className="group relative p-4 rounded-2xl border border-base-300 bg-base-100 hover:border-slate-300 hover:shadow-sm transition-all duration-200 flex items-center justify-between overflow-hidden"
                             >
                                 {/* Listra lateral */}
                                 <div className={`absolute left-0 top-0 bottom-0 w-1 ${accent.bg}`} />
-                                
+
                                 <div className="flex items-center gap-3.5 pl-2">
                                     {/* Checkbox circular */}
-                                    <button 
+                                    <button
                                         onClick={(e) => {
                                             e.stopPropagation();
                                             toggleRevisionCompletion(rev.id);
                                         }}
-                                        className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all cursor-pointer active:scale-90 shrink-0 ${
-                                            rev.completed 
-                                                ? 'bg-secondary border-secondary text-white' 
-                                                : 'border-slate-300 hover:border-primary text-transparent'
-                                        }`}
+                                        className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all cursor-pointer active:scale-90 shrink-0 ${rev.completed
+                                            ? 'bg-secondary border-secondary text-white'
+                                            : 'border-slate-300 hover:border-primary text-transparent'
+                                            }`}
                                     >
                                         <Check size={12} className={rev.completed ? 'opacity-100' : 'opacity-0'} strokeWidth={3} />
                                     </button>
@@ -87,6 +86,11 @@ export default function DailyRevisionsList({
                                         {rev.revisionTag && (
                                             <span className="badge badge-xs bg-amber-50 text-accent font-bold px-1.5 py-2.5 rounded-md">
                                                 {rev.revisionTag}
+                                            </span>
+                                        )}
+                                        {rev.type === 'QUESTIONS' && (
+                                            <span className="badge badge-xs bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold">
+                                                {rev.questionCount || rev.questionCount} Questões
                                             </span>
                                         )}
                                         <span className="badge badge-xs bg-slate-100 text-slate-600 font-medium px-1.5 py-2.5 rounded-md">
@@ -118,7 +122,7 @@ export default function DailyRevisionsList({
 
                                     {/* Estado Hover: Botão desliza para dentro */}
                                     {!rev.completed && (
-                                        <button 
+                                        <button
                                             onClick={(e) => {
                                                 e.stopPropagation();
                                                 onStartFocusSession(rev);

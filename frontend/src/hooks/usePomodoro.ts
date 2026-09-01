@@ -1,15 +1,17 @@
 import { useState, useEffect } from 'react';
 
-export function usePomodoro(initialFocusMinutes = 25, initialBreakMinutes = 5) {
+export type PomodoroMode = 'focus' | 'break';
+
+export function usePomodoro(initialFocusMinutes: number = 25, initialBreakMinutes: number = 5) {
     const focusSeconds = initialFocusMinutes * 60;
     const breakSeconds = initialBreakMinutes * 60;
 
-    const [pomodoroSeconds, setPomodoroSeconds] = useState(focusSeconds);
-    const [isPomodoroRunning, setIsPomodoroRunning] = useState(false);
-    const [pomodoroMode, setPomodoroMode] = useState('focus'); // 'focus' | 'break'
+    const [pomodoroSeconds, setPomodoroSeconds] = useState<number>(focusSeconds);
+    const [isPomodoroRunning, setIsPomodoroRunning] = useState<boolean>(false);
+    const [pomodoroMode, setPomodoroMode] = useState<PomodoroMode>('focus');
 
     useEffect(() => {
-        let interval = null;
+        let interval: ReturnType<typeof setInterval> | null = null;
         if (isPomodoroRunning && pomodoroSeconds > 0) {
             interval = setInterval(() => {
                 setPomodoroSeconds((prev) => prev - 1);
@@ -25,7 +27,7 @@ export function usePomodoro(initialFocusMinutes = 25, initialBreakMinutes = 5) {
 
     const togglePomodoro = () => setIsPomodoroRunning(!isPomodoroRunning);
 
-    const resetPomodoro = (mode = pomodoroMode) => {
+    const resetPomodoro = (mode: PomodoroMode = pomodoroMode) => {
         setIsPomodoroRunning(false);
         setPomodoroMode(mode);
         setPomodoroSeconds(mode === 'focus' ? focusSeconds : breakSeconds);

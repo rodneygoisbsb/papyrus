@@ -1,5 +1,5 @@
 import React from 'react';
-
+import WeeklyStudyChartCard from './Inicio/components/WeeklyStudyChartCard';
 export default function DesempenhoTab() {
     const desempenhoMaterias = [
         { name: 'Direito Constitucional', pct: 86, color: 'bg-primary' },
@@ -12,6 +12,7 @@ export default function DesempenhoTab() {
         <div className="space-y-6 animate-in fade-in duration-200">
             <h2 className="text-2xl font-black text-base-content">Painel de Desempenho</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <WeeklyStudyChartCard />
                 <div className="bg-base-100 border border-base-300/70 rounded-3xl p-7 space-y-3 shadow-sm">
                     <h3 className="font-bold text-sm text-base-content">Taxa de Acerto por Disciplina</h3>
                     {desempenhoMaterias.map((subj) => (

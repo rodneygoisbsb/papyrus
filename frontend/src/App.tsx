@@ -5,10 +5,11 @@ import { Layers } from 'lucide-react';
 // 1. Layout Base
 import MainLayout from './components/layout/MainLayout';
 
-// 2. Telas / Abas
 import InicioPage from './pages/Inicio';
 import ConcursosPage from './pages/ConcursosPage';
 import MetasPage from './pages/MetasPage';
+import PerfilPage from './pages/PerfilPage';
+import ConfiguracoesPage from './pages/ConfiguracoesPage';
 
 // 3. Hooks personalizados
 import { useLocalStorage } from './hooks/useLocalStorage';
@@ -86,7 +87,18 @@ export default function App() {
       type: 'REVISION',
       durationMinutes: 60,
       completed: false,
-      revisionTag: '1 Dia'
+      revisionTag: '1 Dia',
+    },
+    {
+      id: 'q1',
+      subject: 'APRENDIZAGEM DE MÁQUINA',
+      topicName: 'Noções de Aprendizagem de Máquina',
+      type: 'QUESTIONS',
+      durationMinutes: 60,
+      completed: false,
+      revisionTag: 'exercícios',
+      tecUrl: 'https://www.tecconcursos.com.br',
+      pdfUrl: '#'
     }
   ]);
 
@@ -232,16 +244,20 @@ export default function App() {
       )}
 
       {activeTab === 'metas' && (
-        <MetasPage 
+        <MetasPage
           dailyGoals={dailyGoals}
           toggleGoalCompletion={toggleGoalCompletion}
-          handleOpenStudy={() => {}}
-          setIsRegisterModalOpen={() => {}}
+          handleOpenStudy={() => { }}
+          setIsRegisterModalOpen={() => { }}
           setActiveTab={setActiveTab}
         />
       )}
 
-      {activeTab !== 'inicio' && activeTab !== 'concursos' && activeTab !== 'metas' && (
+      {activeTab === 'perfil' && <PerfilPage />}
+
+      {activeTab === 'configuracoes' && <ConfiguracoesPage />}
+
+      {activeTab !== 'inicio' && activeTab !== 'concursos' && activeTab !== 'metas' && activeTab !== 'perfil' && activeTab !== 'configuracoes' && (
         <div className="bg-base-100 border border-base-300/70 p-12 rounded-3xl shadow-xs text-center space-y-4 flex flex-col items-center justify-center h-full min-h-[400px]">
           <Layers size={40} className="text-primary" />
           <h3 className="text-lg font-bold text-base-content capitalize">

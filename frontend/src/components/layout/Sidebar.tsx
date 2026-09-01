@@ -23,8 +23,8 @@ const MENU = [
 ];
 
 const BOTTOM = [
-    { label: 'Perfil', icon: User },
-    { label: 'Configurações', icon: Settings },
+    { id: 'perfil', label: 'Perfil', icon: User },
+    { id: 'configuracoes', label: 'Configurações', icon: Settings },
 ];
 
 const ITEM_H = 40;
@@ -43,7 +43,7 @@ export default function Sidebar({ activeTab, setActiveTab }) {
                 'h-screen bg-white border-r border-slate-100',
                 'flex flex-col justify-between',
                 'shrink-0 sticky top-0 z-40',
-                'transition-[width] duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]',
+                'transition-[width] duration-150 ease-out',
                 'overflow-hidden select-none hidden md:flex',
                 'shadow-[2px_0_20px_rgba(0,0,0,0.04)]',
             ].join(' ')}
@@ -68,7 +68,7 @@ export default function Sidebar({ activeTab, setActiveTab }) {
                         style={{
                             maxWidth: expanded ? '140px' : '0',
                             opacity: expanded ? 1 : 0,
-                            transition: 'max-width 280ms cubic-bezier(0.4,0,0.2,1), opacity 220ms ease',
+                            transition: 'max-width 150ms ease-out, opacity 150ms ease-out',
                         }}
                     >
                         <h1 className="font-black text-sm text-slate-800 tracking-tight leading-none">Papyrus</h1>
@@ -122,7 +122,7 @@ export default function Sidebar({ activeTab, setActiveTab }) {
                                     style={{
                                         maxWidth: expanded ? '160px' : '0',
                                         opacity: expanded ? 1 : 0,
-                                        transition: 'max-width 280ms cubic-bezier(0.4,0,0.2,1), opacity 180ms ease 60ms',
+                                        transition: 'max-width 150ms ease-out, opacity 150ms ease-out',
                                     }}
                                 >
                                     {label}
@@ -135,33 +135,38 @@ export default function Sidebar({ activeTab, setActiveTab }) {
 
             {/* ── RODAPÉ ───────────────────────────────────────────── */}
             <div className="px-3 pb-4 pt-3 border-t border-slate-100 flex flex-col gap-1 shrink-0">
-                {BOTTOM.map(({ label, icon: Icon }) => (
-                    <button
-                        key={label}
-                        type="button"
-                        title={!expanded ? label : undefined}
-                        style={{ height: `${ITEM_H}px` }}
-                        className={[
-                            'w-full flex items-center rounded-xl',
-                            'text-sm font-semibold text-slate-400',
-                            'hover:text-slate-700 hover:bg-slate-100',
-                            'cursor-pointer transition-all duration-150 active:scale-95',
-                            expanded ? 'gap-3 px-3' : 'justify-center px-0',
-                        ].join(' ')}
-                    >
-                        <Icon size={18} className="shrink-0" />
-                        <span
-                            className="whitespace-nowrap overflow-hidden text-slate-500"
-                            style={{
-                                maxWidth: expanded ? '160px' : '0',
-                                opacity: expanded ? 1 : 0,
-                                transition: 'max-width 280ms cubic-bezier(0.4,0,0.2,1), opacity 180ms ease 60ms',
-                            }}
+                {BOTTOM.map(({ id, label, icon: Icon }) => {
+                    const active = activeTab === id;
+                    return (
+                        <button
+                            key={id}
+                            type="button"
+                            title={!expanded ? label : undefined}
+                            onClick={() => setActiveTab(id)}
+                            style={{ height: `${ITEM_H}px` }}
+                            className={[
+                                'w-full flex items-center rounded-xl',
+                                'text-sm font-semibold transition-all duration-150 cursor-pointer active:scale-95',
+                                expanded ? 'gap-3 px-3' : 'justify-center px-0',
+                                active
+                                    ? 'bg-primary/10 text-primary font-bold'
+                                    : 'text-slate-400 hover:text-slate-700 hover:bg-slate-100',
+                            ].join(' ')}
                         >
-                            {label}
-                        </span>
-                    </button>
-                ))}
+                            <Icon size={18} className="shrink-0" />
+                            <span
+                                className="whitespace-nowrap overflow-hidden"
+                                style={{
+                                    maxWidth: expanded ? '160px' : '0',
+                                    opacity: expanded ? 1 : 0,
+                                    transition: 'max-width 150ms ease-out, opacity 150ms ease-out',
+                                }}
+                            >
+                                {label}
+                            </span>
+                        </button>
+                    );
+                })}
             </div>
         </aside>
     );

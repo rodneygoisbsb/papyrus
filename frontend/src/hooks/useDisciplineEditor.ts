@@ -1,13 +1,17 @@
-import { useState } from 'react';
+import React, { useState, Dispatch, SetStateAction } from 'react';
+import { Discipline, Topic } from '../types/study';
 
-export function useDisciplineEditor(activeDisciplineEditor, setActiveDisciplineEditor) {
+export function useDisciplineEditor(
+  activeDisciplineEditor: Partial<Discipline>,
+  setActiveDisciplineEditor: Dispatch<SetStateAction<Partial<Discipline>>>
+) {
     const [newTopicText, setNewTopicText] = useState('');
-    const [draggedTopicIndex, setDraggedTopicIndex] = useState(null);
+    const [draggedTopicIndex, setDraggedTopicIndex] = useState<number | null>(null);
 
     const handleAddTopic = () => {
         if (!newTopicText.trim()) return;
 
-        const newTopic = {
+        const newTopic: Topic = {
             id: `temp-${Date.now()}`,
             name: newTopicText.trim(),
             theoryCompleted: false
@@ -20,21 +24,21 @@ export function useDisciplineEditor(activeDisciplineEditor, setActiveDisciplineE
         setNewTopicText('');
     };
 
-    const handleRemoveTopic = (topicId) => {
+    const handleRemoveTopic = (topicId: string) => {
         setActiveDisciplineEditor(prev => ({
             ...prev,
             topics: (prev.topics || []).filter(t => t.id !== topicId)
         }));
     };
 
-    const handleDragStart = (e, index) => {
+    const handleDragStart = (e: React.DragEvent<HTMLElement>, index: number) => {
         setDraggedTopicIndex(index);
         e.dataTransfer.effectAllowed = 'move';
         // Requerido pelo Firefox
-        e.dataTransfer.setData('text/html', e.target.parentNode);
+        e.dataTransfer.setData('text/html', (e.target as HTMLElement).parentElement?.innerHTML || '');
     };
 
-    const handleDragOver = (e, index) => {
+    const handleDragOver = (e: React.DragEvent<HTMLElement>, index: number) => {
         e.preventDefault();
         if (draggedTopicIndex === null) return;
         

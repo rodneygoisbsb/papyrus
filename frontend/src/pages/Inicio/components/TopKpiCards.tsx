@@ -22,8 +22,8 @@ export default function TopKpiCards({
     const faltamHoras = Math.max(0, Number((weeklyHoursGoal - weeklyHoursStudied).toFixed(1)));
 
     // 2. Cálculos de Questões Semanais
-    const progressoQuestoesCalculado = weeklyQuestionsGoal > 0 
-        ? Math.min(100, Math.round((totalQuestionsDone / weeklyQuestionsGoal) * 100)) 
+    const progressoQuestoesCalculado = weeklyQuestionsGoal > 0
+        ? Math.min(100, Math.round((totalQuestionsDone / weeklyQuestionsGoal) * 100))
         : 0;
     const faltamQuestoes = Math.max(0, weeklyQuestionsGoal - totalQuestionsDone);
 
@@ -46,7 +46,7 @@ export default function TopKpiCards({
                             <AnimatedCounter value={weeklyHoursStudied} duration={700} decimals={Number.isInteger(weeklyHoursStudied) ? 0 : 1} />
                         </span>
                         <span className="text-xl sm:text-2xl font-semibold text-base-content leading-none">h</span>
-                        
+
                         <span className="text-xs font-medium text-neutral-content leading-none ml-2">
                             / {weeklyHoursGoal}h
                         </span>

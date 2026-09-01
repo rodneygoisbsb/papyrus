@@ -3,9 +3,9 @@ import RegisterStudyModal from '../../components/modals/RegisterStudyModal';
 import TopKpiCards from './components/TopKpiCards';
 import DailyGoalsList from './components/DailyGoalsList';
 import DailyRevisionsList from './components/DailyRevisionsList';
-import WeeklyStudyChartCard from './components/WeeklyStudyChartCard';
 import MonthlyHeatmapCard from './components/MonthlyHeatmapCard';
 import TodaySessionsCard from './components/TodaySessionsCard';
+import AiDailySuggestionsCard from './components/AiDailySuggestionsCard';
 
 export default function InicioPage({
     weeklyHoursStudied = 14,
@@ -40,33 +40,36 @@ export default function InicioPage({
 
             {/* 2. CORPO PRINCIPAL: GRID 12 COLUNAS */}
             <section className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start w-full">
-                
+
                 {/* COLUNA ESQUERDA (8 COLS): REVISÕES & GRÁFICOS */}
                 <div className="lg:col-span-8 space-y-6 w-full min-w-0">
 
-                    <DailyRevisionsList 
-                        revisions={dailyGoals.filter(g => g.type === 'REVISION')} 
+                    <DailyRevisionsList
+                        revisions={dailyGoals.filter(g => g.type === 'REVISION' || g.type === 'QUESTIONS')}
                         toggleRevisionCompletion={toggleGoalCompletion}
                         onStartFocusSession={handleOpenStudy}
                         onOpenRegisterModal={() => setIsRegisterModalOpen(true)}
                     />
 
-                    <DailyGoalsList 
-                        dailyGoals={dailyGoals}
+                    <AiDailySuggestionsCard 
+                        onRegisterStudy={() => setIsRegisterModalOpen(true)} 
+                        onStartFocusSession={handleOpenStudy}
+                    />
+
+                    <DailyGoalsList
+                        dailyGoals={dailyGoals.filter(item => item.type === 'THEORY')}
                         toggleGoalCompletion={toggleGoalCompletion}
                         handleOpenStudy={handleOpenStudy}
                         setIsRegisterModalOpen={setIsRegisterModalOpen}
                         setActiveTab={setActiveTab}
                         isCompact={true}
                     />
-
-                    <TodaySessionsCard />
                 </div>
 
                 {/* COLUNA DIREITA (4 COLS): CONSTÂNCIA & GRÁFICO SEMANAL */}
                 <div className="lg:col-span-4 space-y-6 w-full min-w-0">
                     <MonthlyHeatmapCard />
-                    <WeeklyStudyChartCard />
+                    <TodaySessionsCard />
                 </div>
 
             </section>

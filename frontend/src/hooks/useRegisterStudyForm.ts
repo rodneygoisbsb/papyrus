@@ -1,18 +1,37 @@
 import { useState, useEffect } from 'react';
 import { calculateAccuracyRate, addTimeToDuration } from '../utils/studyCalculations';
 
-export function useRegisterStudyForm({ isOpen, recordedTime, initialTime, initialData, onSave }) {
-    const [disciplina, setDisciplina] = useState('');
-    const [topico, setTopico] = useState('');
-    const [tipoEstudo, setTipoEstudo] = useState('Teoria');
-    const [horas, setHoras] = useState(0);
-    const [minutos, setMinutos] = useState(0);
-    const [materiais, setMateriais] = useState([]);
-    const [questoesFeitas, setQuestoesFeitas] = useState(0);
-    const [acertos, setAcertos] = useState(0);
-    const [revisoes, setRevisoes] = useState([]);
-    const [agendarEmBloco, setAgendarEmBloco] = useState(false);
-    const [isSaving, setIsSaving] = useState(false);
+export interface RegisterStudyData {
+    disciplina: string;
+    topico: string;
+    tipoEstudo: string;
+    duracao: { horas: number; minutos: number };
+    materiais: string[];
+    questoes: { feitas: number; acertos: number };
+    revisoesAgendadas: string[];
+    agendarEmBloco: boolean;
+}
+
+export interface UseRegisterStudyFormProps {
+    isOpen: boolean;
+    recordedTime?: string;
+    initialTime?: { hours?: number; minutes?: number };
+    initialData?: Record<string, any>;
+    onSave: (data: RegisterStudyData) => void;
+}
+
+export function useRegisterStudyForm({ isOpen, recordedTime, initialTime, initialData, onSave }: UseRegisterStudyFormProps) {
+    const [disciplina, setDisciplina] = useState<string>('');
+    const [topico, setTopico] = useState<string>('');
+    const [tipoEstudo, setTipoEstudo] = useState<string>('Teoria');
+    const [horas, setHoras] = useState<number>(0);
+    const [minutos, setMinutos] = useState<number>(0);
+    const [materiais, setMateriais] = useState<string[]>([]);
+    const [questoesFeitas, setQuestoesFeitas] = useState<number>(0);
+    const [acertos, setAcertos] = useState<number>(0);
+    const [revisoes, setRevisoes] = useState<string[]>([]);
+    const [agendarEmBloco, setAgendarEmBloco] = useState<boolean>(false);
+    const [isSaving, setIsSaving] = useState<boolean>(false);
 
     useEffect(() => {
         if (isOpen) {
@@ -32,13 +51,11 @@ export function useRegisterStudyForm({ isOpen, recordedTime, initialTime, initia
             setIsSaving(false);
 
             if (recordedTime) {
-                // assume 'HH:MM:SS'
                 const partes = recordedTime.split(':');
                 if (partes.length === 3) {
                     setHoras(parseInt(partes[0], 10) || 0);
                     setMinutos(parseInt(partes[1], 10) || 0);
                 } else if (partes.length === 2) {
-                    // MM:SS
                     setHoras(0);
                     setMinutos(parseInt(partes[0], 10) || 0);
                 } else {
@@ -53,15 +70,15 @@ export function useRegisterStudyForm({ isOpen, recordedTime, initialTime, initia
                 setMinutos(0);
             }
         }
-    }, [isOpen, recordedTime, initialTime]);
+    }, [isOpen, recordedTime, initialTime, initialData]);
 
-    const adicionarTempo = (minsToAdd) => {
+    const adicionarTempo = (minsToAdd: number) => {
         const { hours, minutes } = addTimeToDuration(horas, minutos, minsToAdd);
         setHoras(hours);
         setMinutos(minutes);
     };
 
-    const alternarCiclo = (cicloId) => {
+    const alternarCiclo = (cicloId: string) => {
         setRevisoes((prev) =>
             prev.includes(cicloId)
                 ? prev.filter((id) => id !== cicloId)
@@ -69,7 +86,7 @@ export function useRegisterStudyForm({ isOpen, recordedTime, initialTime, initia
         );
     };
 
-    const alternarMaterial = (materialId) => {
+    const alternarMaterial = (materialId: string) => {
         setMateriais((prev) =>
             prev.includes(materialId)
                 ? prev.filter((id) => id !== materialId)
@@ -77,8 +94,8 @@ export function useRegisterStudyForm({ isOpen, recordedTime, initialTime, initia
         );
     };
 
-    const incrementarQuestoes = (valor) => setQuestoesFeitas(Math.max(0, questoesFeitas + valor));
-    const incrementarAcertos = (valor) => setAcertos(Math.max(0, acertos + valor));
+    const incrementarQuestoes = (valor: number) => setQuestoesFeitas(Math.max(0, questoesFeitas + valor));
+    const incrementarAcertos = (valor: number) => setAcertos(Math.max(0, acertos + valor));
 
     const handleSalvar = () => {
         if (!disciplina.trim()) {
