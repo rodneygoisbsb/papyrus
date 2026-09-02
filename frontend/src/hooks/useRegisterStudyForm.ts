@@ -10,6 +10,7 @@ export interface RegisterStudyData {
     questoes: { feitas: number; acertos: number };
     revisoesAgendadas: string[];
     agendarEmBloco: boolean;
+    teoriaFinalizada: boolean;
     dataEstudo: string;
 }
 
@@ -33,6 +34,7 @@ export function useRegisterStudyForm({ isOpen, recordedTime, initialTime, initia
     const [acertos, setAcertos] = useState<number | ''>(0);
     const [revisoes, setRevisoes] = useState<string[]>([]);
     const [agendarEmBloco, setAgendarEmBloco] = useState<boolean>(false);
+    const [teoriaFinalizada, setTeoriaFinalizada] = useState<boolean>(false);
     const [isSaving, setIsSaving] = useState<boolean>(false);
 
     // Usar um ref para evitar que a inicialização rode múltiplas vezes se as props mudarem a referência (como objetos anônimos)
@@ -53,6 +55,7 @@ export function useRegisterStudyForm({ isOpen, recordedTime, initialTime, initia
             setAcertos(0);
             setRevisoes([]);
             setAgendarEmBloco(false);
+            setTeoriaFinalizada(false);
             setIsSaving(false);
             setDataEstudo(new Date().toISOString().split('T')[0]);
 
@@ -136,6 +139,7 @@ export function useRegisterStudyForm({ isOpen, recordedTime, initialTime, initia
                 questoes: { feitas: finalQuestoes, acertos: finalAcertos },
                 revisoesAgendadas: revisoes,
                 agendarEmBloco,
+                teoriaFinalizada,
                 dataEstudo
             });
             setIsSaving(false);
@@ -159,6 +163,7 @@ export function useRegisterStudyForm({ isOpen, recordedTime, initialTime, initia
         acertos, setAcertos,
         revisoes,
         agendarEmBloco, setAgendarEmBloco,
+        teoriaFinalizada, setTeoriaFinalizada,
         isSaving,
         adicionarTempo,
         alternarCiclo,

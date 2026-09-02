@@ -5,7 +5,6 @@ import {
 } from 'lucide-react';
 import { useRegisterStudyForm } from '../../hooks/useRegisterStudyForm';
 import { STUDY_MATERIALS, REVISION_CYCLES } from '../../utils/studyConstants';
-import NotebookEditorModal from './NotebookEditorModal';
 import { useLocalStorage } from '../../hooks/useLocalStorage';
 import { Discipline } from '../../types/study';
 
@@ -75,7 +74,6 @@ export default function RegisterStudyModal({
     initialData,
     onSave
 }: RegisterStudyModalProps) {
-    const [activeNotebook, setActiveNotebook] = useState<string | null>(null);
     const [storedDisciplinas] = useLocalStorage<Discipline[]>('@papyrus:disciplines', INITIAL_DISCIPLINAS);
     const disciplinas = Array.isArray(storedDisciplinas) && storedDisciplinas.length > 0 ? storedDisciplinas : INITIAL_DISCIPLINAS;
 
@@ -87,8 +85,8 @@ export default function RegisterStudyModal({
         topico, setTopico,
         tipoEstudo, setTipoEstudo,
         dataEstudo, setDataEstudo,
-        horas,
-        minutos,
+        horas, setHoras,
+        minutos, setMinutos,
         materiais,
         questoesFeitas,
         acertos,
@@ -96,7 +94,6 @@ export default function RegisterStudyModal({
         agendarEmBloco, setAgendarEmBloco,
         teoriaFinalizada, setTeoriaFinalizada,
         isSaving,
-        adicionarTempo,
         alternarCiclo,
         alternarMaterial,
         incrementarQuestoes,
@@ -157,6 +154,46 @@ export default function RegisterStudyModal({
                 </header>
 
                 <div className="px-8 py-6 overflow-y-auto flex-1 space-y-6 bg-slate-50/40">
+                    <div className="bg-blue-50/70 rounded-2xl border border-blue-100 p-5 flex items-center justify-between gap-4 flex-wrap shadow-sm">
+                        <div className="flex items-center gap-3">
+                            <label className="text-[10px] font-bold uppercase tracking-widest text-blue-400 whitespace-nowrap">
+                                Tipo de estudo
+                            </label>
+                            <select
+                                value={tipoEstudo}
+                                onChange={(e) => setTipoEstudo(e.target.value)}
+                                className="select select-sm bg-white text-slate-700 font-semibold rounded-lg border border-blue-200 focus:border-blue-500 focus:outline-none text-sm shadow-sm"
+                            >
+                                <option>Teoria</option>
+                                <option>Revisão</option>
+                                <option>Questões</option>
+                                <option>Leitura de Lei</option>
+                            </select>
+                        </div>
+
+                        <div className="flex items-center gap-4 flex-wrap">
+                            <label className="text-[10px] font-bold uppercase tracking-widest text-blue-400 whitespace-nowrap">
+                                Data do estudo
+                            </label>
+                            <div className="flex items-center gap-2">
+                                <button
+                                    type="button"
+                                    onClick={() => setDataEstudo(new Date().toISOString().split('T')[0])}
+                                    className={`px-3 py-1.5 rounded-md text-xs font-bold transition-colors cursor-pointer ${dataEstudo === new Date().toISOString().split('T')[0] ? 'bg-blue-500 text-white shadow-sm' : 'bg-white text-blue-500 border border-blue-200 active:scale-95 hover:bg-blue-50'}`}
+                                >
+                                    Hoje
+                                </button>
+                                <input
+                                    type="date"
+                                    value={dataEstudo}
+                                    onChange={(e) => setDataEstudo(e.target.value)}
+                                    className="px-3 py-1 h-7 text-xs bg-white text-slate-700 font-semibold rounded-md border border-blue-200 focus:outline-none focus:border-blue-500 shadow-sm cursor-pointer hover:border-blue-400 transition-colors"
+                                    max={new Date().toISOString().split('T')[0]}
+                                />
+                            </div>
+                        </div>
+                    </div>
+
                     <div className="bg-white rounded-2xl border border-slate-200 p-5 space-y-4 shadow-sm">
                         <div className="relative">
                             <label className="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">
@@ -267,64 +304,6 @@ export default function RegisterStudyModal({
                         </div>
                     </div>
 
-                    <div className="bg-blue-50/70 rounded-2xl border border-blue-100 p-5 space-y-3">
-                        <div className="flex items-center justify-between gap-4 flex-wrap">
-                            <div className="flex items-center gap-3">
-                                <label className="text-[10px] font-bold uppercase tracking-widest text-blue-400 whitespace-nowrap">
-                                    Tipo de estudo
-                                </label>
-                                <select
-                                    value={tipoEstudo}
-                                    onChange={(e) => setTipoEstudo(e.target.value)}
-                                    className="select select-sm bg-white text-slate-700 font-semibold rounded-lg border border-blue-200 focus:border-blue-500 focus:outline-none text-sm shadow-sm"
-                                >
-                                    <option>Teoria</option>
-                                    <option>Revisão</option>
-                                    <option>Questões</option>
-                                    <option>Leitura de Lei</option>
-                                </select>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <span className="text-[10px] font-bold uppercase tracking-widest text-blue-400">
-                                    Adicionar tempo
-                                </span>
-                                <div className="flex items-center gap-1.5">
-                                    {[{ l: '+15m', m: 15 }, { l: '+30m', m: 30 }, { l: '+1h', m: 60 }].map(({ l, m }) => (
-                                        <button
-                                            key={l}
-                                            type="button"
-                                            onClick={() => adicionarTempo(m)}
-                                            className="px-3 py-1 rounded-full bg-white border border-blue-200 text-blue-500 font-bold text-[11px] active:scale-95 cursor-pointer shadow-sm transform-gpu"
-                                        >
-                                            {l}
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="flex items-center gap-4 flex-wrap pt-3 border-t border-blue-100/50">
-                            <label className="text-[10px] font-bold uppercase tracking-widest text-blue-400 whitespace-nowrap">
-                                Data do estudo
-                            </label>
-                            <div className="flex items-center gap-2">
-                                <button
-                                    type="button"
-                                    onClick={() => setDataEstudo(new Date().toISOString().split('T')[0])}
-                                    className={`px-3 py-1.5 rounded-md text-xs font-bold transition-colors cursor-pointer ${dataEstudo === new Date().toISOString().split('T')[0] ? 'bg-blue-500 text-white shadow-sm' : 'bg-white text-blue-500 border border-blue-200 active:scale-95 hover:bg-blue-50'}`}
-                                >
-                                    Hoje
-                                </button>
-                                <input
-                                    type="date"
-                                    value={dataEstudo}
-                                    onChange={(e) => setDataEstudo(e.target.value)}
-                                    className="px-3 py-1 h-7 text-xs bg-white text-slate-700 font-semibold rounded-md border border-blue-200 focus:outline-none focus:border-blue-500 shadow-sm cursor-pointer hover:border-blue-400 transition-colors"
-                                    max={new Date().toISOString().split('T')[0]}
-                                />
-                            </div>
-                        </div>
-
                         <div className="flex items-center justify-between px-4 py-3.5 bg-white rounded-xl border border-blue-100 shadow-sm">
                             <div className="flex items-center gap-2.5 text-blue-500">
                                 <Clock size={16} />
@@ -332,40 +311,35 @@ export default function RegisterStudyModal({
                                     Duração registrada
                                 </span>
                             </div>
-                            <span className="text-2xl font-medium text-slate-700 tracking-tight tabular-nums"
-                                style={{ fontFeatureSettings: "'tnum' on" }}>
-                                {String(horas).padStart(2, '0')}
-                                <span className="text-sm text-slate-400 font-normal mx-1">h</span>
-                                {String(minutos).padStart(2, '0')}
-                                <span className="text-sm text-slate-400 font-normal ml-1">min</span>
-                            </span>
+                            <div className="flex items-center text-2xl font-medium text-slate-700 tracking-tight tabular-nums" style={{ fontFeatureSettings: "'tnum' on" }}>
+                                <input
+                                    type="text"
+                                    inputMode="numeric"
+                                    value={String(horas).padStart(2, '0')}
+                                    onChange={(e) => {
+                                        const val = e.target.value.replace(/\D/g, '');
+                                        setHoras(val === '' ? 0 : parseInt(val.slice(-2), 10));
+                                    }}
+                                    onFocus={(e) => e.target.select()}
+                                    className="w-[2.2ch] bg-transparent border-none p-0 text-right focus:ring-0 focus:outline-none hover:bg-slate-100 cursor-text rounded transition-colors"
+                                />
+                                <span className="text-sm text-slate-400 font-normal mx-1 select-none">h</span>
+                                <input
+                                    type="text"
+                                    inputMode="numeric"
+                                    value={String(minutos).padStart(2, '0')}
+                                    onChange={(e) => {
+                                        const val = e.target.value.replace(/\D/g, '');
+                                        let num = val === '' ? 0 : parseInt(val.slice(-2), 10);
+                                        if (num > 59) num = 59;
+                                        setMinutos(num);
+                                    }}
+                                    onFocus={(e) => e.target.select()}
+                                    className="w-[2.2ch] bg-transparent border-none p-0 text-right focus:ring-0 focus:outline-none hover:bg-slate-100 cursor-text rounded transition-colors"
+                                />
+                                <span className="text-sm text-slate-400 font-normal ml-1 select-none">min</span>
+                            </div>
                         </div>
-                    </div>
-
-                    <div className="bg-white rounded-2xl border border-slate-200 p-5 space-y-3 shadow-sm">
-                        <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
-                            Anotações
-                        </p>
-                        <div className="grid grid-cols-1">
-                            <button
-                                type="button"
-                                onClick={() => setActiveNotebook('Anotações')}
-                                className="group flex items-center gap-3 p-4 rounded-xl border border-slate-200 bg-slate-50/60 hover:bg-white hover:border-slate-300 hover:shadow-md transition-colors duration-150 cursor-pointer text-left"
-                            >
-                                <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center shrink-0">
-                                    <PenLine size={18} className="text-blue-500" />
-                                </div>
-                                <div className="min-w-0 flex-1">
-                                    <span className="block text-sm font-bold text-slate-800">Bloco de Anotações</span>
-                                    <span className="block text-xs text-slate-400 mt-0.5 truncate">Registre observações, resumos ou dúvidas</span>
-                                </div>
-                                <span className="text-xs font-bold text-blue-500 flex items-center gap-0.5 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-out">
-                                    Editar
-                                    <ChevronRight size={12} className="group-hover:translate-x-0.5 transition-transform transform-gpu" />
-                                </span>
-                            </button>
-                        </div>
-                    </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="bg-white rounded-2xl border border-slate-200 p-5 space-y-3 shadow-sm">
@@ -542,16 +516,6 @@ export default function RegisterStudyModal({
                 </footer>
 
             </div>
-
-            {/* Modal Secundário do Editor de Texto Rico */}
-            <NotebookEditorModal
-                isOpen={activeNotebook !== null}
-                title={activeNotebook}
-                onClose={() => setActiveNotebook(null)}
-                onSave={(content) => {
-                    console.log(`Salvou o ${activeNotebook}:`, content);
-                }}
-            />
         </div>
     );
 }
