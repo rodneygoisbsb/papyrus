@@ -27,8 +27,8 @@ export function useRegisterStudyForm({ isOpen, recordedTime, initialTime, initia
     const [topico, setTopico] = useState<string>('');
     const [tipoEstudo, setTipoEstudo] = useState<string>('Teoria');
     const [dataEstudo, setDataEstudo] = useState<string>(new Date().toISOString().split('T')[0]);
-    const [horas, setHoras] = useState<number>(0);
-    const [minutos, setMinutos] = useState<number>(0);
+    const [horas, setHoras] = useState<number | ''>(0);
+    const [minutos, setMinutos] = useState<number | ''>(0);
     const [materiais, setMateriais] = useState<string[]>([]);
     const [questoesFeitas, setQuestoesFeitas] = useState<number | ''>(0);
     const [acertos, setAcertos] = useState<number | ''>(0);
@@ -84,7 +84,7 @@ export function useRegisterStudyForm({ isOpen, recordedTime, initialTime, initia
     }, [isOpen]); // Dependências reduzidas para evitar resets indevidos
 
     const adicionarTempo = (minsToAdd: number) => {
-        const { hours, minutes } = addTimeToDuration(horas, minutos, minsToAdd);
+        const { hours, minutes } = addTimeToDuration(Number(horas) || 0, Number(minutos) || 0, minsToAdd);
         setHoras(hours);
         setMinutos(minutes);
     };
@@ -134,7 +134,7 @@ export function useRegisterStudyForm({ isOpen, recordedTime, initialTime, initia
                 disciplina,
                 topico,
                 tipoEstudo,
-                duracao: { horas, minutos },
+                duracao: { horas: Number(horas) || 0, minutos: Number(minutos) || 0 },
                 materiais,
                 questoes: { feitas: finalQuestoes, acertos: finalAcertos },
                 revisoesAgendadas: revisoes,

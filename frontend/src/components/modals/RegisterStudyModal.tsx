@@ -5,6 +5,7 @@ import {
 } from 'lucide-react';
 import { useRegisterStudyForm } from '../../hooks/useRegisterStudyForm';
 import { STUDY_MATERIALS, REVISION_CYCLES } from '../../utils/studyConstants';
+import { useModalLenis } from '../../hooks/useModalLenis';
 import { useLocalStorage } from '../../hooks/useLocalStorage';
 import { Discipline } from '../../types/study';
 
@@ -80,6 +81,8 @@ export default function RegisterStudyModal({
     const [disciplinaFocus, setDisciplinaFocus] = useState(false);
     const [topicoFocus, setTopicoFocus] = useState(false);
 
+    const { wrapperRef, contentRef } = useModalLenis();
+
     const {
         disciplina, setDisciplina,
         topico, setTopico,
@@ -153,8 +156,9 @@ export default function RegisterStudyModal({
                     </button>
                 </header>
 
-                <div className="px-8 py-6 overflow-y-auto flex-1 space-y-6 bg-slate-50/40">
-                    <div className="bg-blue-50/70 rounded-2xl border border-blue-100 p-5 flex items-center justify-between gap-4 flex-wrap shadow-sm">
+                <div className="px-8 py-6 overflow-y-auto flex-1 bg-slate-50/40" data-lenis-prevent="true" ref={wrapperRef}>
+                    <div className="space-y-6" ref={contentRef}>
+                        <div className="bg-blue-50/70 rounded-2xl border border-blue-100 p-5 flex items-center justify-between gap-4 flex-wrap shadow-sm">
                         <div className="flex items-center gap-3">
                             <label className="text-[10px] font-bold uppercase tracking-widest text-blue-400 whitespace-nowrap">
                                 Tipo de estudo
@@ -224,7 +228,7 @@ export default function RegisterStudyModal({
                                 </button>
                             </div>
                             {disciplinaFocus && filteredDisciplinas.length > 0 && (
-                                <ul className="absolute z-50 w-full mt-1 bg-white border border-slate-200 rounded-xl shadow-xl max-h-48 overflow-y-auto">
+                                <ul className="absolute z-50 w-full mt-1 bg-white border border-slate-200 rounded-xl shadow-xl max-h-48 overflow-y-auto" data-lenis-prevent="true">
                                     {filteredDisciplinas.map((d) => (
                                         <li
                                             key={d.id}
@@ -269,7 +273,7 @@ export default function RegisterStudyModal({
                                 </button>
                             </div>
                             {topicoFocus && filteredTopicos.length > 0 && (
-                                <ul className="absolute z-50 w-full mt-1 bg-white border border-slate-200 rounded-xl shadow-xl max-h-48 overflow-y-auto">
+                                <ul className="absolute z-50 w-full mt-1 bg-white border border-slate-200 rounded-xl shadow-xl max-h-48 overflow-y-auto" data-lenis-prevent="true">
                                     {filteredTopicos.map((t) => (
                                         <li
                                             key={t.id}
@@ -287,7 +291,7 @@ export default function RegisterStudyModal({
                             )}
 
                             {/* Teoria Finalizada Checkbox */}
-                            <label className="mt-3 ml-1 flex items-center gap-2 cursor-pointer w-fit group">
+                            <label className="mt-6 ml-1 flex items-center gap-2 cursor-pointer w-fit group">
                                 <div className={`w-3.5 h-3.5 rounded-[3px] border flex items-center justify-center transition-colors ${teoriaFinalizada ? 'bg-emerald-500 border-emerald-500' : 'bg-white border-slate-300 group-hover:border-slate-400'}`}>
                                     {teoriaFinalizada && <Check size={10} className="text-white" strokeWidth={3} />}
                                 </div>
@@ -304,42 +308,44 @@ export default function RegisterStudyModal({
                         </div>
                     </div>
 
-                        <div className="flex items-center justify-between px-4 py-3.5 bg-white rounded-xl border border-blue-100 shadow-sm">
-                            <div className="flex items-center gap-2.5 text-blue-500">
-                                <Clock size={16} />
-                                <span className="text-[10px] font-bold uppercase tracking-widest text-blue-400">
-                                    Duração registrada
-                                </span>
-                            </div>
-                            <div className="flex items-center text-2xl font-medium text-slate-700 tracking-tight tabular-nums" style={{ fontFeatureSettings: "'tnum' on" }}>
-                                <input
-                                    type="text"
-                                    inputMode="numeric"
-                                    value={String(horas).padStart(2, '0')}
-                                    onChange={(e) => {
-                                        const val = e.target.value.replace(/\D/g, '');
-                                        setHoras(val === '' ? 0 : parseInt(val.slice(-2), 10));
-                                    }}
-                                    onFocus={(e) => e.target.select()}
-                                    className="w-[2.2ch] bg-transparent border-none p-0 text-right focus:ring-0 focus:outline-none hover:bg-slate-100 cursor-text rounded transition-colors"
-                                />
-                                <span className="text-sm text-slate-400 font-normal mx-1 select-none">h</span>
-                                <input
-                                    type="text"
-                                    inputMode="numeric"
-                                    value={String(minutos).padStart(2, '0')}
-                                    onChange={(e) => {
-                                        const val = e.target.value.replace(/\D/g, '');
-                                        let num = val === '' ? 0 : parseInt(val.slice(-2), 10);
-                                        if (num > 59) num = 59;
-                                        setMinutos(num);
-                                    }}
-                                    onFocus={(e) => e.target.select()}
-                                    className="w-[2.2ch] bg-transparent border-none p-0 text-right focus:ring-0 focus:outline-none hover:bg-slate-100 cursor-text rounded transition-colors"
-                                />
-                                <span className="text-sm text-slate-400 font-normal ml-1 select-none">min</span>
-                            </div>
+                    <div className="flex items-center justify-between px-4 py-3.5 bg-white rounded-xl border border-blue-100 shadow-sm">
+                        <div className="flex items-center gap-2.5 text-blue-500">
+                            <Clock size={16} />
+                            <span className="text-[10px] font-bold uppercase tracking-widest text-blue-400">
+                                Duração registrada
+                            </span>
                         </div>
+                        <div className="flex items-center text-2xl font-medium text-slate-700 tracking-tight tabular-nums" style={{ fontFeatureSettings: "'tnum' on" }}>
+                            <input
+                                type="number"
+                                value={horas === '' ? '' : String(horas).padStart(2, '0')}
+                                onChange={(e) => {
+                                    const val = e.target.value;
+                                    setHoras(val === '' ? '' : Math.max(0, parseInt(val, 10)));
+                                }}
+                                onFocus={(e) => e.target.select()}
+                                className="w-[2.5ch] bg-transparent border-none p-0 text-right focus:ring-0 focus:outline-none hover:bg-slate-100 cursor-text rounded transition-colors [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none [-moz-appearance:textfield]"
+                            />
+                            <span className="text-sm text-slate-400 font-normal mx-1 select-none">h</span>
+                            <input
+                                type="number"
+                                value={minutos === '' ? '' : String(minutos).padStart(2, '0')}
+                                onChange={(e) => {
+                                    const val = e.target.value;
+                                    if (val === '') {
+                                        setMinutos('');
+                                    } else {
+                                        let num = parseInt(val, 10);
+                                        if (num > 59) num = 59;
+                                        setMinutos(Math.max(0, num));
+                                    }
+                                }}
+                                onFocus={(e) => e.target.select()}
+                                className="w-[2.5ch] bg-transparent border-none p-0 text-right focus:ring-0 focus:outline-none hover:bg-slate-100 cursor-text rounded transition-colors [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none [-moz-appearance:textfield]"
+                            />
+                            <span className="text-sm text-slate-400 font-normal ml-1 select-none">min</span>
+                        </div>
+                    </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="bg-white rounded-2xl border border-slate-200 p-5 space-y-3 shadow-sm">
@@ -487,7 +493,7 @@ export default function RegisterStudyModal({
                             </div>
                         </div>
                     </div>
-
+                    </div>
                 </div>
 
                 <footer className="px-8 py-5 border-t border-slate-100 bg-white flex items-center justify-end gap-3 shrink-0">

@@ -1,6 +1,7 @@
 import React from 'react';
 import { X, Plus, Trash2 } from 'lucide-react';
 import { useDisciplineEditor } from '../../hooks/useDisciplineEditor';
+import { useModalLenis } from '../../hooks/useModalLenis';
 
 export default function DisciplineEditorModal({
     activeDisciplineEditor,
@@ -19,6 +20,8 @@ export default function DisciplineEditorModal({
         handleDragEnd
     } = useDisciplineEditor(activeDisciplineEditor, setActiveDisciplineEditor);
 
+    const { wrapperRef, contentRef } = useModalLenis();
+
     if (!activeDisciplineEditor) return null;
 
     return (
@@ -35,8 +38,9 @@ export default function DisciplineEditorModal({
                     </button>
                 </div>
 
-                <div className="p-6 overflow-y-auto space-y-6 flex-1 text-xs">
-                    <div>
+                <div className="p-6 overflow-y-auto flex-1 text-xs" data-lenis-prevent="true" ref={wrapperRef}>
+                    <div className="space-y-6" ref={contentRef}>
+                        <div>
                         <label className="text-neutral-content font-bold block mb-1.5 uppercase">Nome da Disciplina</label>
                         <input
                             type="text"
@@ -74,7 +78,7 @@ export default function DisciplineEditorModal({
                             </button>
                         </div>
 
-                        <div className="bg-base-200 rounded-3xl divide-y divide-base-300 max-h-64 overflow-y-auto p-1 border border-base-300">
+                        <div className="bg-base-200 rounded-3xl divide-y divide-base-300 max-h-64 overflow-y-auto p-1 border border-base-300" data-lenis-prevent="true">
                             {!activeDisciplineEditor.topics || activeDisciplineEditor.topics.length === 0 ? (
                                 <div className="p-6 text-center text-neutral-content">Nenhum tópico adicionado ainda.</div>
                             ) : (
@@ -107,6 +111,7 @@ export default function DisciplineEditorModal({
                                 ))
                             )}
                         </div>
+                    </div>
                     </div>
                 </div>
 

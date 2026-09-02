@@ -15,6 +15,7 @@ import {
     AlignCenter
 } from 'lucide-react';
 import { useRichTextEditor } from '../../hooks/useRichTextEditor';
+import { useModalLenis } from '../../hooks/useModalLenis';
 
 export default function RichTextEditorModal({
     isOpen,
@@ -25,6 +26,7 @@ export default function RichTextEditorModal({
     type = 'notes' // 'notes' ou 'errors'
 }) {
     const { editorRef, execCmd, saveEditorContent } = useRichTextEditor(onSave);
+    const { wrapperRef, contentRef } = useModalLenis();
 
     if (!isOpen) return null;
 
@@ -91,12 +93,16 @@ export default function RichTextEditorModal({
                     </button>
                 </div>
 
-                <div
-                    ref={editorRef}
-                    contentEditable
-                    className="flex-1 p-8 overflow-y-auto bg-base-100 text-base-content outline-none leading-relaxed prose max-w-none text-sm font-sans"
-                    style={{ minHeight: '300px' }}
-                />
+                <div className="flex-1 flex overflow-y-auto" data-lenis-prevent="true" ref={wrapperRef}>
+                    <div className="flex-1 p-8 bg-base-100 text-base-content outline-none leading-relaxed prose max-w-none text-sm font-sans" ref={contentRef}>
+                        <div
+                            ref={editorRef}
+                            contentEditable
+                            className="outline-none"
+                            style={{ minHeight: '300px' }}
+                        />
+                    </div>
+                </div>
 
                 <div className="px-6 py-4 border-t border-base-300 flex justify-between items-center bg-base-100 shrink-0">
                     <span className="text-xs text-neutral-content">As formatações ficam salvas no seu caderno de estudos.</span>

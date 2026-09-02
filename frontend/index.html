@@ -12,6 +12,23 @@
 <body class="antialiased">
   <div id="root"></div>
   <script type="module" src="/src/main.tsx"></script>
+
+  <!-- Lenis: Smooth Scroll -->
+  <script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const lenis = new Lenis({
+        lerp: 0.1,
+        smoothWheel: true,
+      });
+
+      function raf(time) {
+        lenis.raf(time);
+        requestAnimationFrame(raf);
+      }
+      requestAnimationFrame(raf);
+    });
+  </script>
 </body>
 
 </html>
