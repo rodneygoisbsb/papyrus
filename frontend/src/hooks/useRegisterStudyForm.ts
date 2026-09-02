@@ -10,6 +10,7 @@ export interface RegisterStudyData {
     questoes: { feitas: number; acertos: number };
     revisoesAgendadas: string[];
     agendarEmBloco: boolean;
+    dataEstudo: string;
 }
 
 export interface UseRegisterStudyFormProps {
@@ -24,11 +25,12 @@ export function useRegisterStudyForm({ isOpen, recordedTime, initialTime, initia
     const [disciplina, setDisciplina] = useState<string>('');
     const [topico, setTopico] = useState<string>('');
     const [tipoEstudo, setTipoEstudo] = useState<string>('Teoria');
+    const [dataEstudo, setDataEstudo] = useState<string>(new Date().toISOString().split('T')[0]);
     const [horas, setHoras] = useState<number>(0);
     const [minutos, setMinutos] = useState<number>(0);
     const [materiais, setMateriais] = useState<string[]>([]);
-    const [questoesFeitas, setQuestoesFeitas] = useState<number>(0);
-    const [acertos, setAcertos] = useState<number>(0);
+    const [questoesFeitas, setQuestoesFeitas] = useState<number | ''>(0);
+    const [acertos, setAcertos] = useState<number | ''>(0);
     const [revisoes, setRevisoes] = useState<string[]>([]);
     const [agendarEmBloco, setAgendarEmBloco] = useState<boolean>(false);
     const [isSaving, setIsSaving] = useState<boolean>(false);
@@ -40,7 +42,7 @@ export function useRegisterStudyForm({ isOpen, recordedTime, initialTime, initia
         if (isOpen) {
             setDisciplina(initialData?.subject || '');
             setTopico(initialData?.topicName || initialData?.topicoNome || '');
-            
+
             let tipo = 'Teoria';
             if (initialData?.type === 'REVISION') tipo = 'Revisão';
             if (initialData?.type === 'QUESTIONS') tipo = 'Questões';
@@ -52,6 +54,7 @@ export function useRegisterStudyForm({ isOpen, recordedTime, initialTime, initia
             setRevisoes([]);
             setAgendarEmBloco(false);
             setIsSaving(false);
+            setDataEstudo(new Date().toISOString().split('T')[0]);
 
             if (recordedTime) {
                 const partes = recordedTime.split(':');
@@ -99,8 +102,14 @@ export function useRegisterStudyForm({ isOpen, recordedTime, initialTime, initia
         );
     };
 
-    const incrementarQuestoes = (valor: number) => setQuestoesFeitas(Math.max(0, questoesFeitas + valor));
-    const incrementarAcertos = (valor: number) => setAcertos(Math.max(0, acertos + valor));
+    const incrementarQuestoes = (valor: number) => {
+        const atual = typeof questoesFeitas === 'number' ? questoesFeitas : 0;
+        setQuestoesFeitas(Math.max(0, atual + valor));
+    };
+    const incrementarAcertos = (valor: number) => {
+        const atual = typeof acertos === 'number' ? acertos : 0;
+        setAcertos(Math.max(0, atual + valor));
+    };
 
     const handleSalvar = () => {
         if (!disciplina.trim()) {
@@ -115,26 +124,34 @@ export function useRegisterStudyForm({ isOpen, recordedTime, initialTime, initia
 
         setIsSaving(true);
         setTimeout(() => {
+            const finalQuestoes = typeof questoesFeitas === 'number' ? questoesFeitas : 0;
+            const finalAcertos = typeof acertos === 'number' ? acertos : 0;
+
             onSave({
                 disciplina,
                 topico,
                 tipoEstudo,
                 duracao: { horas, minutos },
                 materiais,
-                questoes: { feitas: questoesFeitas, acertos },
+                questoes: { feitas: finalQuestoes, acertos: finalAcertos },
                 revisoesAgendadas: revisoes,
-                agendarEmBloco
+                agendarEmBloco,
+                dataEstudo
             });
             setIsSaving(false);
         }, 800);
     };
 
-    const taxaAcertos = calculateAccuracyRate(acertos, questoesFeitas);
+    const taxaAcertos = calculateAccuracyRate(
+        typeof acertos === 'number' ? acertos : 0,
+        typeof questoesFeitas === 'number' ? questoesFeitas : 0
+    );
 
     return {
         disciplina, setDisciplina,
         topico, setTopico,
         tipoEstudo, setTipoEstudo,
+        dataEstudo, setDataEstudo,
         horas, setHoras,
         minutos, setMinutos,
         materiais,

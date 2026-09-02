@@ -23,7 +23,7 @@ export default function PomodoroCard() {
                     <button
                         type="button"
                         onClick={() => resetPomodoro('focus')}
-                        className={`join-item btn btn-xs ${pomodoroMode === 'focus'
+                        className={`join-item btn btn-xs ${pomodoroMode ==='focus'
                             ? 'btn-primary text-primary-content font-bold'
                             : 'btn-ghost text-neutral-content'
                             } focus-visible:ring-2 focus-visible:ring-primary`}
@@ -33,7 +33,7 @@ export default function PomodoroCard() {
                     <button
                         type="button"
                         onClick={() => resetPomodoro('break')}
-                        className={`join-item btn btn-xs ${pomodoroMode === 'break'
+                        className={`join-item btn btn-xs ${pomodoroMode ==='break'
                             ? 'btn-primary text-primary-content font-bold'
                             : 'btn-ghost text-neutral-content'
                             } focus-visible:ring-2 focus-visible:ring-primary`}
@@ -53,7 +53,7 @@ export default function PomodoroCard() {
                 <button
                     type="button"
                     onClick={togglePomodoro}
-                    className={`btn btn-sm flex-1 font-semibold rounded-xl ${isPomodoroRunning ? 'btn-warning' : 'btn-primary text-primary-content'
+                    className={ transform-gpu`transform-gpu btn btn-sm flex-1 font-semibold rounded-xl ${isPomodoroRunning ? 'btn-warning' : 'btn-primary text-primary-content'
                         } shadow-2xs`}
                 >
                     {isPomodoroRunning ? (

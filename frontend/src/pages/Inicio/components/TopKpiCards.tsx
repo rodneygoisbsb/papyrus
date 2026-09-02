@@ -57,7 +57,7 @@ export default function TopKpiCards({
 
                     <div className="w-full bg-base-200 rounded-full h-2 mt-4 overflow-hidden border border-base-300">
                         <div
-                            className="bg-primary h-full rounded-full transition-all duration-700 ease-out"
+                            className="bg-primary h-full rounded-full transition-[width] duration-500 ease-out ease-out"
                             style={{ width: `${progressoSemanalCalculado}%` }}
                         />
                     </div>
@@ -96,7 +96,7 @@ export default function TopKpiCards({
 
                     <div className="w-full bg-base-200 rounded-full h-2 mt-4 overflow-hidden border border-base-300">
                         <div
-                            className="bg-emerald-500 h-full rounded-full transition-all duration-700 ease-out"
+                            className="bg-emerald-500 h-full rounded-full transition-[width] duration-500 ease-out ease-out"
                             style={{ width: `${progressoQuestoesCalculado}%` }}
                         />
                     </div>
@@ -110,7 +110,7 @@ export default function TopKpiCards({
             </div>
 
             {/* Card 3: Progresso no Edital */}
-            <div className="bg-base-100 border border-primary/40 p-6 rounded-3xl shadow-[0_0_30px_rgba(94,148,255,0.15)] flex flex-col justify-between hover:shadow-[0_0_40px_rgba(94,148,255,0.25)] transition-shadow relative overflow-hidden before:absolute before:top-0 before:left-0 before:right-0 before:h-[2px] before:bg-gradient-to-r before:from-transparent before:via-primary before:to-transparent">
+            <div className="bg-base-100 border border-primary/40 p-6 rounded-3xl shadow-[0_0_30px_rgba(94,148,255,0.15)] flex flex-col justify-between hover:border-primary/80 transition-colors duration-150 relative overflow-hidden before:absolute before:top-0 before:left-0 before:right-0 before:h-[2px] before:bg-gradient-to-r before:from-transparent before:via-primary before:to-transparent">
                 <div className="flex justify-between items-center h-8 mb-4">
                     <div className="flex items-center gap-2">
                         <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary shrink-0">
@@ -127,9 +127,9 @@ export default function TopKpiCards({
                     </div>
                 </div>
 
-                <div className="flex justify-between items-start my-auto">
-                    <div>
-                        <div className="flex items-baseline gap-0.5">
+                <div className="flex justify-center items-center gap-5 sm:gap-8 my-auto w-full">
+                    <div className="text-center">
+                        <div className="flex items-baseline justify-center gap-0.5">
                             <span className="text-3xl sm:text-4xl font-semibold tracking-tight text-base-content leading-none">
                                 <AnimatedCounter value={editalProgress} duration={750} />
                             </span>
@@ -140,12 +140,15 @@ export default function TopKpiCards({
                         </span>
                     </div>
 
-                    <div className="text-right">
-                        <div className="flex items-baseline justify-end gap-0.5">
+                    {/* Divisória elegante */}
+                    <div className="h-12 w-px bg-base-300/80 rounded-full"></div>
+
+                    <div className="text-center">
+                        <div className="flex items-baseline justify-center gap-0.5">
                             <span className="text-3xl sm:text-4xl font-semibold tracking-tight text-primary leading-none">
                                 <AnimatedCounter value={topicsStudied} duration={750} />
                             </span>
-                            <span className="text-xs font-medium text-neutral-content leading-none ml-1">
+                            <span className="text-xs font-medium text-neutral-content leading-none ml-1 text-neutral-content/70">
                                 / {totalTopics}
                             </span>
                         </div>

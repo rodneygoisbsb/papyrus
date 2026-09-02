@@ -25,10 +25,10 @@ export default function Header({
                     <button
                         type="button"
                         onClick={() => setIsPlanOpen((v) => !v)}
-                        className="flex items-center gap-2 bg-base-200/70 hover:bg-base-200 text-primary font-bold text-xs px-3.5 py-2 rounded-xl border border-base-300/70 transition-all cursor-pointer"
+                        className="flex items-center gap-2 bg-base-200/70 hover:bg-base-200 text-primary font-bold text-xs px-3.5 py-2 rounded-xl border border-base-300/70 transition-colors duration-150 cursor-pointer"
                     >
                         <span>{planoAtivo?.nome || 'Selecionar'}</span>
-                        <ChevronDown size={13} className={`transition-transform duration-200 ${isPlanOpen ? 'rotate-180' : ''}`} />
+                        <ChevronDown size={13} className={`transition-transform duration-200 ${isPlanOpen ?'rotate-180' : ''}`} />
                     </button>
 
                     {isPlanOpen && (

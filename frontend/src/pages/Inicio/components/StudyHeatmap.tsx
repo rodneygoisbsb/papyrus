@@ -45,7 +45,7 @@ export default function StudyHeatmap() {
                                     data-tip={`(${dia}): ${item.hours} líquidas`}
                                 >
                                     <div
-                                        className={`w-full aspect-square rounded-[4px] transition-all duration-150 hover:scale-125 cursor-pointer shadow-2xs ${getHeatmapLevelColor(item.level)}`}
+                                        className={`w-full aspect-square rounded-[4px] transition-transform duration-200 ease-out hover:scale-125 cursor-pointer shadow-2xs ${getHeatmapLevelColor(item.level)} transform-gpu`}
                                     />
                                 </div>
                             ))}

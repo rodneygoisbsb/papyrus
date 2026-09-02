@@ -68,7 +68,7 @@ export default function DisciplineEditorModal({
                             <button
                                 type="button"
                                 onClick={handleAddTopic}
-                                className="btn btn-primary btn-sm text-white font-bold px-4 py-2 rounded-2xl flex items-center gap-1.5 shadow-sm border-none"
+                                className="btn btn-primary btn-sm text-white font-bold px-4 py-2 rounded-2xl flex items-center gap-1.5 shadow-sm border-none transform-gpu"
                             >
                                 <Plus size={15} /> Adicionar
                             </button>
@@ -85,7 +85,7 @@ export default function DisciplineEditorModal({
                                         onDragStart={(e) => handleDragStart(e, idx)}
                                         onDragOver={(e) => handleDragOver(e, idx)}
                                         onDragEnd={handleDragEnd}
-                                        className={`p-3.5 flex items-center justify-between transition-colors select-none cursor-grab active:cursor-grabbing rounded-2xl ${draggedTopicIndex === idx ? 'bg-primary/10' : 'hover:bg-base-100'
+                                        className={`p-3.5 flex items-center justify-between transition-colors select-none cursor-grab active:cursor-grabbing rounded-2xl ${draggedTopicIndex === idx ?'bg-primary/10' : 'hover:bg-base-100'
                                             }`}
                                     >
                                         <span className="font-semibold text-base-content truncate pr-4 pointer-events-none">{t.name}</span>
@@ -129,7 +129,7 @@ export default function DisciplineEditorModal({
                         <button
                             type="button"
                             onClick={handleSaveDisciplineEditor}
-                            className="btn btn-sm btn-primary text-white font-bold text-xs px-6 py-2 rounded-2xl shadow-md border-none"
+                            className="btn btn-sm btn-primary text-white font-bold text-xs px-6 py-2 rounded-2xl shadow-md border-none transform-gpu"
                         >
                             Salvar Alterações
                         </button>

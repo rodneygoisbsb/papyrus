@@ -10,6 +10,7 @@ import {
     BarChart3,
     User,
     Settings,
+    ChevronRight
 } from 'lucide-react';
 
 const MENU = [
@@ -32,22 +33,26 @@ const ITEM_GAP = 4;
 
 export default function Sidebar({ activeTab, setActiveTab }) {
     const [expanded, setExpanded] = useState(false);
-    const [hoveredIdx, setHoveredIdx] = useState(null);
 
     return (
         <aside
-            onMouseEnter={() => setExpanded(true)}
-            onMouseLeave={() => { setExpanded(false); setHoveredIdx(null); }}
             className={[
                 expanded ? 'w-60' : 'w-[68px]',
-                'h-screen bg-white border-r border-slate-100',
+                'h-screen bg-white border-r border-slate-100 relative',
                 'flex flex-col justify-between',
                 'shrink-0 sticky top-0 z-40',
                 'transition-[width] duration-150 ease-out',
-                'overflow-hidden select-none hidden md:flex',
+                'select-none hidden md:flex',
                 'shadow-[2px_0_20px_rgba(0,0,0,0.04)]',
             ].join(' ')}
         >
+            {/* Botão flutuante para expandir/recolher */}
+            <button
+                onClick={() => setExpanded(!expanded)}
+                className="absolute -right-3 top-7 w-6 h-6 bg-white border border-slate-200 rounded-full flex items-center justify-center text-slate-400 hover:text-blue-600 hover:border-blue-300 hover:shadow-md transition-colors duration-150 z-50 cursor-pointer transform-gpu"
+            >
+                <ChevronRight size={14} className={`transition-transform duration-200 ${expanded ?'rotate-180' : ''}`} />
+            </button>
             {/* ── TOPO ─────────────────────────────────────────────── */}
             <div className="flex flex-col flex-1 overflow-hidden">
 
@@ -82,21 +87,8 @@ export default function Sidebar({ activeTab, setActiveTab }) {
                 <nav
                     className="p-3 flex-1 overflow-y-auto overflow-x-hidden relative"
                     style={{ display: 'flex', flexDirection: 'column', gap: `${ITEM_GAP}px` }}
-                    onMouseLeave={() => setHoveredIdx(null)}
                 >
-                    {/* Pill deslizante de hover */}
-                    {hoveredIdx !== null && (
-                        <span
-                            aria-hidden
-                            className="absolute left-3 right-3 pointer-events-none rounded-xl bg-slate-100 transition-all duration-150 ease-out"
-                            style={{
-                                top: `${12 + hoveredIdx * (ITEM_H + ITEM_GAP)}px`,
-                                height: `${ITEM_H}px`,
-                            }}
-                        />
-                    )}
-
-                    {MENU.map(({ id, label, icon: Icon }, idx) => {
+                    {MENU.map(({ id, label, icon: Icon }) => {
                         const active = activeTab === id;
                         return (
                             <button
@@ -104,12 +96,10 @@ export default function Sidebar({ activeTab, setActiveTab }) {
                                 type="button"
                                 title={!expanded ? label : undefined}
                                 onClick={() => setActiveTab(id)}
-                                onMouseEnter={() => setHoveredIdx(idx)}
-                                style={{ height: `${ITEM_H}px` }}
+                                style={{ height: `${ITEM_H}px`, gap: '12px' }}
                                 className={[
-                                    'relative z-10 w-full flex items-center rounded-xl',
+                                    'relative z-10 w-full flex items-center rounded-xl px-3',
                                     'text-sm font-semibold transition-all duration-150 cursor-pointer active:scale-95',
-                                    expanded ? 'gap-3 px-3' : 'justify-center px-0',
                                     active
                                         ? 'bg-primary text-primary-content shadow-sm'
                                         : 'text-slate-400 hover:text-slate-700',
@@ -143,11 +133,10 @@ export default function Sidebar({ activeTab, setActiveTab }) {
                             type="button"
                             title={!expanded ? label : undefined}
                             onClick={() => setActiveTab(id)}
-                            style={{ height: `${ITEM_H}px` }}
+                            style={{ height: `${ITEM_H}px`, gap: '12px' }}
                             className={[
-                                'w-full flex items-center rounded-xl',
+                                'w-full flex items-center rounded-xl px-3',
                                 'text-sm font-semibold transition-all duration-150 cursor-pointer active:scale-95',
-                                expanded ? 'gap-3 px-3' : 'justify-center px-0',
                                 active
                                     ? 'bg-primary/10 text-primary font-bold'
                                     : 'text-slate-400 hover:text-slate-700 hover:bg-slate-100',

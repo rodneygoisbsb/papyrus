@@ -44,7 +44,7 @@ export default function StudyTimer({ disciplines = [], onSaveStudy = () => { } }
                 <button
                     type="button"
                     onClick={handleOpenManualRegister}
-                    className="w-7 h-7 rounded-xl flex items-center justify-center bg-primary/10 hover:bg-primary text-primary hover:text-primary-content transition-all cursor-pointer shadow-2xs"
+                    className="w-7 h-7 rounded-xl flex items-center justify-center bg-primary/10 hover:bg-primary text-primary hover:text-primary-content transition-colors duration-150 cursor-pointer shadow-2xs transform-gpu"
                     title="Registrar Estudo"
                 >
                     <BookOpenCheck size={15} />
@@ -54,9 +54,9 @@ export default function StudyTimer({ disciplines = [], onSaveStudy = () => { } }
                 <button
                     type="button"
                     onClick={togglePlay}
-                    className={`w-7 h-7 rounded-xl flex items-center justify-center transition-all cursor-pointer ${isRunning
-                        ? 'bg-warning text-warning-content shadow-xs'
-                        : 'bg-primary text-primary-content hover:bg-primary/90 shadow-xs'
+                    className={`w-7 h-7 rounded-xl flex items-center justify-center transition-transform duration-200 ease-out cursor-pointer transform-gpu ${isRunning
+                        ? 'bg-accent text-accent-content hover:brightness-110 shadow-md'
+                        : 'bg-primary text-primary-content hover:brightness-110 shadow-md'
                         }`}
                     title={isRunning ? "Pausar" : "Iniciar"}
                 >
@@ -68,7 +68,7 @@ export default function StudyTimer({ disciplines = [], onSaveStudy = () => { } }
                     type="button"
                     onClick={handleStop}
                     disabled={seconds === 0}
-                    className="w-7 h-7 rounded-xl flex items-center justify-center bg-error/10 hover:bg-error text-error hover:text-error-content transition-all cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+                    className="w-7 h-7 rounded-xl flex items-center justify-center bg-error/10 hover:bg-error text-error hover:text-error-content transition-colors duration-150 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed transform-gpu"
                     title="Parar e Registrar"
                 >
                     <Square size={12} fill="currentColor" />
@@ -79,7 +79,7 @@ export default function StudyTimer({ disciplines = [], onSaveStudy = () => { } }
                     <button
                         type="button"
                         onClick={handleReset}
-                        className="w-7 h-7 rounded-xl flex items-center justify-center bg-base-200 hover:bg-base-300 text-neutral-content hover:text-base-content transition-all cursor-pointer"
+                        className="w-7 h-7 rounded-xl flex items-center justify-center bg-base-200 hover:bg-base-300 text-neutral-content hover:text-base-content transition-colors duration-150 cursor-pointer transform-gpu"
                         title="Zerar Cronômetro"
                     >
                         <RotateCcw size={13} />
@@ -98,7 +98,7 @@ export default function StudyTimer({ disciplines = [], onSaveStudy = () => { } }
                 <button
                     type="button"
                     onClick={() => setIsFullscreen(true)}
-                    className="w-7 h-7 rounded-xl flex items-center justify-center text-neutral-content hover:text-base-content hover:bg-base-200 transition-all cursor-pointer ml-0.5"
+                    className="w-7 h-7 rounded-xl flex items-center justify-center text-neutral-content hover:text-base-content hover:bg-base-200 transition-colors duration-150 cursor-pointer ml-0.5"
                     title="Modo Foco Zen"
                 >
                     <Maximize2 size={14} />

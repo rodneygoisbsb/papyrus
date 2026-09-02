@@ -56,3 +56,17 @@ export const addTimeToDuration = (currentHours: number, currentMinutes: number, 
         minutes: totalMinutes % 60
     };
 };
+
+/**
+ * Converte string para Title Case, ignorando palavras menores como 'de', 'da', etc.
+ */
+export const toTitleCase = (str: string): string => {
+    if (!str) return '';
+    const minorWords = ['de', 'do', 'da', 'dos', 'das', 'e', 'em', 'na', 'no', 'nas', 'nos', 'a', 'o', 'as', 'os', 'por', 'para', 'com'];
+    return str.toLowerCase().split(' ').map((word, index) => {
+        if (index !== 0 && minorWords.includes(word)) {
+            return word;
+        }
+        return word.charAt(0).toUpperCase() + word.slice(1);
+    }).join(' ');
+};

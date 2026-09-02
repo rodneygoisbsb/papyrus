@@ -1,11 +1,24 @@
-// src/components/modals/RegisterStudyModal.jsx
-import React from 'react';
+import React, { useState } from 'react';
 import {
     X, BookOpen, Clock, Sparkles, ChevronRight,
-    FileWarning, PenLine, Minus, Plus, CalendarCheck2
+    FileWarning, PenLine, Minus, Plus, CalendarCheck2, ChevronDown, Check
 } from 'lucide-react';
 import { useRegisterStudyForm } from '../../hooks/useRegisterStudyForm';
 import { STUDY_MATERIALS, REVISION_CYCLES } from '../../utils/studyConstants';
+import NotebookEditorModal from './NotebookEditorModal';
+import { useLocalStorage } from '../../hooks/useLocalStorage';
+import { Discipline } from '../../types/study';
+
+const toTitleCase = (str: string) => {
+    if (!str) return '';
+    return str
+        .toLowerCase()
+        .split(' ')
+        .map(word => {
+            return word.charAt(0).toUpperCase() + word.slice(1);
+        })
+        .join(' ');
+};
 
 interface RegisterStudyModalProps {
     isOpen: boolean;
@@ -16,6 +29,44 @@ interface RegisterStudyModalProps {
     onSave?: (data: any) => void;
 }
 
+const INITIAL_DISCIPLINAS: Discipline[] = [
+    {
+        id: 1,
+        name: 'DIREITO CONSTITUCIONAL',
+        colorHex: '#2563EB',
+        studiedTopics: 8,
+        totalTopics: 5,
+        questionsDone: 140,
+        topics: [
+            { id: 't1', name: 'Direitos e Garantias Fundamentais (Art. 5º)', theoryCompleted: true },
+            { id: 't2', name: 'Organização dos Poderes', theoryCompleted: false }
+        ]
+    },
+    {
+        id: 2,
+        name: 'LÍNGUA PORTUGUESA',
+        colorHex: '#16A34A',
+        studiedTopics: 12,
+        totalTopics: 5,
+        questionsDone: 210,
+        topics: [
+            { id: 't3', name: 'Emprego da Crase', theoryCompleted: true },
+            { id: 't4', name: 'Pontuação e Sintaxe', theoryCompleted: false }
+        ]
+    },
+    {
+        id: 3,
+        name: 'DIREITO ADMINISTRATIVO',
+        colorHex: '#EA580C',
+        studiedTopics: 6,
+        totalTopics: 3,
+        questionsDone: 95,
+        topics: [
+            { id: 't5', name: 'Lei 8.112/90 - Regime Disciplinar', theoryCompleted: true }
+        ]
+    }
+];
+
 export default function RegisterStudyModal({
     isOpen,
     onClose,
@@ -24,10 +75,18 @@ export default function RegisterStudyModal({
     initialData,
     onSave
 }: RegisterStudyModalProps) {
+    const [activeNotebook, setActiveNotebook] = useState<string | null>(null);
+    const [storedDisciplinas] = useLocalStorage<Discipline[]>('@papyrus:disciplines', INITIAL_DISCIPLINAS);
+    const disciplinas = Array.isArray(storedDisciplinas) && storedDisciplinas.length > 0 ? storedDisciplinas : INITIAL_DISCIPLINAS;
+
+    const [disciplinaFocus, setDisciplinaFocus] = useState(false);
+    const [topicoFocus, setTopicoFocus] = useState(false);
+
     const {
         disciplina, setDisciplina,
         topico, setTopico,
         tipoEstudo, setTipoEstudo,
+        dataEstudo, setDataEstudo,
         horas,
         minutos,
         materiais,
@@ -35,18 +94,39 @@ export default function RegisterStudyModal({
         acertos,
         revisoes,
         agendarEmBloco, setAgendarEmBloco,
+        teoriaFinalizada, setTeoriaFinalizada,
         isSaving,
         adicionarTempo,
         alternarCiclo,
         alternarMaterial,
         incrementarQuestoes,
         incrementarAcertos,
+        setQuestoesFeitas,
+        setAcertos,
         handleSalvar,
         taxaAcertos
-    } = useRegisterStudyForm({ isOpen, recordedTime, initialTime, initialData, onSave: (data) => {
-        onSave?.(data);
-        onClose();
-    }});
+    } = useRegisterStudyForm({
+        isOpen, recordedTime, initialTime, initialData, onSave: (data) => {
+            onSave?.(data);
+            onClose();
+        }
+    });
+
+    const safeDisciplina = (disciplina || '').trim().toLowerCase();
+    const safeTopico = (topico || '').trim().toLowerCase();
+
+    const selectedDiscipline = disciplinas.find(d => (d?.name || '').trim().toLowerCase() === safeDisciplina);
+    const availableTopics = selectedDiscipline && Array.isArray(selectedDiscipline.topics) ? selectedDiscipline.topics : [];
+
+    const isDisciplinaExactMatch = safeDisciplina === '' || disciplinas.some(d => (d?.name || '').trim().toLowerCase() === safeDisciplina);
+    const filteredDisciplinas = isDisciplinaExactMatch
+        ? disciplinas
+        : disciplinas.filter(d => (d?.name || '').trim().toLowerCase().includes(safeDisciplina));
+
+    const isTopicoExactMatch = safeTopico === '' || availableTopics.some(t => (t?.name || '').trim().toLowerCase() === safeTopico);
+    const filteredTopicos = isTopicoExactMatch
+        ? availableTopics
+        : availableTopics.filter(t => (t?.name || '').trim().toLowerCase().includes(safeTopico));
 
     if (!isOpen) return null;
 
@@ -70,7 +150,7 @@ export default function RegisterStudyModal({
                     <button
                         type="button"
                         onClick={onClose}
-                        className="w-8 h-8 flex items-center justify-center rounded-full text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer mt-0.5"
+                        className="w-8 h-8 flex items-center justify-center rounded-full text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer mt-0.5 transform-gpu"
                     >
                         <X size={15} />
                     </button>
@@ -78,29 +158,112 @@ export default function RegisterStudyModal({
 
                 <div className="px-8 py-6 overflow-y-auto flex-1 space-y-6 bg-slate-50/40">
                     <div className="bg-white rounded-2xl border border-slate-200 p-5 space-y-4 shadow-sm">
-                        <div>
+                        <div className="relative">
                             <label className="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">
                                 Disciplina
                             </label>
-                            <input
-                                type="text"
-                                placeholder="Qual matéria você estudou?"
-                                value={disciplina}
-                                onChange={(e) => setDisciplina(e.target.value)}
-                                className="input w-full bg-slate-50 text-slate-700 font-medium rounded-xl border border-slate-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500/15 text-sm h-11 transition-all"
-                            />
+                            <div className="relative flex items-center">
+                                <input
+                                    type="text"
+                                    placeholder="Qual matéria você estudou?"
+                                    value={disciplina}
+                                    onChange={(e) => {
+                                        setDisciplina(e.target.value);
+                                        setTopico('');
+                                    }}
+                                    onFocus={() => setDisciplinaFocus(true)}
+                                    onBlur={() => setTimeout(() => setDisciplinaFocus(false), 200)}
+                                    className="input w-full bg-slate-50 text-slate-700 font-medium rounded-xl border border-slate-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500/15 text-sm h-11 transition-colors duration-150 pr-10 cursor-pointer"
+                                />
+                                <button
+                                    type="button"
+                                    className="absolute right-3 text-slate-400 hover:text-blue-500 cursor-pointer transform-gpu"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        setDisciplinaFocus(!disciplinaFocus);
+                                    }}
+                                >
+                                    <ChevronDown size={16} className={`transition-transform duration-200 ${disciplinaFocus ? 'rotate-180' : ''}`} />
+                                </button>
+                            </div>
+                            {disciplinaFocus && filteredDisciplinas.length > 0 && (
+                                <ul className="absolute z-50 w-full mt-1 bg-white border border-slate-200 rounded-xl shadow-xl max-h-48 overflow-y-auto">
+                                    {filteredDisciplinas.map((d) => (
+                                        <li
+                                            key={d.id}
+                                            onMouseDown={(e) => {
+                                                e.preventDefault();
+                                                setDisciplina(toTitleCase(d.name));
+                                                setTopico('');
+                                                setDisciplinaFocus(false);
+                                            }}
+                                            className="px-4 py-2.5 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 font-medium cursor-pointer transition-colors border-b border-slate-50 last:border-0"
+                                        >
+                                            {toTitleCase(d.name)}
+                                        </li>
+                                    ))}
+                                </ul>
+                            )}
                         </div>
-                        <div>
+
+                        <div className="relative">
                             <label className="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">
                                 Assunto / Tópico
                             </label>
-                            <input
-                                type="text"
-                                placeholder="Qual assunto / tópico?"
-                                value={topico}
-                                onChange={(e) => setTopico(e.target.value)}
-                                className="input w-full bg-slate-50 text-slate-700 font-medium rounded-xl border border-slate-200 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/15 text-sm h-11 transition-all"
-                            />
+                            <div className="relative flex items-center">
+                                <input
+                                    type="text"
+                                    placeholder="Qual assunto / tópico?"
+                                    value={topico}
+                                    onChange={(e) => setTopico(e.target.value)}
+                                    onFocus={() => setTopicoFocus(true)}
+                                    onBlur={() => setTimeout(() => setTopicoFocus(false), 200)}
+                                    className="input w-full bg-slate-50 text-slate-700 font-medium rounded-xl border border-slate-200 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/15 text-sm h-11 transition-colors duration-150 pr-10 cursor-pointer"
+                                />
+                                <button
+                                    type="button"
+                                    className="absolute right-3 text-slate-400 hover:text-blue-500 transform-gpu"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        setTopicoFocus(!topicoFocus);
+                                    }}
+                                >
+                                    <ChevronDown size={16} className={`transition-transform duration-200 ${topicoFocus ? 'rotate-180' : ''}`} />
+                                </button>
+                            </div>
+                            {topicoFocus && filteredTopicos.length > 0 && (
+                                <ul className="absolute z-50 w-full mt-1 bg-white border border-slate-200 rounded-xl shadow-xl max-h-48 overflow-y-auto">
+                                    {filteredTopicos.map((t) => (
+                                        <li
+                                            key={t.id}
+                                            onMouseDown={(e) => {
+                                                e.preventDefault();
+                                                setTopico(toTitleCase(t.name));
+                                                setTopicoFocus(false);
+                                            }}
+                                            className="px-4 py-2.5 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 font-medium cursor-pointer transition-colors border-b border-slate-50 last:border-0"
+                                        >
+                                            {toTitleCase(t.name)}
+                                        </li>
+                                    ))}
+                                </ul>
+                            )}
+
+                            {/* Teoria Finalizada Checkbox */}
+                            <label className="mt-3 ml-1 flex items-center gap-2 cursor-pointer w-fit group">
+                                <div className={`w-3.5 h-3.5 rounded-[3px] border flex items-center justify-center transition-colors ${teoriaFinalizada ? 'bg-emerald-500 border-emerald-500' : 'bg-white border-slate-300 group-hover:border-slate-400'}`}>
+                                    {teoriaFinalizada && <Check size={10} className="text-white" strokeWidth={3} />}
+                                </div>
+                                <span className={`text-[10px] font-bold uppercase tracking-widest select-none mt-[1px] ${teoriaFinalizada ? 'text-slate-800' : 'text-slate-500'}`}>
+                                    Teoria Finalizada
+                                </span>
+                                <input
+                                    type="checkbox"
+                                    className="hidden"
+                                    checked={teoriaFinalizada}
+                                    onChange={(e) => setTeoriaFinalizada(e.target.checked)}
+                                />
+                            </label>
                         </div>
                     </div>
 
@@ -131,12 +294,34 @@ export default function RegisterStudyModal({
                                             key={l}
                                             type="button"
                                             onClick={() => adicionarTempo(m)}
-                                            className="px-3 py-1 rounded-full bg-white border border-blue-200 text-blue-500 hover:bg-blue-500 hover:text-white hover:border-blue-500 font-bold text-[11px] transition-all duration-150 active:scale-95 cursor-pointer shadow-sm"
+                                            className="px-3 py-1 rounded-full bg-white border border-blue-200 text-blue-500 font-bold text-[11px] active:scale-95 cursor-pointer shadow-sm transform-gpu"
                                         >
                                             {l}
                                         </button>
                                     ))}
                                 </div>
+                            </div>
+                        </div>
+
+                        <div className="flex items-center gap-4 flex-wrap pt-3 border-t border-blue-100/50">
+                            <label className="text-[10px] font-bold uppercase tracking-widest text-blue-400 whitespace-nowrap">
+                                Data do estudo
+                            </label>
+                            <div className="flex items-center gap-2">
+                                <button
+                                    type="button"
+                                    onClick={() => setDataEstudo(new Date().toISOString().split('T')[0])}
+                                    className={`px-3 py-1.5 rounded-md text-xs font-bold transition-colors cursor-pointer ${dataEstudo === new Date().toISOString().split('T')[0] ? 'bg-blue-500 text-white shadow-sm' : 'bg-white text-blue-500 border border-blue-200 active:scale-95 hover:bg-blue-50'}`}
+                                >
+                                    Hoje
+                                </button>
+                                <input
+                                    type="date"
+                                    value={dataEstudo}
+                                    onChange={(e) => setDataEstudo(e.target.value)}
+                                    className="px-3 py-1 h-7 text-xs bg-white text-slate-700 font-semibold rounded-md border border-blue-200 focus:outline-none focus:border-blue-500 shadow-sm cursor-pointer hover:border-blue-400 transition-colors"
+                                    max={new Date().toISOString().split('T')[0]}
+                                />
                             </div>
                         </div>
 
@@ -159,41 +344,26 @@ export default function RegisterStudyModal({
 
                     <div className="bg-white rounded-2xl border border-slate-200 p-5 space-y-3 shadow-sm">
                         <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
-                            Anotações & Cadernos
+                            Anotações
                         </p>
-                        <div className="grid grid-cols-2 gap-3">
-                            {[
-                                {
-                                    icon: <FileWarning size={18} className="text-red-400" />,
-                                    bg: 'bg-red-50 border border-red-100',
-                                    title: 'Caderno de Erros',
-                                    sub: 'Pegadinhas e questões erradas',
-                                },
-                                {
-                                    icon: <PenLine size={18} className="text-emerald-500" />,
-                                    bg: 'bg-emerald-50 border border-emerald-100',
-                                    title: 'Resumo da Matéria',
-                                    sub: 'Pontos-chave e mnemônicos',
-                                },
-                            ].map(({ icon, bg, title, sub }) => (
-                                <button
-                                    key={title}
-                                    type="button"
-                                    className="group flex items-center gap-3 p-4 rounded-xl border border-slate-200 bg-slate-50/60 hover:bg-white hover:border-slate-300 hover:shadow-md transition-all duration-200 cursor-pointer text-left"
-                                >
-                                    <div className={`w-10 h-10 rounded-xl ${bg} flex items-center justify-center shrink-0`}>
-                                        {icon}
-                                    </div>
-                                    <div className="min-w-0 flex-1">
-                                        <span className="block text-sm font-bold text-slate-800">{title}</span>
-                                        <span className="block text-xs text-slate-400 mt-0.5 truncate">{sub}</span>
-                                    </div>
-                                    <span className="text-xs font-bold text-blue-500 flex items-center gap-0.5 shrink-0 opacity-0 group-hover:opacity-100 transition-all">
-                                        Editar
-                                        <ChevronRight size={12} className="group-hover:translate-x-0.5 transition-transform" />
-                                    </span>
-                                </button>
-                            ))}
+                        <div className="grid grid-cols-1">
+                            <button
+                                type="button"
+                                onClick={() => setActiveNotebook('Anotações')}
+                                className="group flex items-center gap-3 p-4 rounded-xl border border-slate-200 bg-slate-50/60 hover:bg-white hover:border-slate-300 hover:shadow-md transition-colors duration-150 cursor-pointer text-left"
+                            >
+                                <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center shrink-0">
+                                    <PenLine size={18} className="text-blue-500" />
+                                </div>
+                                <div className="min-w-0 flex-1">
+                                    <span className="block text-sm font-bold text-slate-800">Bloco de Anotações</span>
+                                    <span className="block text-xs text-slate-400 mt-0.5 truncate">Registre observações, resumos ou dúvidas</span>
+                                </div>
+                                <span className="text-xs font-bold text-blue-500 flex items-center gap-0.5 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-out">
+                                    Editar
+                                    <ChevronRight size={12} className="group-hover:translate-x-0.5 transition-transform transform-gpu" />
+                                </span>
+                            </button>
                         </div>
                     </div>
 
@@ -210,9 +380,9 @@ export default function RegisterStudyModal({
                                             key={id}
                                             type="button"
                                             onClick={() => alternarMaterial(id)}
-                                            className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold border transition-all duration-150 active:scale-95 cursor-pointer ${on
+                                            className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold border active:scale-95 cursor-pointer transform-gpu ${on
                                                 ? 'bg-blue-600 text-white border-blue-600 shadow-sm shadow-blue-500/25'
-                                                : 'bg-slate-50 text-slate-600 border-slate-200 hover:border-blue-300 hover:text-blue-600'
+                                                : 'bg-slate-50 text-slate-600 border-slate-200'
                                                 }`}
                                         >
                                             {label}
@@ -236,6 +406,10 @@ export default function RegisterStudyModal({
                                 {[
                                     {
                                         label: 'Feitas',
+                                        onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+                                            const val = e.target.value;
+                                            setQuestoesFeitas(val === '' ? '' : Number(val));
+                                        },
                                         value: questoesFeitas,
                                         onDec: () => incrementarQuestoes(-1),
                                         onInc: () => incrementarQuestoes(1),
@@ -243,25 +417,31 @@ export default function RegisterStudyModal({
                                     },
                                     {
                                         label: 'Acertos',
+                                        onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+                                            const val = e.target.value;
+                                            setAcertos(val === '' ? '' : Number(val));
+                                        },
                                         value: acertos,
                                         onDec: () => incrementarAcertos(-1),
-                                        onInc: () => acertos < questoesFeitas && incrementarAcertos(1),
+                                        onInc: () => (typeof acertos === 'number' ? acertos : 0) < (typeof questoesFeitas === 'number' ? questoesFeitas : 0) && incrementarAcertos(1),
                                         numClass: 'text-emerald-600',
                                     },
-                                ].map(({ label, value, onDec, onInc, numClass }) => (
+                                ].map(({ label, value, onDec, onInc, onChange, numClass }) => (
                                     <div key={label}>
                                         <span className="block text-[11px] font-semibold text-slate-400 mb-1.5">{label}</span>
                                         <div className="flex items-center border border-slate-200 rounded-xl overflow-hidden bg-slate-50 shadow-2xs">
                                             <button type="button" onClick={onDec}
-                                                className="w-9 h-9 flex items-center justify-center text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-colors cursor-pointer border-r border-slate-200">
+                                                className="w-9 h-9 flex items-center justify-center text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-colors cursor-pointer border-r border-slate-200 transform-gpu">
                                                 <Minus size={13} />
                                             </button>
-                                            <span className={`flex-1 text-center text-base font-bold tabular-nums bg-white ${numClass}`}
-                                                style={{ fontFeatureSettings: "'tnum' on" }}>
-                                                {value}
-                                            </span>
+                                            <input type="number"
+                                                value={value}
+                                                onChange={onChange}
+                                                className={`flex-1 text-center text-base font-bold tabular-nums bg-white ${numClass} outline-none bg-transparent w-full [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none [-moz-appearance:textfield]`}
+                                                style={{ fontFeatureSettings: "'tnum' on" }}
+                                            />
                                             <button type="button" onClick={onInc}
-                                                className="w-9 h-9 flex items-center justify-center text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-colors cursor-pointer border-l border-slate-200">
+                                                className="w-9 h-9 flex items-center justify-center text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-colors cursor-pointer border-l border-slate-200 transform-gpu">
                                                 <Plus size={13} />
                                             </button>
                                         </div>
@@ -284,9 +464,9 @@ export default function RegisterStudyModal({
                                         key={id}
                                         type="button"
                                         onClick={() => alternarCiclo(id)}
-                                        className={`px-4 py-1.5 rounded-lg text-xs font-semibold border transition-all duration-150 active:scale-95 cursor-pointer ${on
+                                        className={`px-4 py-1.5 rounded-lg text-xs font-semibold border active:scale-95 cursor-pointer transform-gpu ${on
                                             ? 'bg-blue-600 text-white border-blue-600 shadow-sm shadow-blue-500/25'
-                                            : 'bg-slate-50 text-slate-600 border-slate-200 hover:border-blue-400 hover:text-blue-600'
+                                            : 'bg-slate-50 text-slate-600 border-slate-200'
                                             }`}
                                     >
                                         {label}
@@ -300,35 +480,35 @@ export default function RegisterStudyModal({
                             tabIndex={0}
                             onClick={() => setAgendarEmBloco((v) => !v)}
                             onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && setAgendarEmBloco((v) => !v)}
-                            className={`flex items-center justify-between p-4 rounded-xl border cursor-pointer select-none outline-none transition-all duration-200 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 ${agendarEmBloco
+                            className={`group flex items-center justify-between p-4 rounded-xl border cursor-pointer select-none outline-none transition-colors duration-200 ease-out focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 overflow-hidden relative ${agendarEmBloco
                                 ? 'bg-blue-600 border-blue-600 shadow-md shadow-blue-500/25'
-                                : 'bg-slate-50 border-slate-200 hover:bg-slate-100 hover:border-slate-300'
+                                : 'bg-slate-50 border-slate-200'
                                 }`}
                         >
-                            <div className="flex items-center gap-3">
-                                <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-colors duration-200 ${agendarEmBloco
+                            <div className="flex items-center gap-3 relative z-10">
+                                <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-colors duration-300 ${agendarEmBloco
                                     ? 'bg-blue-500/40'
                                     : 'bg-white border border-slate-200'
                                     }`}>
                                     <CalendarCheck2
                                         size={17}
-                                        className={`transition-colors duration-200 ${agendarEmBloco ? 'text-white' : 'text-slate-400'}`}
+                                        className={`transition-colors duration-300 ${agendarEmBloco ? 'text-white' : 'text-slate-400'}`}
                                     />
                                 </div>
                                 <div>
-                                    <span className={`block text-sm font-bold transition-colors duration-200 ${agendarEmBloco ? 'text-white' : 'text-slate-800'}`}>
+                                    <span className={`block text-sm font-bold transition-colors duration-300 ${agendarEmBloco ? 'text-white' : 'text-slate-800'}`}>
                                         Agendar revisão em bloco
                                     </span>
-                                    <span className={`block text-[11px] mt-0.5 transition-colors duration-200 ${agendarEmBloco ? 'text-blue-200' : 'text-slate-400'}`}>
+                                    <span className={`block text-[11px] mt-0.5 transition-colors duration-300 ${agendarEmBloco ? 'text-blue-200' : 'text-slate-400'}`}>
                                         Dispara revisão automática a cada 3 tópicos desta matéria
                                     </span>
                                 </div>
                             </div>
 
-                            <div className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 shrink-0 ${agendarEmBloco ? 'bg-white/30' : 'bg-slate-300'}`}>
-                                <span className={`inline-block h-4 w-4 rounded-full transition-all duration-200 shadow-sm ${agendarEmBloco
-                                    ? 'translate-x-6 bg-white'
-                                    : 'translate-x-1 bg-white'
+                            <div className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-150 shrink-0 z-10 ${agendarEmBloco ? 'bg-white/30' : 'bg-slate-300'}`}>
+                                <span className={`inline-block h-4 w-4 rounded-full transition-transform duration-200 ease-out shadow-sm bg-white transform-gpu ${agendarEmBloco
+                                    ? 'translate-x-6'
+                                    : 'translate-x-1'
                                     }`} />
                             </div>
                         </div>
@@ -340,7 +520,7 @@ export default function RegisterStudyModal({
                     <button
                         type="button"
                         onClick={onClose}
-                        className="px-5 py-2 rounded-xl text-sm font-medium text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-colors cursor-pointer"
+                        className="px-5 py-2 rounded-xl text-sm font-medium text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-colors cursor-pointer transform-gpu"
                     >
                         Cancelar
                     </button>
@@ -348,7 +528,7 @@ export default function RegisterStudyModal({
                         type="button"
                         onClick={handleSalvar}
                         disabled={isSaving}
-                        className="px-6 py-2 rounded-xl text-sm font-semibold bg-blue-600 text-white hover:bg-blue-700 active:scale-[0.98] shadow-md shadow-blue-500/30 cursor-pointer min-w-[150px] transition-all disabled:opacity-70 flex items-center justify-center gap-2"
+                        className="px-6 py-2 rounded-xl text-sm font-semibold bg-blue-600 text-white hover:bg-blue-700 active:scale-[0.98] shadow-md shadow-blue-500/30 cursor-pointer min-w-[150px] transition-transform duration-200 ease-out disabled:opacity-70 flex items-center justify-center gap-2 transform-gpu"
                     >
                         {isSaving ? (
                             <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -362,6 +542,16 @@ export default function RegisterStudyModal({
                 </footer>
 
             </div>
+
+            {/* Modal Secundário do Editor de Texto Rico */}
+            <NotebookEditorModal
+                isOpen={activeNotebook !== null}
+                title={activeNotebook}
+                onClose={() => setActiveNotebook(null)}
+                onSave={(content) => {
+                    console.log(`Salvou o ${activeNotebook}:`, content);
+                }}
+            />
         </div>
     );
 }

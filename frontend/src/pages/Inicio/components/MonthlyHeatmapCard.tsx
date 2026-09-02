@@ -29,17 +29,17 @@ export default function MonthlyHeatmapCard() {
             {/* HEADER */}
             <div className="flex items-center justify-between pb-2 border-b border-base-200">
                 <div className="flex items-center gap-1">
-                    <button className="btn btn-xs btn-ghost btn-square text-slate-400 hover:text-base-content hover:bg-base-200">
+                    <button className="btn btn-xs btn-ghost btn-square text-slate-400 hover:text-base-content hover:bg-base-200 transform-gpu">
                         <ChevronLeft size={16} />
                     </button>
                     <span className="text-sm font-bold text-base-content">
                         Agosto 2026
                     </span>
-                    <button className="btn btn-xs btn-ghost btn-square text-slate-400 hover:text-base-content hover:bg-base-200">
+                    <button className="btn btn-xs btn-ghost btn-square text-slate-400 hover:text-base-content hover:bg-base-200 transform-gpu">
                         <ChevronRight size={16} />
                     </button>
                 </div>
-                <button className="btn btn-xs btn-ghost text-slate-500 hover:text-primary rounded-lg font-bold">
+                <button className="btn btn-xs btn-ghost text-slate-500 hover:text-primary rounded-lg font-bold transform-gpu">
                     Ver Ano
                 </button>
             </div>
@@ -71,7 +71,7 @@ export default function MonthlyHeatmapCard() {
                                 className={`tooltip tooltip-top tooltip-primary before:text-[10px] before:font-bold`}
                                 data-tip={getTooltipText(day)}
                             >
-                                <div className={`aspect-square rounded-lg flex items-center justify-center text-[11px] sm:text-xs font-bold transition-all hover:scale-110 cursor-pointer ${bgClass}`}>
+                                <div className={`aspect-square rounded-lg flex items-center justify-center text-[11px] sm:text-xs font-bold transition-transform duration-200 ease-out hover:scale-110 cursor-pointer ${bgClass} transform-gpu`}>
                                     {day}
                                 </div>
                             </div>

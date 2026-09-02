@@ -36,7 +36,7 @@ export default function ZenFocusModal({
                 <button
                     type="button"
                     onClick={() => setIsFullscreen(false)}
-                    className="flex items-center gap-2 text-sm font-semibold text-neutral-content hover:text-base-content bg-base-100 hover:bg-base-300/60 border border-base-300 px-4 py-2.5 rounded-2xl transition-all cursor-pointer shadow-sm"
+                    className="flex items-center gap-2 text-sm font-semibold text-neutral-content hover:text-base-content bg-base-100 hover:bg-base-300/60 border border-base-300 px-4 py-2.5 rounded-2xl transition-colors duration-150 cursor-pointer shadow-sm"
                     title="Voltar ao Painel"
                 >
                     <Minimize2 size={16} />
@@ -61,7 +61,7 @@ export default function ZenFocusModal({
                     <button
                         type="button"
                         onClick={togglePlay}
-                        className={`w-20 h-20 sm:w-24 sm:h-24 rounded-[30px] flex items-center justify-center transition-all duration-200 active:scale-95 cursor-pointer shadow-lg ${isRunning
+                        className={`w-20 h-20 sm:w-24 sm:h-24 rounded-[30px] flex items-center justify-center transition-transform duration-200 ease-out active:scale-95 cursor-pointer shadow-lg transform-gpu ${isRunning
                             ? 'bg-accent text-accent-content hover:brightness-110 shadow-accent/20'
                             : 'bg-primary text-primary-content hover:brightness-110 shadow-[0_0_35px_rgba(94,148,255,0.35)]'
                             }`}
@@ -78,7 +78,7 @@ export default function ZenFocusModal({
                     <button
                         type="button"
                         onClick={handleReset}
-                        className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center bg-base-100 hover:bg-base-300 text-neutral-content hover:text-base-content border border-base-300 transition-all duration-150 active:scale-95 cursor-pointer shadow-sm"
+                        className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center bg-base-100 hover:bg-base-300 text-neutral-content hover:text-base-content border border-base-300 transition-transform duration-200 ease-out active:scale-95 cursor-pointer shadow-sm transform-gpu"
                         title="Reiniciar tempo"
                     >
                         <RotateCcw size={22} />
@@ -95,7 +95,7 @@ export default function ZenFocusModal({
                 <button
                     type="button"
                     onClick={handleFinalizarMissao}
-                    className="w-full sm:w-auto bg-primary text-secondary-content px-7 py-3.5 rounded-2xl font-extrabold text-sm sm:text-base flex items-center justify-center gap-2.5 hover:brightness-110 active:scale-95 transition-all shadow-[0_0_25px_rgba(52,211,153,0.2)] cursor-pointer"
+                    className="w-full sm:w-auto bg-primary text-secondary-content px-7 py-3.5 rounded-2xl font-extrabold text-sm sm:text-base flex items-center justify-center gap-2.5 hover:brightness-110 active:scale-95 transition-transform duration-200 ease-out shadow-[0_0_25px_rgba(52,211,153,0.2)] cursor-pointer transform-gpu"
                 >
                     <Trophy size={18} />
                     Finalizar Missão

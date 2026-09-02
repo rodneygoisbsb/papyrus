@@ -49,6 +49,7 @@ export default function InicioPage({
                         toggleRevisionCompletion={toggleGoalCompletion}
                         onStartFocusSession={handleOpenStudy}
                         onOpenRegisterModal={() => setIsRegisterModalOpen(true)}
+                        setActiveTab={setActiveTab}
                     />
 
                     <AiDailySuggestionsCard 

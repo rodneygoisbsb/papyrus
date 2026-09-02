@@ -1,5 +1,6 @@
 import React from 'react';
 import { Clock, Target, FileEdit } from 'lucide-react';
+import { toTitleCase } from '../../../utils/studyCalculations';
 
 const defaultSessoes = [
     {
@@ -68,14 +69,14 @@ export default function TodaySessionsCard({ sessoes = defaultSessoes }) {
                         return (
                             <div
                                 key={sessao.id}
-                                className="relative pl-3.5 pr-3 py-2.5 rounded-xl border border-base-300 bg-white hover:border-slate-300 hover:shadow-xs transition-all space-y-2 overflow-hidden"
+                                className="relative pl-3.5 pr-3 py-2.5 rounded-xl border border-base-300 bg-white hover:border-slate-300 hover:shadow-xs transition-colors duration-150 space-y-2 overflow-hidden"
                             >
                                 {/* Listra Lateral */}
                                 <div className={`absolute left-0 top-0 bottom-0 w-1 rounded-l-xl ${getBorderColor(sessao.disciplina)}`} />
 
                                 <div>
-                                    <h4 className="text-xs font-bold text-base-content tracking-wide uppercase">
-                                        {sessao.disciplina}
+                                    <h4 className="text-sm font-bold text-base-content tracking-wide">
+                                        {toTitleCase(sessao.disciplina)}
                                     </h4>
                                     <p className="text-xs text-slate-500 font-normal mt-0.5">
                                         {sessao.topico}

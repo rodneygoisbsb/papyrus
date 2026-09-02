@@ -1,12 +1,13 @@
 import React from 'react';
 import { RefreshCw, ExternalLink, Video, FileText, Play, Check } from 'lucide-react';
-import { getSubjectAccent } from '../../../utils/studyCalculations';
+import { getSubjectAccent, toTitleCase } from '../../../utils/studyCalculations';
 
 interface DailyRevisionsListProps {
     revisions?: any[];
     toggleRevisionCompletion?: (id: string) => void;
     onStartFocusSession?: (goal: any) => void;
     onOpenRegisterModal?: () => void;
+    setActiveTab?: (tab: string) => void;
 }
 
 export default function DailyRevisionsList({
@@ -14,6 +15,7 @@ export default function DailyRevisionsList({
     toggleRevisionCompletion = () => { },
     onStartFocusSession = () => { },
     onOpenRegisterModal = () => { },
+    setActiveTab = () => { },
 }: DailyRevisionsListProps) {
     const totalMinutes = revisions.reduce((acc, rev) => acc + (rev.durationMinutes || 0), 0);
     const isHeavyLoad = totalMinutes > 180;
@@ -38,30 +40,36 @@ export default function DailyRevisionsList({
                     )}
                 </div>
 
-                <button
-                    onClick={onOpenRegisterModal}
-                    className="btn btn-sm btn-primary rounded-xl px-3.5 gap-1 font-bold text-xs"
-                >
-                    + Registrar Estudo
-                </button>
+                <div className="flex items-center gap-3">
+                    <button
+                        type="button"
+                        onClick={() => setActiveTab('metas')}
+                        className="text-sm font-semibold text-primary hover:underline flex items-center gap-1 cursor-pointer focus-visible:ring-2 focus-visible:ring-primary rounded-md"
+                    >
+                        Ver metas →
+                    </button>
+                </div>
             </div>
 
             {/* LISTA DE MATÉRIAS */}
             <div className="space-y-3 mt-4">
                 {revisions.length === 0 ? (
-                    <div className="text-center py-6 text-xs text-neutral-content bg-base-200/50 rounded-xl">
+                    <div className="text-center py-6 text-sm text-neutral-content bg-base-200/50 rounded-xl">
                         Nenhuma revisão agendada para hoje.
                     </div>
                 ) : (
                     revisions.map((rev) => {
                         const accent = getSubjectAccent(rev.subject);
+                        // DEMO: Forçando a primeira revisão (r1) a ser atrasada para demonstração visual
+                        const isOverdue = rev.isOverdue || rev.daysOverdue > 0 || (!rev.completed && rev.id === 'r1');
+
                         return (
                             <div
                                 key={rev.id}
-                                className="group relative p-4 rounded-2xl border border-base-300 bg-base-100 hover:border-slate-300 hover:shadow-sm transition-all duration-200 flex items-center justify-between overflow-hidden"
+                                className={`group relative p-4 rounded-2xl border ${isOverdue ?'border-error/40 bg-error/5 hover:border-error/60' : 'border-base-300 bg-base-100 hover:border-slate-300'} hover:shadow-sm transition-all duration-200 flex items-center justify-between overflow-hidden`}
                             >
                                 {/* Listra lateral */}
-                                <div className={`absolute left-0 top-0 bottom-0 w-1 ${accent.bg}`} />
+                                {!isOverdue && <div className={`absolute left-0 top-0 bottom-0 w-1 ${accent.bg}`} />}
 
                                 <div className="flex items-center gap-3.5 pl-2">
                                     {/* Checkbox circular */}
@@ -72,32 +80,37 @@ export default function DailyRevisionsList({
                                         }}
                                         className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all cursor-pointer active:scale-90 shrink-0 ${rev.completed
                                             ? 'bg-secondary border-secondary text-white'
-                                            : 'border-slate-300 hover:border-primary text-transparent'
+                                            : isOverdue ? 'border-error/40 hover:border-error text-transparent' : 'border-slate-300 hover:border-primary text-transparent'
                                             }`}
                                     >
                                         <Check size={12} className={rev.completed ? 'opacity-100' : 'opacity-0'} strokeWidth={3} />
                                     </button>
 
                                     {/* Textos */}
-                                    <div className="flex flex-col">
-                                        <span className={`text-xs font-bold transition-colors ${rev.completed ? 'text-slate-400 line-through' : 'text-base-content'}`}>
-                                            {rev.subject || 'MATÉRIA'}
+                                    <div className="flex flex-col gap-1">
+                                        <span className={`text-sm font-bold transition-colors ${rev.completed ?'text-slate-400 line-through' : (isOverdue ? 'text-error' : 'text-base-content')}`}>
+                                            {toTitleCase(rev.subject || 'MATÉRIA')}
                                         </span>
-                                        <span className={`text-xs font-normal transition-colors ${rev.completed ? 'text-slate-400/70' : 'text-slate-500'}`}>
+                                        <span className={`text-xs font-normal transition-colors ${rev.completed ?'text-slate-400/70' : 'text-slate-500'}`}>
                                             {rev.topicName || 'Tópico'}
                                         </span>
                                     </div>
 
                                     {/* Badges */}
                                     <div className="flex items-center gap-1.5 ml-2">
-                                        {rev.revisionTag && (
-                                            <span className="badge badge-xs bg-amber-50 text-accent font-bold px-1.5 py-2.5 rounded-md">
+                                        {isOverdue && !rev.completed && (
+                                            <span className="badge badge-xs bg-error/10 text-error font-bold px-1.5 py-2.5 rounded-md border-none flex items-center gap-1">
+                                                <span className="w-1.5 h-1.5 rounded-full bg-error animate-pulse" /> Atrasada
+                                            </span>
+                                        )}
+                                        {rev.revisionTag && rev.type !== 'QUESTIONS' && (
+                                            <span className="badge badge-xs bg-amber-50 text-accent font-bold px-1.5 py-2.5 rounded-md border-none">
                                                 {rev.revisionTag}
                                             </span>
                                         )}
                                         {rev.type === 'QUESTIONS' && (
-                                            <span className="badge badge-xs bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold">
-                                                {rev.questionCount || rev.questionCount} Questões
+                                            <span className="badge badge-xs bg-emerald-50 text-emerald-700 font-bold px-1.5 py-2.5 rounded-md border-none">
+                                                {rev.questionCount ? `${rev.questionCount} Questões` : 'Questões'}
                                             </span>
                                         )}
                                         <span className="badge badge-xs bg-slate-100 text-slate-600 font-medium px-1.5 py-2.5 rounded-md">
@@ -107,38 +120,21 @@ export default function DailyRevisionsList({
                                 </div>
 
                                 {/* Hover Disclosure (Utilitários vs Botão Iniciar) */}
-                                <div className="relative flex items-center h-8 pr-1">
-                                    {/* Estado Normal: Ícones */}
-                                    <div className={`flex items-center gap-2 transition-opacity duration-200 ${rev.completed ? 'opacity-50' : 'opacity-100 group-hover:opacity-0'}`}>
-                                        {rev.tecUrl && (
-                                            <a href={rev.tecUrl} target="_blank" rel="noreferrer" onClick={e => e.stopPropagation()} className="text-slate-400 hover:text-primary transition-colors">
-                                                <ExternalLink size={15} />
-                                            </a>
-                                        )}
-                                        {rev.videoUrl && (
-                                            <a href={rev.videoUrl} target="_blank" rel="noreferrer" onClick={e => e.stopPropagation()} className="text-slate-400 hover:text-secondary transition-colors">
-                                                <Video size={15} />
-                                            </a>
-                                        )}
-                                        {rev.pdfUrl && (
-                                            <a href={rev.pdfUrl} target="_blank" rel="noreferrer" onClick={e => e.stopPropagation()} className="text-slate-400 hover:text-accent transition-colors">
-                                                <FileText size={15} />
-                                            </a>
+                                <div className="flex items-center gap-2 shrink-0 self-center">
+                                    <div className="max-w-0 opacity-0 group-hover:max-w-xs group-hover:opacity-100 transition-opacity duration-200 ease-out ease-out overflow-hidden flex items-center pr-1">
+                                        {!rev.completed && (
+                                            <button
+                                                type="button"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    onStartFocusSession(rev);
+                                                }}
+                                                className={`btn btn-xs min-h-[28px] h-7 px-3 text-xs font-semibold btn-outline ${isOverdue ?'border-error text-error group-hover:bg-error group-hover:border-error' : 'border-base-300 text-base-content group-hover:bg-primary group-hover:border-primary'} group-hover:text-primary-content rounded-lg shadow-2xs whitespace-nowrap transition-colors flex items-center gap-1.5`}
+                                            >
+                                                <Play size={11} className="fill-current" /> Estudar
+                                            </button>
                                         )}
                                     </div>
-
-                                    {/* Estado Hover: Botão desliza para dentro */}
-                                    {!rev.completed && (
-                                        <button
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                onStartFocusSession(rev);
-                                            }}
-                                            className="absolute right-0 opacity-0 group-hover:opacity-100 translate-x-3 group-hover:translate-x-0 transition-all duration-200 btn btn-sm btn-primary rounded-xl px-4 text-xs font-bold shadow-sm cursor-pointer whitespace-nowrap flex items-center gap-1 min-h-0 h-8"
-                                        >
-                                            Iniciar <Play size={12} className="fill-current" />
-                                        </button>
-                                    )}
                                 </div>
                             </div>
                         );
