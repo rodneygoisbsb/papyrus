@@ -15,7 +15,7 @@ export default function StudyHeatmap() {
     ];
 
     return (
-        <div className="card-papyrus space-y-4">
+        <div className="card-papyrus-static space-y-4">
             {/* Cabeçalho */}
             <div className="flex items-center justify-between pb-2 border-b border-base-300/60">
                 <div className="flex items-center gap-2">

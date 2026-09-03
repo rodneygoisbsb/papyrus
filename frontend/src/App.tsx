@@ -251,8 +251,7 @@ export default function App() {
         <MetasPage
           dailyGoals={dailyGoals}
           toggleGoalCompletion={toggleGoalCompletion}
-          handleOpenStudy={() => { }}
-          setIsRegisterModalOpen={() => { }}
+          handleOpenStudy={handleOpenStudy}
           setActiveTab={setActiveTab}
         />
       )}

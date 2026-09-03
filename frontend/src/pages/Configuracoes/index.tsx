@@ -51,12 +51,13 @@ export default function ConfiguracoesPage() {
     const [isTocandoSom, setIsTocandoSom] = useState(false);
 
     // 5. CATEGORIAS FIXAS & PERSONALIZADAS
-    const [categoriasFixas] = useState([
+    const [categoriasFixas, setCategoriasFixas] = useState([
         { id: 'teoria', nome: 'TEORIA', cor: 'bg-purple-600 text-white' },
         { id: 'revisao', nome: 'REVISÃO', cor: 'bg-rose-500 text-white' },
         { id: 'questoes', nome: 'QUESTÕES', cor: 'bg-emerald-500 text-white' },
         { id: 'simulados', nome: 'SIMULADOS', cor: 'bg-blue-500 text-white' }
     ]);
+    const [editingFixedCat, setEditingFixedCat] = useState(null);
 
     const [categoriasCustom, setCategoriasCustom] = useState([
         { id: 'c1', nome: 'LEI SECA', cor: 'bg-amber-500 text-white' },
@@ -289,12 +290,15 @@ export default function ConfiguracoesPage() {
                         </div>
 
                         <div className="flex flex-wrap items-center gap-2.5">
-                            {intervalosRevisao.map((intervalo) => (
+                            {intervalosRevisao.map((intervalo) => {
+                                const num = intervalo.replace(/\D/g, '');
+                                const label = num === '1' ? '1 DIA' : (num ? `${num} DIAS` : intervalo.toUpperCase());
+                                return (
                                 <div
                                     key={intervalo}
-                                    className="group flex items-center gap-1.5 bg-slate-50 border border-base-300 text-base-content px-3.5 py-1.5 rounded-xl text-xs font-bold shadow-2xs hover:border-primary/50 transition-all"
+                                    className="group flex items-center gap-1.5 bg-slate-50 border border-base-300 text-base-content px-3.5 py-1.5 rounded-xl text-xs font-bold shadow-2xs hover:border-primary/50 transition-all uppercase tracking-wider"
                                 >
-                                    <span>{intervalo}</span>
+                                    <span>{label}</span>
                                     <button
                                         type="button"
                                         onClick={() => handleRemoveIntervalo(intervalo)}
@@ -304,7 +308,7 @@ export default function ConfiguracoesPage() {
                                         &times;
                                     </button>
                                 </div>
-                            ))}
+                            )})}
 
                             {showAddIntervalo ? (
                                 <div className="flex items-center gap-1.5 animate-in fade-in">
@@ -429,12 +433,48 @@ export default function ConfiguracoesPage() {
 
                         <div className="flex flex-wrap items-center gap-3">
                             {categoriasFixas.map((cat) => (
-                                <div
-                                    key={cat.id}
-                                    className={`px-4 py-2 rounded-xl text-xs font-black tracking-wider uppercase shadow-xs ${cat.cor}`}
-                                >
-                                    {cat.nome}
-                                </div>
+                                editingFixedCat === cat.id ? (
+                                    <div key={cat.id} className="flex items-center gap-2 bg-slate-50 p-1.5 rounded-xl border border-base-300 animate-in fade-in">
+                                        <span className="text-xs font-bold px-2 text-base-content">{cat.nome}</span>
+                                        <select
+                                            value={cat.cor}
+                                            onChange={(e) => {
+                                                const novas = categoriasFixas.map(c => c.id === cat.id ? { ...c, cor: e.target.value } : c);
+                                                setCategoriasFixas(novas);
+                                            }}
+                                            className="select select-xs bg-white border-base-300 rounded-lg text-[10px] font-bold text-base-content"
+                                        >
+                                            <option value="bg-purple-600 text-white">Roxo</option>
+                                            <option value="bg-rose-500 text-white">Rosa/Vermelho</option>
+                                            <option value="bg-emerald-500 text-white">Verde Esmeralda</option>
+                                            <option value="bg-blue-500 text-white">Azul</option>
+                                            <option value="bg-amber-500 text-white">Laranja</option>
+                                            <option value="bg-indigo-600 text-white">Índigo</option>
+                                            <option value="bg-slate-700 text-white">Cinza Escuro</option>
+                                            <option value="bg-cyan-600 text-white">Ciano</option>
+                                        </select>
+                                        <button
+                                            type="button"
+                                            onClick={() => setEditingFixedCat(null)}
+                                            className="btn btn-xs btn-primary rounded-lg text-[10px]"
+                                        >
+                                            OK
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <button
+                                        key={cat.id}
+                                        type="button"
+                                        onClick={() => setEditingFixedCat(cat.id)}
+                                        className={`group relative px-4 py-2 rounded-xl text-xs font-black tracking-wider uppercase shadow-xs cursor-pointer overflow-hidden transition-transform active:scale-95 ${cat.cor}`}
+                                        title="Clique para alterar a cor"
+                                    >
+                                        <span className="group-hover:opacity-0 transition-opacity">{cat.nome}</span>
+                                        <span className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/20 text-white text-[10px]">
+                                            MUDAR COR
+                                        </span>
+                                    </button>
+                                )
                             ))}
                         </div>
                     </div>

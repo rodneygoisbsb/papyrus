@@ -162,4 +162,8 @@
   .card-papyrus {
     @apply bg-base-100 border border-base-300/70 rounded-3xl p-6 shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 transform-gpu;
   }
+
+  .card-papyrus-static {
+    @apply bg-base-100 border border-base-300/70 rounded-3xl p-6 shadow-md;
+  }
 }

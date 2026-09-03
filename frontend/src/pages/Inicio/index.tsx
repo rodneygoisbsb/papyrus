@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import RegisterStudyModal from '../../components/modals/RegisterStudyModal';
 import TopKpiCards from './components/TopKpiCards';
-import DailyGoalsList from './components/DailyGoalsList';
-import DailyRevisionsList from './components/DailyRevisionsList';
+import DailyGoalsList from '../../components/shared/DailyGoalsList';
+import DailyRevisionsList from '../../components/shared/DailyRevisionsList';
 import MonthlyHeatmapCard from './components/MonthlyHeatmapCard';
 import TodaySessionsCard from './components/TodaySessionsCard';
 import AiDailySuggestionsCard from './components/AiDailySuggestionsCard';
@@ -50,10 +50,11 @@ export default function InicioPage({
                         onStartFocusSession={handleOpenStudy}
                         onOpenRegisterModal={() => setIsRegisterModalOpen(true)}
                         setActiveTab={setActiveTab}
+                        isCompact={true}
                     />
 
-                    <AiDailySuggestionsCard 
-                        onRegisterStudy={() => setIsRegisterModalOpen(true)} 
+                    <AiDailySuggestionsCard
+                        onRegisterStudy={() => setIsRegisterModalOpen(true)}
                         onStartFocusSession={handleOpenStudy}
                     />
 
