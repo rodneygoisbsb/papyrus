@@ -260,7 +260,9 @@ export default function App() {
 
       {activeTab === 'configuracoes' && <ConfiguracoesPage />}
 
-      {activeTab !== 'inicio' && activeTab !== 'concursos' && activeTab !== 'metas' && activeTab !== 'perfil' && activeTab !== 'configuracoes' && (
+      {activeTab === 'quadro' && <QuadroSemanalPage />}
+
+      {activeTab !== 'inicio' && activeTab !== 'concursos' && activeTab !== 'metas' && activeTab !== 'perfil' && activeTab !== 'configuracoes' && activeTab !== 'quadro' && (
         <div className="card-papyrus !p-12 text-center space-y-4 flex flex-col items-center justify-center h-full min-h-[400px]">
           <Layers size={40} className="text-primary" />
           <h3 className="text-lg font-bold text-base-content capitalize">
