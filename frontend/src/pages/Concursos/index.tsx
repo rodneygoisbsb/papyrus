@@ -1,6 +1,6 @@
 import React from 'react';
 import { Plus, Trash2, Edit3, Folder, BookOpen, X, ArrowRight } from 'lucide-react';
-import { useDisciplineEditor } from '../hooks/useDisciplineEditor';
+import { useDisciplineEditor } from '../../hooks/useDisciplineEditor';
 
 export default function ConcursosPage({
     disciplines = [],
@@ -55,7 +55,7 @@ export default function ConcursosPage({
             {/* 2. GRID DE DISCIPLINAS CADASTRADAS */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {(!disciplines || disciplines.length === 0) ? (
-                    <div className="col-span-full p-12 text-center bg-base-100 border border-base-300/60 rounded-3xl text-neutral-content space-y-3">
+                    <div className="col-span-full card-papyrus !p-12 text-center text-neutral-content space-y-3">
                         <Folder size={36} className="mx-auto text-neutral-content/40" />
                         <p className="text-sm font-semibold text-base-content">
                             Nenhuma disciplina cadastrada ainda.
@@ -68,74 +68,47 @@ export default function ConcursosPage({
                     disciplines.map((disc) => (
                         <div
                             key={disc.id}
-                            className="bg-base-100 border border-base-300/70 rounded-3xl p-6 shadow-xs flex flex-col justify-between hover:shadow-sm transition-all border-l-[6px]"
+                            className="card-papyrus flex flex-col justify-between border-l-[6px] relative min-h-[160px]"
                             style={{ borderLeftColor: disc.colorHex || '#2563EB' }}
                         >
-                            <div>
-                                <div className="flex justify-between items-start gap-2">
-                                    <h3 className="font-bold text-base tracking-tight text-base-content uppercase truncate">
-                                        {disc.name}
-                                    </h3>
-                                    <div className="flex items-center gap-1 shrink-0">
-                                        <button
-                                            type="button"
-                                            onClick={() => onEditDiscipline(disc)}
-                                            className="btn btn-ghost btn-xs btn-square text-neutral-content hover:text-primary rounded-lg"
-                                            title="Editar Disciplina"
-                                        >
-                                            <Edit3 size={15} />
-                                        </button>
-                                        <button
-                                            type="button"
-                                            onClick={() => onDeleteDiscipline(disc.id)}
-                                            className="btn btn-ghost btn-xs btn-square text-neutral-content hover:text-error rounded-lg"
-                                            title="Excluir Disciplina"
-                                        >
-                                            <Trash2 size={15} />
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <div className="grid grid-cols-3 gap-2 bg-base-200/40 border border-base-300/50 p-3 rounded-2xl my-4 text-center">
-                                    <div>
-                                        <span className="text-xl font-bold text-primary block leading-none tabular-nums">
-                                            {disc.studiedTopics || 0}
-                                        </span>
-                                        <span className="text-[10px] text-neutral-content uppercase font-semibold mt-1 block">
-                                            Estudados
-                                        </span>
-                                    </div>
-                                    <div>
-                                        <span className="text-xl font-bold text-base-content block leading-none tabular-nums">
-                                            {disc.totalTopics || disc.topics?.length || 0}
-                                        </span>
-                                        <span className="text-[10px] text-neutral-content uppercase font-semibold mt-1 block">
-                                            Totais
-                                        </span>
-                                    </div>
-                                    <div>
-                                        <span className="text-xl font-bold text-[#16A34A] block leading-none tabular-nums">
-                                            {disc.questionsDone || 0}
-                                        </span>
-                                        <span className="text-[10px] text-neutral-content uppercase font-semibold mt-1 block">
-                                            Questões
-                                        </span>
-                                    </div>
+                            {/* Top Bar: Title & Actions */}
+                            <div className="flex justify-between items-start gap-2 mb-6">
+                                <h3 className="font-bold text-base tracking-tight text-base-content uppercase truncate">
+                                    {disc.name}
+                                </h3>
+                                <div className="flex items-center gap-1 shrink-0">
+                                    <button
+                                        type="button"
+                                        onClick={() => onEditDiscipline(disc)}
+                                        className="btn btn-ghost btn-xs btn-square text-neutral-content hover:text-primary rounded-lg"
+                                        title="Editar Disciplina"
+                                    >
+                                        <Edit3 size={15} />
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => onDeleteDiscipline(disc.id)}
+                                        className="btn btn-ghost btn-xs btn-square text-neutral-content hover:text-error rounded-lg"
+                                        title="Excluir Disciplina"
+                                    >
+                                        <Trash2 size={15} />
+                                    </button>
                                 </div>
                             </div>
 
-                            <div className="pt-3 flex justify-between items-center text-xs text-neutral-content border-t border-base-300/60 font-medium">
-                                <span className="flex items-center gap-1.5">
-                                    <Folder size={14} className="text-primary" />
-                                    {disc.topics?.length || 0} tópicos no edital
+                            {/* Bottom Stats */}
+                            <div className="pt-4 flex justify-between items-end text-[11px] font-bold uppercase tracking-wider border-t border-base-300/60 mt-auto">
+                                <div className="flex items-baseline gap-1">
+                                    <span className="text-lg font-bold text-primary leading-none">
+                                        {disc.studiedTopics || 0}
+                                    </span>
+                                    <span className="text-neutral-content/70">
+                                        / {disc.totalTopics || disc.topics?.length || 0} tópicos
+                                    </span>
+                                </div>
+                                <span className="text-[#16A34A] flex items-center gap-1 mb-[2px]">
+                                    {disc.questionsDone || 0} questões
                                 </span>
-                                <button
-                                    type="button"
-                                    onClick={() => onEditDiscipline(disc)}
-                                    className="text-primary font-semibold hover:underline flex items-center gap-0.5 text-[11px]"
-                                >
-                                    Ver tópicos <ArrowRight size={12} />
-                                </button>
                             </div>
                         </div>
                     ))

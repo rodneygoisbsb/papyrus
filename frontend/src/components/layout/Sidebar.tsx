@@ -38,12 +38,8 @@ export default function Sidebar({ activeTab, setActiveTab }) {
         <aside
             className={[
                 expanded ? 'w-60' : 'w-[68px]',
-                'h-screen bg-white border-r border-slate-100 relative',
-                'flex flex-col justify-between',
-                'shrink-0 sticky top-0 z-40',
-                'transition-[width] duration-150 ease-out',
+                'bg-base-100 flex flex-col justify-between shrink-0 h-screen sticky top-0 z-40 transition-all duration-300 ease-[cubic-bezier(0.2,0.8,0.2,1)] border-r border-base-300/60 shadow-[4px_0_24px_rgba(0,0,0,0.03)]',
                 'select-none hidden md:flex',
-                'shadow-[2px_0_20px_rgba(0,0,0,0.04)]',
             ].join(' ')}
         >
             {/* Botão flutuante para expandir/recolher */}
@@ -57,7 +53,7 @@ export default function Sidebar({ activeTab, setActiveTab }) {
             <div className="flex flex-col flex-1 overflow-hidden">
 
                 {/* Logo */}
-                <div className="flex items-center gap-3 px-[14px] py-5 border-b border-slate-100 shrink-0">
+                <div className="flex items-center gap-3 px-[14px] h-[68px] border-b border-base-300/60 shrink-0">
                     <div
                         className="w-10 h-10 rounded-xl flex items-center justify-center font-black text-white text-base shrink-0 shadow-lg"
                         style={{

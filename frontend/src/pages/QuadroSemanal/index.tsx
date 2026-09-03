@@ -12,7 +12,7 @@ export default function QuadroSemanalTab() {
 
             <div className="grid grid-cols-1 md:grid-cols-7 gap-3">
                 {diasDaSemana.map((day, idx) => (
-                    <div key={day} className="bg-base-100 border border-base-300/70 rounded-3xl p-4 min-h-[260px] flex flex-col justify-between space-y-4 shadow-sm">
+                    <div key={day} className="card-papyrus min-h-[260px] flex flex-col justify-between space-y-4">
                         <div>
                             <div className="border-b border-base-300 pb-2 mb-3">
                                 <span className="text-xs font-black uppercase text-base-content">{day}</span>

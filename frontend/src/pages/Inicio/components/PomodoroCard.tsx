@@ -13,7 +13,7 @@ export default function PomodoroCard() {
     } = usePomodoro();
 
     return (
-        <div className="bg-base-100 border border-base-300/70 p-6 rounded-3xl shadow-xs flex flex-col items-center text-center">
+        <div className="card-papyrus flex flex-col items-center text-center">
             <div className="flex items-center justify-between w-full mb-4 pb-2 border-b border-base-300/60">
                 <div className="flex items-center gap-2">
                     <Clock size={18} className="text-accent" />

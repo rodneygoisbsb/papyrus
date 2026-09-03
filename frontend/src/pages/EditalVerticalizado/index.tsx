@@ -10,7 +10,7 @@ export default function EditalVerticalizadoTab({ editalTopics, toggleEditalCheck
                 <p className="text-xs text-neutral-content">Controle de fechamento de teoria e 6 ciclos de revisões ($R_1$ a $R_6$)</p>
             </div>
 
-            <div className="bg-base-100 border border-base-300/70 rounded-3xl overflow-x-auto shadow-sm p-2">
+            <div className="card-papyrus !p-2 overflow-x-auto">
                 <table className="table table-xs w-full text-left">
                     <thead className="bg-base-200/80 text-base-content font-bold rounded-2xl">
                         <tr>

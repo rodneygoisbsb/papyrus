@@ -30,7 +30,7 @@ export default function TopKpiCards({
     return (
         <section className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch w-full">
             {/* Card 1: Estudo Semanal */}
-            <div className="bg-base-100 border border-base-300/70 p-6 rounded-3xl shadow-xs flex flex-col justify-between hover:shadow-sm transition-shadow">
+            <div className="card-papyrus flex flex-col justify-between">
                 <div className="flex justify-between items-center h-8 mb-4">
                     <span className="text-xs uppercase tracking-wider font-bold text-neutral-content">
                         ESTUDO SEMANAL
@@ -71,7 +71,7 @@ export default function TopKpiCards({
             </div>
 
             {/* Card 2: Questões Semanais */}
-            <div className="bg-base-100 border border-base-300/70 p-6 rounded-3xl shadow-xs flex flex-col justify-between hover:shadow-sm transition-shadow">
+            <div className="card-papyrus flex flex-col justify-between">
                 <div className="flex justify-between items-center h-8 mb-4">
                     <span className="text-xs uppercase tracking-wider font-bold text-neutral-content">
                         QUESTÕES SEMANAIS
@@ -110,7 +110,11 @@ export default function TopKpiCards({
             </div>
 
             {/* Card 3: Progresso no Edital */}
-            <div className="bg-base-100 border border-primary/40 p-6 rounded-3xl shadow-[0_0_30px_rgba(94,148,255,0.15)] flex flex-col justify-between hover:border-primary/80 transition-colors duration-150 relative overflow-hidden before:absolute before:top-0 before:left-0 before:right-0 before:h-[2px] before:bg-gradient-to-r before:from-transparent before:via-primary before:to-transparent">
+            <div className="relative overflow-hidden rounded-[22px] border border-blue-500/30 bg-gradient-to-br from-white via-white to-blue-50/40 p-6 shadow-[0_10px_30px_-6px_rgba(37,99,235,0.09)] transition-all duration-200 ease-out hover:-translate-y-1 hover:border-blue-500/45 hover:shadow-[0_16px_35px_-6px_rgba(37,99,235,0.14)] active:scale-[0.99] flex flex-col justify-between h-full">
+                {/* Linha de acento luminoso superior */}
+                <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-blue-200 via-blue-600 to-blue-200" />
+
+                {/* Cabeçalho */}
                 <div className="flex justify-between items-center h-8 mb-4">
                     <div className="flex items-center gap-2">
                         <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary shrink-0">

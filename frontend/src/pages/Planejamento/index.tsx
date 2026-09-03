@@ -3,7 +3,7 @@ import { Calendar, RotateCcw } from 'lucide-react';
 
 export default function PlanejamentoTab() {
     return (
-        <div className="bg-base-100 border border-base-300/70 rounded-3xl p-8 max-w-2xl mx-auto space-y-6 shadow-sm animate-in fade-in duration-200">
+        <div className="card-papyrus !p-8 max-w-2xl mx-auto space-y-6 animate-in fade-in duration-200">
             <h2 className="text-2xl font-black text-base-content text-center">Planejamento de Estudos</h2>
             <div className="grid grid-cols-2 gap-4">
                 <button

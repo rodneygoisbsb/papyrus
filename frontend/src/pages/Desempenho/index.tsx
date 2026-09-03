@@ -13,7 +13,7 @@ export default function DesempenhoTab() {
             <h2 className="text-2xl font-black text-base-content">Painel de Desempenho</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <WeeklyStudyChartCard />
-                <div className="bg-base-100 border border-base-300/70 rounded-3xl p-7 space-y-3 shadow-sm">
+                <div className="card-papyrus space-y-3">
                     <h3 className="font-bold text-sm text-base-content">Taxa de Acerto por Disciplina</h3>
                     {desempenhoMaterias.map((subj) => (
                         <div key={subj.name} className="space-y-1">

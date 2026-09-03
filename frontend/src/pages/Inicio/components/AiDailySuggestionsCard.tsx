@@ -93,7 +93,7 @@ export default function AiDailySuggestionsCard({
         {items.map((group) => (
           <div
             key={group.subjectId}
-            className="p-3.5 rounded-2xl bg-base-100 border border-base-200 shadow-sm space-y-3"
+            className="card-papyrus !p-3.5 !rounded-2xl space-y-3"
           >
             {/* Header da Matéria */}
             <div className="flex items-center justify-between">

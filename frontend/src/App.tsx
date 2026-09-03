@@ -6,10 +6,14 @@ import { Layers } from 'lucide-react';
 import MainLayout from './components/layout/MainLayout';
 
 import InicioPage from './pages/Inicio';
-import ConcursosPage from './pages/ConcursosPage';
-import MetasPage from './pages/MetasPage';
-import PerfilPage from './pages/PerfilPage';
-import ConfiguracoesPage from './pages/ConfiguracoesPage';
+import ConcursosPage from './pages/Concursos';
+import MetasPage from './pages/Metas';
+import PerfilPage from './pages/Perfil';
+import ConfiguracoesPage from './pages/Configuracoes';
+import PlanejamentoPage from './pages/Planejamento';
+import QuadroSemanalPage from './pages/QuadroSemanal';
+import DesempenhoPage from './pages/Desempenho';
+import EditalVerticalizadoPage from './pages/EditalVerticalizado';
 
 // 3. Hooks personalizados
 import { useLocalStorage } from './hooks/useLocalStorage';
@@ -258,7 +262,7 @@ export default function App() {
       {activeTab === 'configuracoes' && <ConfiguracoesPage />}
 
       {activeTab !== 'inicio' && activeTab !== 'concursos' && activeTab !== 'metas' && activeTab !== 'perfil' && activeTab !== 'configuracoes' && (
-        <div className="bg-base-100 border border-base-300/70 p-12 rounded-3xl shadow-xs text-center space-y-4 flex flex-col items-center justify-center h-full min-h-[400px]">
+        <div className="card-papyrus !p-12 text-center space-y-4 flex flex-col items-center justify-center h-full min-h-[400px]">
           <Layers size={40} className="text-primary" />
           <h3 className="text-lg font-bold text-base-content capitalize">
             Aba {activeTab}

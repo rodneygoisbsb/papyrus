@@ -60,8 +60,8 @@
   /* Superfícies */
   --color-base-100: oklch(100% 0 0);
   /* #FFFFFF Cards e Modais */
-  --color-base-200: oklch(98.7% 0.003 236.3);
-  /* #F8FAFC Canvas geral (Slate 50) */
+  --color-base-200: oklch(95.5% 0.008 236.3);
+  /* #F1F5F9 Canvas geral mais escuro (Slate 100) */
   --color-base-300: oklch(91.7% 0.013 240.9);
   /* #E2E8F0 Divisores e bordas */
   --color-base-content: oklch(16.6% 0.032 253.9);
@@ -152,5 +152,14 @@
     min-height: 100svh;
     margin: 0;
     padding: 0;
+  }
+}
+
+/* ============================================================
+   COMPONENTES PADRÃO (DESIGN SYSTEM)
+   ============================================================ */
+@layer components {
+  .card-papyrus {
+    @apply bg-base-100 border border-base-300/70 rounded-3xl p-6 shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 transform-gpu;
   }
 }

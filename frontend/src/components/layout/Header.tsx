@@ -17,8 +17,8 @@ export default function Header({
         <header className="h-[68px] px-7 flex items-center justify-between bg-base-100 border-b border-base-300/60 sticky top-0 z-30 shrink-0 shadow-sm">
 
             {/* ESQUERDA: Seletor de plano */}
-            <div className="flex items-center gap-3">
-                <span className="text-[11px] uppercase font-bold tracking-widest text-neutral-content hidden sm:block">
+            <div className="flex items-center gap-3 pl-4">
+                <span className="text-xs uppercase font-bold tracking-widest text-neutral-content">
                     Plano:
                 </span>
                 <div className="relative">
@@ -28,7 +28,7 @@ export default function Header({
                         className="flex items-center gap-2 bg-base-200/70 hover:bg-base-200 text-primary font-bold text-xs px-3.5 py-2 rounded-xl border border-base-300/70 transition-colors duration-150 cursor-pointer"
                     >
                         <span>{planoAtivo?.nome || 'Selecionar'}</span>
-                        <ChevronDown size={13} className={`transition-transform duration-200 ${isPlanOpen ?'rotate-180' : ''}`} />
+                        <ChevronDown size={13} className={`transition-transform duration-200 ${isPlanOpen ? 'rotate-180' : ''}`} />
                     </button>
 
                     {isPlanOpen && (
