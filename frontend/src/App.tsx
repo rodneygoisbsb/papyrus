@@ -62,11 +62,17 @@ export default function App() {
     }
   ]);
 
-  const handleCreatePlan = (nome: string, cargo: string) => {
+  const handleCreatePlan = (nome: string, cargo: string, imagem: File | null) => {
+    let imagemUrl = undefined;
+    if (imagem) {
+        imagemUrl = URL.createObjectURL(imagem);
+    }
+
     const newPlan = {
       id: Date.now(),
       nome,
       orgao: cargo,
+      imagemUrl,
       questoes: 0,
       acerto: 0,
       horas: 0,
@@ -86,6 +92,12 @@ export default function App() {
             setSelectedPlanId(null);
         }
     }
+  };
+
+  const handleEditPlan = (updatedPlan: any) => {
+    setPlanosDisponiveis((prev: any) => 
+        prev.map((p: any) => (p.id === updatedPlan.id ? updatedPlan : p))
+    );
   };
 
   const currentPlan = planosDisponiveis.find((p: any) => p.id === selectedPlanId) || planosDisponiveis[0];
@@ -314,9 +326,11 @@ export default function App() {
       {activeTab === 'plano-estudos' && (
         <PlanoEstudosPage 
             planos={planosDisponiveis} 
+            selectedPlanId={selectedPlanId}
             setActiveTab={setActiveTab} 
+            onSelectPlan={setSelectedPlanId}
             onDeletePlan={handleDeletePlan}
-            onEditPlan={(plano) => alert(`Edição do plano ${plano.nome} será implementada em breve!`)}
+            onEditPlan={handleEditPlan}
         />
       )}
 
