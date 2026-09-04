@@ -11,13 +11,13 @@ interface PlanoEstudosPageProps {
     onDeletePlan?: (id: number) => void;
 }
 
-export default function PlanoEstudosPage({ 
-    planos = [], 
+export default function PlanoEstudosPage({
+    planos = [],
     selectedPlanId,
-    setActiveTab, 
+    setActiveTab,
     onSelectPlan,
-    onEditPlan, 
-    onDeletePlan 
+    onEditPlan,
+    onDeletePlan
 }: PlanoEstudosPageProps) {
     const [editingPlan, setEditingPlan] = useState<any>(null);
     const [planToSelect, setPlanToSelect] = useState<any>(null);
@@ -61,111 +61,112 @@ export default function PlanoEstudosPage({
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {sortedPlanos.map((plano) => {
                     const isSelected = plano.id === selectedPlanId;
-                    
+
                     return (
-                    <div
-                        key={plano.id}
-                        onClick={() => handlePlanClick(plano)}
-                        className={`p-6 rounded-[24px] border shadow-[0_4px_24px_rgba(0,0,0,0.02)] transition-all group cursor-pointer flex flex-col justify-between min-h-[220px] 
-                            ${isSelected 
-                                ? 'bg-primary/5 border-primary shadow-[0_8px_30px_rgba(37,99,235,0.12)] ring-2 ring-primary/20' 
-                                : 'bg-base-100 border-base-200 hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)] hover:border-base-300'
-                            }`}
-                    >
-                        {/* HEADER DO CARD */}
-                        <div>
-                            <div className="flex items-start justify-between mb-4">
-                                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center overflow-hidden ${!plano.imagemUrl ? `${plano.bgLight} ${plano.iconColor}` : ''}`}>
-                                    {plano.imagemUrl ? (
-                                        <img src={plano.imagemUrl} alt={plano.nome} className="w-full h-full object-cover" />
-                                    ) : (
-                                        <Shield size={24} />
+                        <div
+                            key={plano.id}
+                            onClick={() => handlePlanClick(plano)}
+                            className={`card-papyrus group cursor-pointer flex flex-col justify-between min-h-[220px] 
+                            ${isSelected
+                                    ? 'border-l-[6px] border-l-primary relative overflow-hidden hover:-translate-y-0.5'
+                                    : ''
+                                }`}
+                        >
+
+                            {/* HEADER DO CARD */}
+                            <div>
+                                <div className="flex items-start justify-between mb-4">
+                                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center overflow-hidden ${!plano.imagemUrl ? `${plano.bgLight} ${plano.iconColor}` : ''}`}>
+                                        {plano.imagemUrl ? (
+                                            <img src={plano.imagemUrl} alt={plano.nome} className="w-full h-full object-cover" />
+                                        ) : (
+                                            <Shield size={24} />
+                                        )}
+                                    </div>
+                                    <div className="flex items-center gap-1">
+                                        <button
+                                            type="button"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                setEditingPlan(plano);
+                                            }}
+                                            className="btn btn-ghost btn-xs btn-square text-neutral-content hover:text-primary rounded-lg"
+                                            title="Editar Plano"
+                                        >
+                                            <Edit3 size={15} />
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                if (onDeletePlan) onDeletePlan(plano.id);
+                                            }}
+                                            className="btn btn-ghost btn-xs btn-square text-neutral-content hover:text-error rounded-lg"
+                                            title="Excluir Plano"
+                                        >
+                                            <Trash2 size={15} />
+                                        </button>
+                                    </div>
+                                </div>
+                                <div className="flex items-center gap-2 mb-1">
+                                    <h3 className={`font-extrabold text-lg leading-tight transition-colors ${isSelected ? 'text-primary' : 'text-base-content group-hover:text-primary'}`}>
+                                        {plano.nome}
+                                    </h3>
+                                    {isSelected && (
+                                        <span className="bg-primary text-primary-content text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full">
+                                            Atual
+                                        </span>
                                     )}
                                 </div>
-                                <div className="flex items-center gap-1">
-                                    <button
-                                        type="button"
-                                        onClick={(e) => { 
-                                            e.stopPropagation(); 
-                                            setEditingPlan(plano);
-                                        }}
-                                        className="btn btn-ghost btn-xs btn-square text-neutral-content hover:text-primary rounded-lg"
-                                        title="Editar Plano"
-                                    >
-                                        <Edit3 size={15} />
-                                    </button>
-                                    <button
-                                        type="button"
-                                        onClick={(e) => { 
-                                            e.stopPropagation(); 
-                                            if(onDeletePlan) onDeletePlan(plano.id); 
-                                        }}
-                                        className="btn btn-ghost btn-xs btn-square text-neutral-content hover:text-error rounded-lg"
-                                        title="Excluir Plano"
-                                    >
-                                        <Trash2 size={15} />
-                                    </button>
-                                </div>
+                                <p className="text-xs font-semibold text-neutral-content/70">
+                                    {plano.orgao}
+                                </p>
                             </div>
-                            <div className="flex items-center gap-2 mb-1">
-                                <h3 className={`font-extrabold text-lg leading-tight transition-colors ${isSelected ? 'text-primary' : 'text-base-content group-hover:text-primary'}`}>
-                                    {plano.nome}
-                                </h3>
-                                {isSelected && (
-                                    <span className="bg-primary text-primary-content text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full">
-                                        Atual
+
+                            {/* MÉTRICAS */}
+                            <div className="grid grid-cols-3 gap-2 mt-6 pt-5 border-t border-base-200/60">
+                                {/* Questões */}
+                                <div className="flex flex-col gap-1">
+                                    <span className="text-base font-black text-base-content">
+                                        {plano.questoes === 0 ? '--' : plano.questoes}
                                     </span>
-                                )}
-                            </div>
-                            <p className="text-xs font-semibold text-neutral-content/70">
-                                {plano.orgao}
-                            </p>
-                        </div>
+                                    <div className="flex items-center gap-1.5 text-neutral-content">
+                                        <CheckSquare size={12} />
+                                        <span className="text-[10px] uppercase tracking-wider font-bold">Questões</span>
+                                    </div>
 
-                        {/* MÉTRICAS */}
-                        <div className="grid grid-cols-3 gap-2 mt-6 pt-5 border-t border-base-200/60">
-                            {/* Questões */}
-                            <div className="flex flex-col gap-1">
-                                <span className="text-base font-black text-base-content">
-                                    {plano.questoes === 0 ? '--' : plano.questoes}
-                                </span>
-                                <div className="flex items-center gap-1.5 text-neutral-content">
-                                    <CheckSquare size={12} />
-                                    <span className="text-[10px] uppercase tracking-wider font-bold">Questões</span>
                                 </div>
 
-                            </div>
+                                {/* Acerto */}
+                                <div className="flex flex-col gap-1">
+                                    <span className="text-base font-black text-emerald-600">
+                                        {plano.acerto === 0 ? '--' : `${plano.acerto}%`}
+                                    </span>
+                                    <div className="flex items-center gap-1.5 text-neutral-content">
+                                        <Target size={12} />
+                                        <span className="text-[10px] uppercase tracking-wider font-bold">Acerto</span>
+                                    </div>
 
-                            {/* Acerto */}
-                            <div className="flex flex-col gap-1">
-                                <span className="text-base font-black text-emerald-600">
-                                    {plano.acerto === 0 ? '--' : `${plano.acerto}%`}
-                                </span>
-                                <div className="flex items-center gap-1.5 text-neutral-content">
-                                    <Target size={12} />
-                                    <span className="text-[10px] uppercase tracking-wider font-bold">Acerto</span>
                                 </div>
 
-                            </div>
+                                {/* Tempo */}
+                                <div className="flex flex-col gap-1">
+                                    <span className="text-base font-black text-base-content">
+                                        {plano.horas === 0 ? '--' : `${plano.horas}h`}
+                                    </span>
+                                    <div className="flex items-center gap-1.5 text-neutral-content">
+                                        <Clock size={12} />
+                                        <span className="text-[10px] uppercase tracking-wider font-bold">Tempo</span>
+                                    </div>
 
-                            {/* Tempo */}
-                            <div className="flex flex-col gap-1">
-                                <span className="text-base font-black text-base-content">
-                                    {plano.horas === 0 ? '--' : `${plano.horas}h`}
-                                </span>
-                                <div className="flex items-center gap-1.5 text-neutral-content">
-                                    <Clock size={12} />
-                                    <span className="text-[10px] uppercase tracking-wider font-bold">Tempo</span>
                                 </div>
-
                             </div>
                         </div>
-                    </div>
                     );
                 })}
             </div>
 
-            <PlanModal 
+            <PlanModal
                 isOpen={!!editingPlan}
                 onClose={() => setEditingPlan(null)}
                 initialData={editingPlan ? { nome: editingPlan.nome, cargo: editingPlan.orgao } : null}
@@ -189,7 +190,7 @@ export default function PlanoEstudosPage({
                         {/* Header */}
                         <div className="flex items-center justify-between p-6 pb-2">
                             <h3 className="font-extrabold text-xl text-base-content">Alterar Plano Atual</h3>
-                            <button 
+                            <button
                                 onClick={() => setPlanToSelect(null)}
                                 className="text-neutral-content hover:text-base-content transition-colors rounded-full p-1 hover:bg-base-200"
                             >
@@ -206,13 +207,13 @@ export default function PlanoEstudosPage({
 
                         {/* Footer */}
                         <div className="p-6 pt-4 border-t border-base-200 bg-base-50 flex gap-3 justify-end">
-                            <button 
+                            <button
                                 onClick={() => setPlanToSelect(null)}
                                 className="btn btn-ghost font-bold text-neutral-content hover:bg-base-200/50 rounded-xl"
                             >
                                 Cancelar
                             </button>
-                            <button 
+                            <button
                                 onClick={() => {
                                     if (onSelectPlan) onSelectPlan(planToSelect.id);
                                     setPlanToSelect(null);
