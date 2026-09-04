@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Calendar, RotateCcw } from 'lucide-react';
-import CreateScheduleWizard from '../../components/modals/CreateScheduleWizard';
+import CreateScheduleWizard from './components/CreateScheduleWizard';
 
 export default function PlanejamentoTab() {
     const [isWizardOpen, setIsWizardOpen] = useState(false);
