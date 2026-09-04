@@ -1,4 +1,3 @@
-// src/components/layout/Sidebar.jsx
 import React, { useState } from 'react';
 import {
     LayoutDashboard,
@@ -10,14 +9,18 @@ import {
     BarChart3,
     User,
     Settings,
-    ChevronRight
+    ChevronRight,
+    BookOpen,
+    Folder
 } from 'lucide-react';
 
 const MENU = [
     { id: 'inicio', label: 'Início', icon: LayoutDashboard },
-    { id: 'planejamento', label: 'Planejamento', icon: Sliders },
+    { id: 'plano-estudos', label: 'Meu Plano', icon: Folder },
+    { id: 'disciplinas', label: 'Disciplinas', icon: BookOpen },
     { id: 'metas', label: 'Metas Diárias', icon: CheckCircle2 },
     { id: 'quadro', label: 'Quadro Semanal', icon: CalendarDays },
+    { id: 'planejamento', label: 'Planejamento', icon: Sliders },
     { id: 'edital', label: 'Edital Verticalizado', icon: ListOrdered },
     { id: 'desempenho', label: 'Desempenho', icon: BarChart3 },
 ];

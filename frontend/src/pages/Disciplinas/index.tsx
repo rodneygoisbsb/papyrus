@@ -2,7 +2,7 @@ import React from 'react';
 import { Plus, Trash2, Edit3, Folder, BookOpen, X, ArrowRight } from 'lucide-react';
 import { useDisciplineEditor } from '../../hooks/useDisciplineEditor';
 
-export default function ConcursosPage({
+export default function DisciplinasPage({
     disciplines = [],
     activeDisciplineEditor = null,
     setActiveDisciplineEditor = () => { },
@@ -29,17 +29,17 @@ export default function ConcursosPage({
 
     return (
         <div className="space-y-6 font-['Plus_Jakarta_Sans'] text-base-content animate-in fade-in duration-200">
-            {/* 1. CABEÇALHO DA SEÇÃO DE CONCURSOS */}
+            {/* 1. CABEÇALHO DA SEÇÃO DE DISCIPLINAS */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-base-100 p-6 rounded-3xl border border-base-300/70 shadow-xs">
                 <div>
                     <div className="flex items-center gap-2 mb-1">
                         <BookOpen size={20} className="text-primary" />
                         <h2 className="text-xl font-bold tracking-tight text-base-content">
-                            Disciplinas do Concurso
+                            Suas Disciplinas
                         </h2>
                     </div>
                     <p className="text-xs text-neutral-content">
-                        Adicione matérias e monte o edital verticalizado do seu concurso.
+                        Adicione e edite matérias e tópicos para os seus planos de estudo.
                     </p>
                 </div>
 

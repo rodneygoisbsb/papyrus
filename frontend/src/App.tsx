@@ -10,6 +10,8 @@ import ConcursosPage from './pages/Concursos';
 import MetasPage from './pages/Metas';
 import PerfilPage from './pages/Perfil';
 import ConfiguracoesPage from './pages/Configuracoes';
+import DisciplinasPage from './pages/Disciplinas';
+import PlanoEstudosPage from './pages/PlanoEstudos';
 import PlanejamentoPage from './pages/Planejamento';
 import QuadroSemanalPage from './pages/QuadroSemanal';
 import DesempenhoPage from './pages/Desempenho';
@@ -233,8 +235,8 @@ export default function App() {
         />
       )}
 
-      {activeTab === 'concursos' && (
-        <ConcursosPage
+      {activeTab === 'disciplinas' && (
+        <DisciplinasPage
           disciplines={disciplines}
           activeDisciplineEditor={activeDisciplineEditor}
           setActiveDisciplineEditor={setActiveDisciplineEditor}
@@ -245,6 +247,10 @@ export default function App() {
           onDeleteDiscipline={handleDeleteDiscipline}
           onSaveDiscipline={handleSaveDisciplineEditor}
         />
+      )}
+
+      {activeTab === 'plano-estudos' && (
+        <PlanoEstudosPage />
       )}
 
       {activeTab === 'metas' && (
@@ -260,9 +266,11 @@ export default function App() {
 
       {activeTab === 'configuracoes' && <ConfiguracoesPage />}
 
+      {activeTab === 'planejamento' && <PlanejamentoPage />}
+
       {activeTab === 'quadro' && <QuadroSemanalPage />}
 
-      {activeTab !== 'inicio' && activeTab !== 'concursos' && activeTab !== 'metas' && activeTab !== 'perfil' && activeTab !== 'configuracoes' && activeTab !== 'quadro' && (
+      {activeTab !== 'inicio' && activeTab !== 'disciplinas' && activeTab !== 'plano-estudos' && activeTab !== 'metas' && activeTab !== 'perfil' && activeTab !== 'configuracoes' && activeTab !== 'planejamento' && activeTab !== 'quadro' && (
         <div className="card-papyrus !p-12 text-center space-y-4 flex flex-col items-center justify-center h-full min-h-[400px]">
           <Layers size={40} className="text-primary" />
           <h3 className="text-lg font-bold text-base-content capitalize">
