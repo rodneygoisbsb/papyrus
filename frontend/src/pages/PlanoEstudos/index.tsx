@@ -37,7 +37,11 @@ const MOCK_PLANOS = [
     }
 ];
 
-export default function PlanoEstudosPage() {
+interface PlanoEstudosPageProps {
+    setActiveTab?: (tab: string) => void;
+}
+
+export default function PlanoEstudosPage({ setActiveTab }: PlanoEstudosPageProps) {
     return (
         <div className="space-y-8 font-['Plus_Jakarta_Sans'] text-base-content animate-in fade-in duration-200">
             {/* CABEÇALHO E AÇÃO PRINCIPAL */}
@@ -46,10 +50,11 @@ export default function PlanoEstudosPage() {
                     <h2 className="text-2xl font-black text-base-content tracking-tight">Meu Plano</h2>
                     <p className="text-xs text-neutral-content mt-1">Gerencie seus planos de estudo e acompanhe sua evolução.</p>
                 </div>
-                
+
                 {/* CRIAR NOVO PLANO (Botão estreito horizontal) */}
-                <button 
-                    type="button" 
+                <button
+                    type="button"
+                    onClick={() => setActiveTab && setActiveTab('criar-plano')}
                     className="flex items-center gap-3 bg-primary text-primary-content px-5 py-2.5 rounded-xl transition-all shadow-sm hover:shadow-md hover:bg-primary/90 font-bold group"
                 >
                     <Plus size={18} className="group-hover:rotate-90 transition-transform duration-300" />
@@ -60,8 +65,8 @@ export default function PlanoEstudosPage() {
             {/* GRID DE PLANOS */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {MOCK_PLANOS.map((plano) => (
-                    <div 
-                        key={plano.id} 
+                    <div
+                        key={plano.id}
                         className="bg-base-100 p-6 rounded-[24px] border border-base-200 shadow-[0_4px_24px_rgba(0,0,0,0.02)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)] hover:border-base-300 transition-all group cursor-pointer flex flex-col justify-between min-h-[220px]"
                     >
                         {/* HEADER DO CARD */}
@@ -81,34 +86,37 @@ export default function PlanoEstudosPage() {
                                 {plano.orgao}
                             </p>
                         </div>
-                        
+
                         {/* MÉTRICAS */}
                         <div className="grid grid-cols-3 gap-2 mt-6 pt-5 border-t border-base-200/60">
                             {/* Questões */}
                             <div className="flex flex-col gap-1">
+                                <span className="text-base font-black text-base-content">{plano.questoes}</span>
                                 <div className="flex items-center gap-1.5 text-neutral-content">
                                     <CheckSquare size={12} />
                                     <span className="text-[10px] uppercase tracking-wider font-bold">Questões</span>
                                 </div>
-                                <span className="text-sm font-black text-base-content">{plano.questoes}</span>
+
                             </div>
 
                             {/* Acerto */}
                             <div className="flex flex-col gap-1">
+                                <span className="text-base font-black text-emerald-600">{plano.acerto}%</span>
                                 <div className="flex items-center gap-1.5 text-neutral-content">
                                     <Target size={12} />
                                     <span className="text-[10px] uppercase tracking-wider font-bold">Acerto</span>
                                 </div>
-                                <span className="text-sm font-black text-emerald-600">{plano.acerto}%</span>
+
                             </div>
 
                             {/* Tempo */}
                             <div className="flex flex-col gap-1">
+                                <span className="text-base font-black text-base-content">{plano.horas}h</span>
                                 <div className="flex items-center gap-1.5 text-neutral-content">
                                     <Clock size={12} />
                                     <span className="text-[10px] uppercase tracking-wider font-bold">Tempo</span>
                                 </div>
-                                <span className="text-sm font-black text-base-content">{plano.horas}h</span>
+
                             </div>
                         </div>
                     </div>

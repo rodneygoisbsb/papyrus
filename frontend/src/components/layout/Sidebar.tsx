@@ -18,9 +18,9 @@ const MENU = [
     { id: 'inicio', label: 'Início', icon: LayoutDashboard },
     { id: 'plano-estudos', label: 'Meu Plano', icon: Folder },
     { id: 'disciplinas', label: 'Disciplinas', icon: BookOpen },
+    { id: 'planejamento', label: 'Planejamento', icon: Sliders },
     { id: 'metas', label: 'Metas Diárias', icon: CheckCircle2 },
     { id: 'quadro', label: 'Quadro Semanal', icon: CalendarDays },
-    { id: 'planejamento', label: 'Planejamento', icon: Sliders },
     { id: 'edital', label: 'Edital Verticalizado', icon: ListOrdered },
     { id: 'desempenho', label: 'Desempenho', icon: BarChart3 },
 ];
@@ -49,7 +49,7 @@ export default function Sidebar({ activeTab, setActiveTab }) {
                 onClick={() => setExpanded(!expanded)}
                 className="absolute -right-3 top-7 w-6 h-6 bg-white border border-slate-200 rounded-full flex items-center justify-center text-slate-400 hover:text-blue-600 hover:border-blue-300 hover:shadow-md transition-colors duration-150 z-50 cursor-pointer transform-gpu"
             >
-                <ChevronRight size={14} className={`transition-transform duration-200 ${expanded ?'rotate-180' : ''}`} />
+                <ChevronRight size={14} className={`transition-transform duration-200 ${expanded ? 'rotate-180' : ''}`} />
             </button>
             {/* ── TOPO ─────────────────────────────────────────────── */}
             <div className="flex flex-col flex-1 overflow-hidden">

@@ -16,6 +16,10 @@ import PlanejamentoPage from './pages/Planejamento';
 import QuadroSemanalPage from './pages/QuadroSemanal';
 import DesempenhoPage from './pages/Desempenho';
 import EditalVerticalizadoPage from './pages/EditalVerticalizado';
+import CriarPlanoPage from './pages/CriarPlano';
+import CriarPlanoEditaisProntosPage from './pages/CriarPlanoEditaisProntos';
+import CriarPlanoInserirEditalPage from './pages/CriarPlanoInserirEdital';
+import CriarPlanoAssuntosLotePage from './pages/CriarPlanoAssuntosLote';
 
 // 3. Hooks personalizados
 import { useLocalStorage } from './hooks/useLocalStorage';
@@ -250,7 +254,23 @@ export default function App() {
       )}
 
       {activeTab === 'plano-estudos' && (
-        <PlanoEstudosPage />
+        <PlanoEstudosPage setActiveTab={setActiveTab} />
+      )}
+
+      {activeTab === 'criar-plano' && (
+        <CriarPlanoPage setActiveTab={setActiveTab} />
+      )}
+
+      {activeTab === 'criar-plano-editais-prontos' && (
+        <CriarPlanoEditaisProntosPage setActiveTab={setActiveTab} />
+      )}
+
+      {activeTab === 'criar-plano-inserir-edital' && (
+        <CriarPlanoInserirEditalPage setActiveTab={setActiveTab} />
+      )}
+
+      {activeTab === 'criar-plano-assuntos-lote' && (
+        <CriarPlanoAssuntosLotePage setActiveTab={setActiveTab} />
       )}
 
       {activeTab === 'metas' && (
@@ -270,7 +290,7 @@ export default function App() {
 
       {activeTab === 'quadro' && <QuadroSemanalPage />}
 
-      {activeTab !== 'inicio' && activeTab !== 'disciplinas' && activeTab !== 'plano-estudos' && activeTab !== 'metas' && activeTab !== 'perfil' && activeTab !== 'configuracoes' && activeTab !== 'planejamento' && activeTab !== 'quadro' && (
+      {activeTab !== 'inicio' && activeTab !== 'disciplinas' && activeTab !== 'plano-estudos' && activeTab !== 'metas' && activeTab !== 'perfil' && activeTab !== 'configuracoes' && activeTab !== 'planejamento' && activeTab !== 'quadro' && !activeTab.startsWith('criar-plano') && (
         <div className="card-papyrus !p-12 text-center space-y-4 flex flex-col items-center justify-center h-full min-h-[400px]">
           <Layers size={40} className="text-primary" />
           <h3 className="text-lg font-bold text-base-content capitalize">
