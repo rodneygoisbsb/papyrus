@@ -18,8 +18,6 @@ import DesempenhoPage from './pages/Desempenho';
 import EditalVerticalizadoPage from './pages/EditalVerticalizado';
 import CriarPlanoPage from './pages/CriarPlano';
 import CriarPlanoEditaisProntosPage from './pages/CriarPlanoEditaisProntos';
-import CriarPlanoInserirEditalPage from './pages/CriarPlanoInserirEdital';
-import CriarPlanoAssuntosLotePage from './pages/CriarPlanoAssuntosLote';
 
 // 3. Hooks personalizados
 import { useLocalStorage } from './hooks/useLocalStorage';
@@ -28,10 +26,69 @@ export default function App() {
   // 1. NAVEGAÇÃO E PLANOS
   const [activeTab, setActiveTab] = useLocalStorage('@papyrus:activeTab', 'inicio');
   const [selectedPlanId, setSelectedPlanId] = useLocalStorage('@papyrus:selectedPlanId', 1);
-  const [planosDisponiveis] = useState([
-    { id: 1, nome: 'PM-DF Oficial' },
-    { id: 2, nome: 'Polícia Federal - Agente' }
+  const [planosDisponiveis, setPlanosDisponiveis] = useLocalStorage('@papyrus:planosDisponiveis', [
+    {
+        id: 1,
+        nome: 'PM-DF Oficial',
+        orgao: 'Polícia Militar do Distrito Federal',
+        questoes: 1250,
+        acerto: 78,
+        horas: 145,
+        atualizacao: 'Atualizado hoje',
+        iconColor: 'text-blue-600',
+        bgLight: 'bg-blue-50'
+    },
+    {
+        id: 2,
+        nome: 'Plano Banco do Brasil',
+        orgao: 'Agente Comercial',
+        questoes: 840,
+        acerto: 82,
+        horas: 92,
+        atualizacao: 'Atualizado há 2 dias',
+        iconColor: 'text-amber-500',
+        bgLight: 'bg-amber-50'
+    },
+    {
+        id: 3,
+        nome: 'Polícia Federal',
+        orgao: 'Agente de Polícia Federal',
+        questoes: 410,
+        acerto: 65,
+        horas: 55,
+        atualizacao: 'Atualizado há 1 semana',
+        iconColor: 'text-slate-800',
+        bgLight: 'bg-slate-100'
+    }
   ]);
+
+  const handleCreatePlan = (nome: string, cargo: string) => {
+    const newPlan = {
+      id: Date.now(),
+      nome,
+      orgao: cargo,
+      questoes: 0,
+      acerto: 0,
+      horas: 0,
+      atualizacao: 'Atualizado hoje',
+      iconColor: 'text-emerald-600',
+      bgLight: 'bg-emerald-50'
+    };
+    
+    setPlanosDisponiveis((prev: any) => [...prev, newPlan]);
+    setSelectedPlanId(newPlan.id);
+  };
+
+  const handleDeletePlan = (id: number) => {
+    if (confirm('Deseja realmente excluir este plano?')) {
+        setPlanosDisponiveis((prev: any) => prev.filter((p: any) => p.id !== id));
+        if (selectedPlanId === id) {
+            setSelectedPlanId(null);
+        }
+    }
+  };
+
+  const currentPlan = planosDisponiveis.find((p: any) => p.id === selectedPlanId) || planosDisponiveis[0];
 
   // 2. MÉTRICAS E PRODUTIVIDADE (KPIS)
   const [weeklyHoursStudied, setWeeklyHoursStudied] = useLocalStorage('@papyrus:weeklyHoursStudied', 14);
@@ -241,36 +298,34 @@ export default function App() {
 
       {activeTab === 'disciplinas' && (
         <DisciplinasPage
+          currentPlan={currentPlan}
           disciplines={disciplines}
           activeDisciplineEditor={activeDisciplineEditor}
           setActiveDisciplineEditor={setActiveDisciplineEditor}
           onOpenNewDiscipline={() =>
             setActiveDisciplineEditor({ id: null, name: '', colorHex: '#2563EB', topics: [] })
           }
-          onEditDiscipline={(disc) => setActiveDisciplineEditor({ ...disc })}
+          onEditDiscipline={(disc: any) => setActiveDisciplineEditor({ ...disc })}
           onDeleteDiscipline={handleDeleteDiscipline}
           onSaveDiscipline={handleSaveDisciplineEditor}
         />
       )}
 
       {activeTab === 'plano-estudos' && (
-        <PlanoEstudosPage setActiveTab={setActiveTab} />
+        <PlanoEstudosPage 
+            planos={planosDisponiveis} 
+            setActiveTab={setActiveTab} 
+            onDeletePlan={handleDeletePlan}
+            onEditPlan={(plano) => alert(`Edição do plano ${plano.nome} será implementada em breve!`)}
+        />
       )}
 
       {activeTab === 'criar-plano' && (
-        <CriarPlanoPage setActiveTab={setActiveTab} />
+        <CriarPlanoPage onPlanCreated={handleCreatePlan} setActiveTab={setActiveTab} />
       )}
 
       {activeTab === 'criar-plano-editais-prontos' && (
         <CriarPlanoEditaisProntosPage setActiveTab={setActiveTab} />
-      )}
-
-      {activeTab === 'criar-plano-inserir-edital' && (
-        <CriarPlanoInserirEditalPage setActiveTab={setActiveTab} />
-      )}
-
-      {activeTab === 'criar-plano-assuntos-lote' && (
-        <CriarPlanoAssuntosLotePage setActiveTab={setActiveTab} />
       )}
 
       {activeTab === 'metas' && (

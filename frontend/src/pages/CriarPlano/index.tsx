@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { FileCheck, FileDown, ListChecks, PencilRuler, ArrowLeft, UploadCloud, X } from 'lucide-react';
+import { FileCheck, PencilRuler, ArrowLeft, UploadCloud, X } from 'lucide-react';
 
 interface CriarPlanoPageProps {
     setActiveTab: (tab: string) => void;
+    onPlanCreated?: (nome: string, cargo: string) => void;
 }
 
-export default function CriarPlanoPage({ setActiveTab }: CriarPlanoPageProps) {
+export default function CriarPlanoPage({ setActiveTab, onPlanCreated }: CriarPlanoPageProps) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedFlow, setSelectedFlow] = useState<string | null>(null);
 
@@ -30,8 +31,9 @@ export default function CriarPlanoPage({ setActiveTab }: CriarPlanoPageProps) {
             return;
         }
         
-        // No futuro: Salvar esses dados no backend ou estado global
-        // console.log({ nomeConcurso, cargo, imagem });
+        if (onPlanCreated) {
+            onPlanCreated(nomeConcurso, cargo);
+        }
 
         if (selectedFlow) {
             setActiveTab(selectedFlow);
@@ -59,33 +61,13 @@ export default function CriarPlanoPage({ setActiveTab }: CriarPlanoPageProps) {
             action: () => handleOptionClick('criar-plano-editais-prontos')
         },
         {
-            id: 'inserir-edital',
-            title: 'Inserir o Edital Oficial',
-            description: 'Nossa inteligência artificial analisa o PDF do edital e extrai automaticamente todas as matérias e tópicos.',
-            icon: <FileDown size={28} />,
+            id: 'manual',
+            title: 'Criar Plano Manualmente',
+            description: 'Cadastre suas disciplinas e cole a lista de assuntos de forma flexível.',
+            icon: <PencilRuler size={28} />,
             colorClass: 'text-emerald-600',
             bgLightClass: 'bg-emerald-600/10',
             hoverClass: 'hover:border-emerald-600/40 hover:shadow-emerald-600/10',
-            action: () => handleOptionClick('criar-plano-inserir-edital')
-        },
-        {
-            id: 'assuntos-lote',
-            title: 'Inserir Assuntos de uma Só Vez',
-            description: 'Cadastre as disciplinas e cole a lista completa de assuntos de forma rápida e prática em lote.',
-            icon: <ListChecks size={28} />,
-            colorClass: 'text-amber-500',
-            bgLightClass: 'bg-amber-500/10',
-            hoverClass: 'hover:border-amber-500/40 hover:shadow-amber-500/10',
-            action: () => handleOptionClick('criar-plano-assuntos-lote')
-        },
-        {
-            id: 'manual',
-            title: 'Inserir Manualmente',
-            description: 'A forma tradicional. Cadastre suas disciplinas e adicione os assuntos um por um de forma detalhada.',
-            icon: <PencilRuler size={28} />,
-            colorClass: 'text-slate-600',
-            bgLightClass: 'bg-slate-500/10',
-            hoverClass: 'hover:border-slate-400/40 hover:shadow-slate-400/10',
             action: () => handleOptionClick('disciplinas')
         }
     ];

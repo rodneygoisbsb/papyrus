@@ -65,6 +65,27 @@ export function useDisciplineEditor(
         setDraggedTopicIndex(null);
     };
 
+    const handleAddTopicsBulk = (bulkText: string) => {
+        if (!bulkText.trim()) return;
+
+        const lines = bulkText.split('\n');
+        const newTopics: Topic[] = lines
+            .map(line => line.trim())
+            .filter(line => line.length > 0)
+            .map((line, index) => ({
+                id: `temp-${Date.now()}-${index}`,
+                name: line,
+                theoryCompleted: false
+            }));
+
+        if (newTopics.length === 0) return;
+
+        setActiveDisciplineEditor(prev => ({
+            ...prev,
+            topics: [...(prev.topics || []), ...newTopics]
+        }));
+    };
+
     return {
         newTopicText,
         setNewTopicText,
@@ -73,6 +94,7 @@ export function useDisciplineEditor(
         draggedTopicIndex,
         handleDragStart,
         handleDragOver,
-        handleDragEnd
+        handleDragEnd,
+        handleAddTopicsBulk
     };
 }

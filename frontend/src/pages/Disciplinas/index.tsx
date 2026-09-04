@@ -1,8 +1,9 @@
-import React from 'react';
-import { Plus, Trash2, Edit3, Folder, BookOpen, X, ArrowRight } from 'lucide-react';
+import React, { useState } from 'react';
+import { Plus, Trash2, Edit3, Folder, BookOpen, X, ArrowRight, ListChecks } from 'lucide-react';
 import { useDisciplineEditor } from '../../hooks/useDisciplineEditor';
 
 export default function DisciplinasPage({
+    currentPlan,
     disciplines = [],
     activeDisciplineEditor = null,
     setActiveDisciplineEditor = () => { },
@@ -16,7 +17,17 @@ export default function DisciplinasPage({
         setNewTopicText,
         handleAddTopic,
         handleRemoveTopic,
+        handleAddTopicsBulk
     } = useDisciplineEditor(activeDisciplineEditor, setActiveDisciplineEditor);
+
+    const [isBulkMode, setIsBulkMode] = useState(false);
+    const [bulkText, setBulkText] = useState('');
+
+    const onBulkAdd = () => {
+        handleAddTopicsBulk(bulkText);
+        setBulkText('');
+        setIsBulkMode(false);
+    };
 
     const availableColors = [
         { label: 'Azul (Constitucional)', hex: '#2563EB' },
@@ -34,12 +45,12 @@ export default function DisciplinasPage({
                 <div>
                     <div className="flex items-center gap-2 mb-1">
                         <BookOpen size={20} className="text-primary" />
-                        <h2 className="text-xl font-bold tracking-tight text-base-content">
-                            Suas Disciplinas
+                        <h2 className="text-xl font-bold tracking-tight text-base-content uppercase">
+                            {currentPlan?.nome || 'Suas Disciplinas'}
                         </h2>
                     </div>
-                    <p className="text-xs text-neutral-content">
-                        Adicione e edite matérias e tópicos para os seus planos de estudo.
+                    <p className="text-xs text-neutral-content font-medium">
+                        {currentPlan?.orgao || 'Adicione e edite matérias e tópicos para os seus planos de estudo.'}
                     </p>
                 </div>
 
@@ -179,33 +190,61 @@ export default function DisciplinasPage({
                                 <label className="text-xs font-bold uppercase tracking-wider text-neutral-content">
                                     Assuntos / Tópicos do Edital
                                 </label>
-                                <span className="text-xs font-semibold text-primary">
-                                    {activeDisciplineEditor.topics?.length || 0} adicionados
-                                </span>
+                                <div className="flex items-center gap-3">
+                                    <button 
+                                        type="button" 
+                                        onClick={() => setIsBulkMode(!isBulkMode)}
+                                        className="text-[10px] font-bold uppercase text-primary hover:text-primary-focus transition-colors flex items-center gap-1 bg-primary/10 px-2 py-1 rounded-md"
+                                    >
+                                        <ListChecks size={12} />
+                                        {isBulkMode ? 'Adicionar Unitário' : 'Adicionar em Lote'}
+                                    </button>
+                                    <span className="text-xs font-semibold text-primary">
+                                        {activeDisciplineEditor.topics?.length || 0} adicionados
+                                    </span>
+                                </div>
                             </div>
 
-                            <div className="flex gap-2">
-                                <input
-                                    type="text"
-                                    placeholder="Ex: Inquérito Policial (Art. 4º ao 23)"
-                                    value={newTopicText}
-                                    onChange={(e) => setNewTopicText(e.target.value)}
-                                    onKeyDown={(e) => {
-                                        if (e.key === 'Enter') {
-                                            e.preventDefault();
-                                            handleAddTopic();
-                                        }
-                                    }}
-                                    className="input input-bordered flex-1 bg-base-200/40 focus:bg-base-100 rounded-xl text-sm"
-                                />
-                                <button
-                                    type="button"
-                                    onClick={handleAddTopic}
-                                    className="btn btn-primary text-primary-content font-bold rounded-xl px-4 shrink-0"
-                                >
-                                    <Plus size={16} /> Adicionar
-                                </button>
-                            </div>
+                            {isBulkMode ? (
+                                <div className="flex flex-col gap-2">
+                                    <textarea
+                                        placeholder="Cole sua lista de assuntos aqui (um por linha)..."
+                                        value={bulkText}
+                                        onChange={(e) => setBulkText(e.target.value)}
+                                        className="textarea textarea-bordered w-full h-24 bg-base-200/40 focus:bg-base-100 rounded-xl text-sm"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={onBulkAdd}
+                                        className="btn btn-primary text-primary-content font-bold rounded-xl btn-sm"
+                                    >
+                                        <Plus size={16} /> Gerar Tópicos
+                                    </button>
+                                </div>
+                            ) : (
+                                <div className="flex gap-2">
+                                    <input
+                                        type="text"
+                                        placeholder="Ex: Inquérito Policial (Art. 4º ao 23)"
+                                        value={newTopicText}
+                                        onChange={(e) => setNewTopicText(e.target.value)}
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'Enter') {
+                                                e.preventDefault();
+                                                handleAddTopic();
+                                            }
+                                        }}
+                                        className="input input-bordered flex-1 bg-base-200/40 focus:bg-base-100 rounded-xl text-sm"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={handleAddTopic}
+                                        className="btn btn-primary text-primary-content font-bold rounded-xl px-4 shrink-0"
+                                    >
+                                        <Plus size={16} /> Adicionar
+                                    </button>
+                                </div>
+                            )}
 
                             <div className="max-h-40 overflow-y-auto space-y-1.5 pr-1 mt-2">
                                 {(!activeDisciplineEditor.topics || activeDisciplineEditor.topics.length === 0) ? (

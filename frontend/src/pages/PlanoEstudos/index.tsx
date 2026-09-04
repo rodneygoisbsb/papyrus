@@ -1,47 +1,14 @@
 import React from 'react';
-import { Plus, Clock, Target, CheckSquare, Shield } from 'lucide-react';
-
-const MOCK_PLANOS = [
-    {
-        id: 1,
-        nome: 'PM-DF Oficial',
-        orgao: 'Polícia Militar do Distrito Federal',
-        questoes: 1250,
-        acerto: 78,
-        horas: 145,
-        atualizacao: 'Atualizado hoje',
-        iconColor: 'text-blue-600',
-        bgLight: 'bg-blue-50'
-    },
-    {
-        id: 2,
-        nome: 'Plano Banco do Brasil',
-        orgao: 'Agente Comercial',
-        questoes: 840,
-        acerto: 82,
-        horas: 92,
-        atualizacao: 'Atualizado há 2 dias',
-        iconColor: 'text-amber-500',
-        bgLight: 'bg-amber-50'
-    },
-    {
-        id: 3,
-        nome: 'Polícia Federal',
-        orgao: 'Agente de Polícia Federal',
-        questoes: 410,
-        acerto: 65,
-        horas: 55,
-        atualizacao: 'Atualizado há 1 semana',
-        iconColor: 'text-slate-800',
-        bgLight: 'bg-slate-100'
-    }
-];
+import { Plus, Clock, Target, CheckSquare, Shield, Edit3, Trash2 } from 'lucide-react';
 
 interface PlanoEstudosPageProps {
+    planos?: any[];
     setActiveTab?: (tab: string) => void;
+    onEditPlan?: (plano: any) => void;
+    onDeletePlan?: (id: number) => void;
 }
 
-export default function PlanoEstudosPage({ setActiveTab }: PlanoEstudosPageProps) {
+export default function PlanoEstudosPage({ planos = [], setActiveTab, onEditPlan, onDeletePlan }: PlanoEstudosPageProps) {
     return (
         <div className="space-y-8 font-['Plus_Jakarta_Sans'] text-base-content animate-in fade-in duration-200">
             {/* CABEÇALHO E AÇÃO PRINCIPAL */}
@@ -64,7 +31,7 @@ export default function PlanoEstudosPage({ setActiveTab }: PlanoEstudosPageProps
 
             {/* GRID DE PLANOS */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {MOCK_PLANOS.map((plano) => (
+                {planos.map((plano) => (
                     <div
                         key={plano.id}
                         className="bg-base-100 p-6 rounded-[24px] border border-base-200 shadow-[0_4px_24px_rgba(0,0,0,0.02)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)] hover:border-base-300 transition-all group cursor-pointer flex flex-col justify-between min-h-[220px]"
@@ -75,9 +42,30 @@ export default function PlanoEstudosPage({ setActiveTab }: PlanoEstudosPageProps
                                 <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${plano.bgLight} ${plano.iconColor}`}>
                                     <Shield size={24} />
                                 </div>
-                                <span className="text-[10px] font-bold text-neutral-content uppercase tracking-wider bg-base-200 px-2 py-1 rounded-md">
-                                    {plano.atualizacao}
-                                </span>
+                                <div className="flex items-center gap-1">
+                                    <button
+                                        type="button"
+                                        onClick={(e) => { 
+                                            e.stopPropagation(); 
+                                            if(onEditPlan) onEditPlan(plano); 
+                                        }}
+                                        className="btn btn-ghost btn-xs btn-square text-neutral-content hover:text-primary rounded-lg"
+                                        title="Editar Plano"
+                                    >
+                                        <Edit3 size={15} />
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={(e) => { 
+                                            e.stopPropagation(); 
+                                            if(onDeletePlan) onDeletePlan(plano.id); 
+                                        }}
+                                        className="btn btn-ghost btn-xs btn-square text-neutral-content hover:text-error rounded-lg"
+                                        title="Excluir Plano"
+                                    >
+                                        <Trash2 size={15} />
+                                    </button>
+                                </div>
                             </div>
                             <h3 className="font-extrabold text-base-content text-lg leading-tight mb-1 group-hover:text-primary transition-colors">
                                 {plano.nome}
@@ -91,7 +79,9 @@ export default function PlanoEstudosPage({ setActiveTab }: PlanoEstudosPageProps
                         <div className="grid grid-cols-3 gap-2 mt-6 pt-5 border-t border-base-200/60">
                             {/* Questões */}
                             <div className="flex flex-col gap-1">
-                                <span className="text-base font-black text-base-content">{plano.questoes}</span>
+                                <span className="text-base font-black text-base-content">
+                                    {plano.questoes === 0 ? '--' : plano.questoes}
+                                </span>
                                 <div className="flex items-center gap-1.5 text-neutral-content">
                                     <CheckSquare size={12} />
                                     <span className="text-[10px] uppercase tracking-wider font-bold">Questões</span>
@@ -101,7 +91,9 @@ export default function PlanoEstudosPage({ setActiveTab }: PlanoEstudosPageProps
 
                             {/* Acerto */}
                             <div className="flex flex-col gap-1">
-                                <span className="text-base font-black text-emerald-600">{plano.acerto}%</span>
+                                <span className="text-base font-black text-emerald-600">
+                                    {plano.acerto === 0 ? '--' : `${plano.acerto}%`}
+                                </span>
                                 <div className="flex items-center gap-1.5 text-neutral-content">
                                     <Target size={12} />
                                     <span className="text-[10px] uppercase tracking-wider font-bold">Acerto</span>
@@ -111,7 +103,9 @@ export default function PlanoEstudosPage({ setActiveTab }: PlanoEstudosPageProps
 
                             {/* Tempo */}
                             <div className="flex flex-col gap-1">
-                                <span className="text-base font-black text-base-content">{plano.horas}h</span>
+                                <span className="text-base font-black text-base-content">
+                                    {plano.horas === 0 ? '--' : `${plano.horas}h`}
+                                </span>
                                 <div className="flex items-center gap-1.5 text-neutral-content">
                                     <Clock size={12} />
                                     <span className="text-[10px] uppercase tracking-wider font-bold">Tempo</span>
