@@ -15,11 +15,10 @@ import {
 
 const MENU = [
     { id: 'inicio', label: 'Início', icon: LayoutDashboard },
-    { id: 'concursos', label: 'Concursos', icon: Award },
-    { id: 'metas', label: 'Metas diárias', icon: CheckCircle2 },
+    { id: 'planejamento', label: 'Planejamento', icon: Sliders },
+    { id: 'metas', label: 'Metas Diárias', icon: CheckCircle2 },
     { id: 'quadro', label: 'Quadro Semanal', icon: CalendarDays },
     { id: 'edital', label: 'Edital Verticalizado', icon: ListOrdered },
-    { id: 'planejamento', label: 'Planejamento', icon: Sliders },
     { id: 'desempenho', label: 'Desempenho', icon: BarChart3 },
 ];
 

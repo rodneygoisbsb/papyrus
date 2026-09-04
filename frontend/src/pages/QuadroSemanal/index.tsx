@@ -62,19 +62,19 @@ const getColorByType = (type: string) => {
     switch (type) {
         case 'REVISION':
             return {
-                bg: 'bg-orange-500',
-                text: 'text-white',
+                bg: 'bg-orange-100 border border-orange-200 hover:border-orange-300 hover:bg-orange-200/60',
+                text: 'text-slate-800',
             };
         case 'QUESTIONS':
             return {
-                bg: 'bg-emerald-500',
-                text: 'text-white',
+                bg: 'bg-emerald-100 border border-emerald-200 hover:border-emerald-300 hover:bg-emerald-200/60',
+                text: 'text-slate-800',
             };
         case 'THEORY':
         default:
             return {
-                bg: 'bg-[#409cf0]',
-                text: 'text-white',
+                bg: 'bg-blue-100 border border-blue-200 hover:border-blue-300 hover:bg-blue-200/60',
+                text: 'text-slate-800',
             };
     }
 };
@@ -90,6 +90,7 @@ const getTypeLabel = (type: string) => {
 
 export default function QuadroSemanalPage() {
     const [weekData, setWeekData] = useState(MOCK_WEEK);
+    const [weekOffset, setWeekOffset] = useState(0);
     const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
     const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
     const [selectedDate, setSelectedDate] = useState<string | null>(null);
@@ -101,6 +102,9 @@ export default function QuadroSemanalPage() {
     };
 
     const toggleGoalCompletion = (dayIndex: number, goalId: string) => {
+        // Only allow toggling if we are in the current week (where mock data lives)
+        if (weekOffset !== 0) return;
+        
         const newData = [...weekData];
         const goalIndex = newData[dayIndex].goals.findIndex(g => g.id === goalId);
         if (goalIndex > -1) {
@@ -117,9 +121,50 @@ export default function QuadroSemanalPage() {
         }
     };
 
+    const getDatesForWeekOffset = (offset: number) => {
+        const today = new Date();
+        const currentDay = today.getDay(); // 0 is Sunday, 1 is Monday
+        const daysToMonday = currentDay === 0 ? -6 : 1 - currentDay;
+        
+        const monday = new Date(today);
+        monday.setDate(today.getDate() + daysToMonday + (offset * 7));
+        monday.setHours(0, 0, 0, 0);
+        
+        const weekDates = [];
+        for (let i = 0; i < 7; i++) {
+            const d = new Date(monday);
+            d.setDate(monday.getDate() + i);
+            weekDates.push(d);
+        }
+        return weekDates;
+    };
+
+    const currentWeekDates = getDatesForWeekOffset(weekOffset);
+    const startDateStr = currentWeekDates[0].toLocaleDateString('pt-BR', { day: 'numeric', month: 'short' }).replace('.', '');
+    const endDateStr = currentWeekDates[6].toLocaleDateString('pt-BR', { day: 'numeric', month: 'short' }).replace('.', '');
+
+    const displayWeekData = currentWeekDates.map((date, index) => {
+        const dateStr = date.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+        const dayNames = ['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB'];
+        const dayName = dayNames[date.getDay()];
+        
+        const today = new Date();
+        const isToday = date.getDate() === today.getDate() && date.getMonth() === today.getMonth() && date.getFullYear() === today.getFullYear();
+        
+        // Use mock goals only for the current week
+        const goals = weekOffset === 0 ? weekData[index].goals : [];
+        
+        return {
+            date: dateStr,
+            dayName,
+            isToday,
+            goals
+        };
+    });
+
     // Cálculos de progresso
-    const totalGoals = weekData.reduce((acc, day) => acc + day.goals.length, 0);
-    const completedGoals = weekData.reduce((acc, day) => acc + day.goals.filter(g => g.completed).length, 0);
+    const totalGoals = displayWeekData.reduce((acc, day) => acc + day.goals.length, 0);
+    const completedGoals = displayWeekData.reduce((acc, day) => acc + day.goals.filter(g => g.completed).length, 0);
     const progressPercent = totalGoals > 0 ? Math.round((completedGoals / totalGoals) * 100) : 0;
 
     return (
@@ -140,13 +185,13 @@ export default function QuadroSemanalPage() {
                     </div>
 
                     <div className="flex items-center gap-1">
-                        <button className="btn btn-sm btn-square btn-ghost text-slate-500 hover:bg-base-200">
+                        <button onClick={() => setWeekOffset(prev => prev - 1)} className="btn btn-sm btn-square btn-ghost text-slate-500 hover:bg-base-200 cursor-pointer">
                             <ChevronLeft size={18} />
                         </button>
                         <div className="px-3 py-1.5 rounded-xl bg-base-100 border border-base-200 shadow-sm text-sm font-bold text-base-content">
-                            31 de ago. - 6 de set. <span className="text-primary ml-1">(atual)</span>
+                            {startDateStr} - {endDateStr} {weekOffset === 0 && <span className="text-primary ml-1">(atual)</span>}
                         </div>
-                        <button className="btn btn-sm btn-square btn-ghost text-slate-500 hover:bg-base-200">
+                        <button onClick={() => setWeekOffset(prev => prev + 1)} className="btn btn-sm btn-square btn-ghost text-slate-500 hover:bg-base-200 cursor-pointer">
                             <ChevronRight size={18} />
                         </button>
                     </div>
@@ -167,31 +212,32 @@ export default function QuadroSemanalPage() {
                 </div>
             </div>
 
-            {/* Grid da Semana - Formato Tabela Compacta (L'estudei style) */}
-            <div className="grid grid-cols-7 bg-base-100 border border-base-300 rounded-3xl shadow-sm overflow-hidden flex-1">
-                {weekData.map((day, dayIndex) => {
-                    const isLast = dayIndex === weekData.length - 1;
-                    const dayCompleted = day.goals.filter(g => g.completed).length;
-                    const dayTotal = day.goals.length;
-
+            {/* Grid da Semana - Tabela Sincronizada por Linhas */}
+            <div className="grid grid-cols-7 bg-base-100 border border-base-300 rounded-3xl shadow-sm overflow-hidden flex-1 min-w-[700px] auto-rows-max">
+                {/* Cabecalhos */}
+                {displayWeekData.map((day, dayIndex) => {
+                    const isLast = dayIndex === displayWeekData.length - 1;
                     return (
-                        <div key={day.date} className={`flex flex-col min-h-[400px] ${!isLast ? 'border-r border-base-200' : ''}`}>
-                            {/* Cabecalho do Dia */}
-                            <div className="p-3 text-center border-b border-base-200 bg-base-50">
-                                <h3 className={`text-xs font-black uppercase ${day.isToday ? 'text-primary' : 'text-base-content'}`}>{day.dayName}</h3>
-                                <p className={`text-[10px] font-bold mt-0.5 ${day.isToday ? 'text-primary' : 'text-neutral-content'}`}>{day.date}</p>
-                            </div>
+                        <div key={`header-${day.date}`} className={`p-3 text-center border-b border-base-200 bg-base-50 ${!isLast ? 'border-r border-base-200' : ''}`}>
+                            <h3 className={`text-xs font-black uppercase ${day.isToday ? 'text-primary' : 'text-base-content'}`}>{day.dayName}</h3>
+                            <p className={`text-[10px] font-bold mt-0.5 ${day.isToday ? 'text-primary' : 'text-neutral-content'}`}>{day.date}</p>
+                        </div>
+                    );
+                })}
 
-                            {/* Lista de Metas */}
-                            <div className="flex-1 p-1.5 space-y-1.5 overflow-y-auto">
-                                {day.goals.map(goal => {
-                                    const colors = getColorByType(goal.type);
-                                    return (
+                {/* Linhas de Metas */}
+                {Array.from({ length: Math.max(1, ...displayWeekData.map(d => d.goals.length)) }).map((_, rowIndex) => (
+                    <React.Fragment key={`row-${rowIndex}`}>
+                        {displayWeekData.map((day, dayIndex) => {
+                            const isLast = dayIndex === displayWeekData.length - 1;
+                            const goal = day.goals[rowIndex];
+                            
+                            return (
+                                <div key={`cell-${day.date}-${rowIndex}`} className={`p-1.5 ${!isLast ? 'border-r border-base-200' : ''}`}>
+                                    {goal ? (
                                         <div
-                                            key={goal.id}
-                                            className={`p-2 rounded-lg transition-all relative group ${colors.bg} ${colors.text} ${goal.completed ? 'opacity-60 grayscale-[30%]' : ''}`}
+                                            className={`h-full p-2 rounded-lg transition-all relative group flex flex-col ${getColorByType(goal.type).bg} ${getColorByType(goal.type).text} ${goal.completed ? 'opacity-60 grayscale-[30%]' : ''}`}
                                         >
-                                            {/* Check button invisível até o hover em telas normais */}
                                             <button
                                                 onClick={() => toggleGoalCompletion(dayIndex, goal.id)}
                                                 className="absolute top-1.5 right-1.5 shrink-0 transition-colors opacity-0 group-hover:opacity-100 z-10 bg-black/10 rounded-full p-0.5"
@@ -199,35 +245,42 @@ export default function QuadroSemanalPage() {
                                                 {goal.completed ? <CheckCircle2 size={12} /> : <Circle size={12} />}
                                             </button>
 
-                                            <div className="flex flex-col gap-1">
-                                                <span className={`text-[10px] font-bold leading-tight pr-4 ${goal.completed ? 'line-through opacity-80' : ''} line-clamp-2`}>
+                                            <div className="flex flex-col gap-1 flex-1">
+                                                <span className={`text-[10px] font-bold leading-tight pr-4 ${goal.completed ? 'line-through opacity-80' : ''}`}>
                                                     {goal.subject}
                                                 </span>
                                                 {goal.topicName && (
-                                                    <span className={`text-[9px] font-medium leading-tight opacity-90 line-clamp-1 ${goal.completed ? 'line-through' : ''}`}>
+                                                    <span className={`text-[9px] font-medium leading-tight opacity-90 ${goal.completed ? 'line-through' : ''}`}>
                                                         {goal.topicName}
                                                     </span>
                                                 )}
-                                                <div className="mt-1">
-                                                    <span className="text-[9px] font-bold bg-white/20 px-1.5 py-0.5 rounded text-white inline-block">
+                                                <div className="mt-auto pt-2">
+                                                    <span className="text-[9px] font-bold bg-black/5 border border-black/5 px-1.5 py-0.5 rounded text-slate-600 inline-block">
                                                         {Math.floor(goal.durationMinutes / 60)}h{(goal.durationMinutes % 60).toString().padStart(2, '0')}min
                                                     </span>
                                                 </div>
                                             </div>
                                         </div>
-                                    );
-                                })}
-                            </div>
+                                    ) : (
+                                        <div className="h-full min-h-[60px]"></div>
+                                    )}
+                                </div>
+                            );
+                        })}
+                    </React.Fragment>
+                ))}
 
-                            {/* Botao Adicionar */}
-                            <div className="p-1.5 mt-auto border-t border-base-200">
-                                <button
-                                    onClick={() => handleAddGoalClick(day.date)}
-                                    className="w-full py-2 rounded-lg text-[10px] font-bold transition-colors text-slate-400 hover:bg-base-200 hover:text-slate-600"
-                                >
-                                    <Plus size={14} className="mx-auto" />
-                                </button>
-                            </div>
+                {/* Linha de Botões de Adicionar */}
+                {displayWeekData.map((day, dayIndex) => {
+                    const isLast = dayIndex === displayWeekData.length - 1;
+                    return (
+                        <div key={`footer-${day.date}`} className={`p-1.5 border-t border-base-200 mt-auto bg-base-50/40 ${!isLast ? 'border-r border-base-200' : ''}`}>
+                            <button
+                                onClick={() => handleAddGoalClick(day.date)}
+                                className="w-full py-2 rounded-lg text-[10px] font-bold transition-colors text-slate-400 hover:bg-base-200 hover:text-slate-600"
+                            >
+                                <Plus size={14} className="mx-auto" />
+                            </button>
                         </div>
                     );
                 })}

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Sparkles, Lightbulb, TrendingUp, EyeOff, Play, CheckCircle2 } from 'lucide-react';
+import { toTitleCase } from '../../../utils/studyCalculations';
 
 const defaultSuggestions = [
   {
@@ -71,7 +72,7 @@ export default function AiDailySuggestionsCard({
   }
 
   return (
-    <div className="rounded-[22px] border-2 border-primary/20 bg-gradient-to-br from-primary/5 via-base-100 to-base-100 p-5 shadow-md space-y-4 relative">
+    <div className="font-['Plus_Jakarta_Sans'] rounded-[22px] border-2 border-primary/20 bg-gradient-to-br from-primary/5 via-base-100 to-base-100 p-5 shadow-md space-y-4 relative">
       {/* Header */}
       <div className="flex items-center justify-between pb-3 border-b border-base-200">
         <div className="flex items-center gap-2">
@@ -98,9 +99,9 @@ export default function AiDailySuggestionsCard({
             {/* Header da Matéria */}
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Sparkles size={14} className="text-primary" />
-                <span className="text-xs font-black text-base-content uppercase tracking-wider">
-                  {group.subjectName}
+                <Sparkles size={16} className="text-primary" />
+                <span className="text-sm font-bold tracking-tight text-base-content">
+                  {toTitleCase(group.subjectName)}
                 </span>
               </div>
               <span className="text-[11px] font-semibold text-slate-500">
@@ -115,22 +116,22 @@ export default function AiDailySuggestionsCard({
                   key={topic.id}
                   className="bg-base-100 p-3 rounded-xl border border-base-200 flex items-center justify-between gap-3 hover:border-primary/30 transition-colors"
                 >
-                  <div className="space-y-1 min-w-0 flex-1">
+                  <div className="space-y-1 min-w-0 flex-1 pl-1">
                     <div className="flex items-center gap-1.5 flex-wrap">
-                      <TrendingUp size={13} className="text-amber-500 shrink-0" />
-                      <span className="text-xs font-bold text-base-content truncate">
+                      <TrendingUp size={14} className="text-amber-500 shrink-0" />
+                      <span className="text-[13px] font-medium text-base-content/80 truncate group-hover:text-base-content transition-colors">
                         {topic.name}
                       </span>
                     </div>
 
-                    <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
-                      <span className="badge badge-xs bg-blue-50 text-primary border-0 font-bold">
+                    <div className="flex items-center gap-1.5 flex-wrap pt-0.5 pl-5">
+                      <span className="badge badge-sm border-none text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-md bg-blue-500 text-white font-bold">
                         {topic.type}
                       </span>
-                      <span className="badge badge-xs bg-amber-50 text-amber-700 border-0 font-bold">
+                      <span className="badge badge-sm border-none text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-md bg-amber-50 text-amber-700 font-bold">
                         {topic.statusTag}
                       </span>
-                      <span className="text-[11px] text-slate-400 font-medium">
+                      <span className="badge badge-sm bg-base-200 text-neutral-content border-none font-medium text-[11px] px-2 py-0.5 rounded-md flex items-center gap-1">
                         ⏱ {topic.durationMinutes}m • {topic.questionsCount} questões
                       </span>
                     </div>
@@ -148,9 +149,9 @@ export default function AiDailySuggestionsCard({
                     <button
                       type="button"
                       onClick={() => onStartFocusSession && onStartFocusSession(topic)}
-                      className="btn btn-xs btn-primary rounded-xl px-3 font-bold gap-1 shadow-xs"
+                      className="btn btn-sm btn-primary rounded-xl px-4 font-bold gap-1.5 shadow-sm"
                     >
-                      <Play size={11} fill="currentColor" />
+                      <Play size={13} fill="currentColor" />
                       Estudar
                     </button>
                   </div>

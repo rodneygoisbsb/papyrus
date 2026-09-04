@@ -28,6 +28,18 @@ const DIAS_SEMANA = [
     { key: 'sab', label: 'Sáb', full: 'Sábado' },
 ];
 
+const CORES_PALETA = [
+    { value: 'bg-purple-600 text-white', label: 'Roxo' },
+    { value: 'bg-rose-500 text-white', label: 'Rosa' },
+    { value: 'bg-red-500 text-white', label: 'Vermelho' },
+    { value: 'bg-emerald-500 text-white', label: 'Verde' },
+    { value: 'bg-blue-500 text-white', label: 'Azul' },
+    { value: 'bg-amber-500 text-white', label: 'Laranja' },
+    { value: 'bg-indigo-600 text-white', label: 'Índigo' },
+    { value: 'bg-slate-700 text-white', label: 'Cinza' },
+    { value: 'bg-cyan-600 text-white', label: 'Ciano' },
+];
+
 export default function ConfiguracoesPage() {
     const [activeTab, setActiveTab] = useState('preferencias'); // 'preferencias' | 'categorias' | 'notificacoes'
     const [salvo, setSalvo] = useState(false);
@@ -52,10 +64,11 @@ export default function ConfiguracoesPage() {
 
     // 5. CATEGORIAS FIXAS & PERSONALIZADAS
     const [categoriasFixas, setCategoriasFixas] = useState([
-        { id: 'teoria', nome: 'TEORIA', cor: 'bg-purple-600 text-white' },
-        { id: 'revisao', nome: 'REVISÃO', cor: 'bg-rose-500 text-white' },
+        { id: 'teoria', nome: 'TEORIA', cor: 'bg-blue-500 text-white' },
+        { id: 'revisao', nome: 'REVISÃO', cor: 'bg-amber-500 text-white' },
         { id: 'questoes', nome: 'QUESTÕES', cor: 'bg-emerald-500 text-white' },
-        { id: 'simulados', nome: 'SIMULADOS', cor: 'bg-blue-500 text-white' }
+        { id: 'simulados', nome: 'SIMULADOS', cor: 'bg-purple-600 text-white' },
+        { id: 'atrasada', nome: 'ATRASADA', cor: 'bg-red-500 text-white' }
     ]);
     const [editingFixedCat, setEditingFixedCat] = useState(null);
 
@@ -323,14 +336,14 @@ export default function ConfiguracoesPage() {
                                     <button
                                         type="button"
                                         onClick={handleAddIntervalo}
-                                        className="btn btn-xs btn-primary rounded-lg font-bold"
+                                        className="btn btn-sm btn-primary rounded-lg font-bold"
                                     >
                                         Adicionar
                                     </button>
                                     <button
                                         type="button"
                                         onClick={() => setShowAddIntervalo(false)}
-                                        className="btn btn-xs btn-ghost rounded-lg text-slate-400"
+                                        className="btn btn-sm btn-ghost rounded-lg text-slate-400"
                                     >
                                         Cancelar
                                     </button>
@@ -433,39 +446,10 @@ export default function ConfiguracoesPage() {
 
                         <div className="flex flex-wrap items-center gap-3">
                             {categoriasFixas.map((cat) => (
-                                editingFixedCat === cat.id ? (
-                                    <div key={cat.id} className="flex items-center gap-2 bg-slate-50 p-1.5 rounded-xl border border-base-300 animate-in fade-in">
-                                        <span className="text-xs font-bold px-2 text-base-content">{cat.nome}</span>
-                                        <select
-                                            value={cat.cor}
-                                            onChange={(e) => {
-                                                const novas = categoriasFixas.map(c => c.id === cat.id ? { ...c, cor: e.target.value } : c);
-                                                setCategoriasFixas(novas);
-                                            }}
-                                            className="select select-xs bg-white border-base-300 rounded-lg text-[10px] font-bold text-base-content"
-                                        >
-                                            <option value="bg-purple-600 text-white">Roxo</option>
-                                            <option value="bg-rose-500 text-white">Rosa/Vermelho</option>
-                                            <option value="bg-emerald-500 text-white">Verde Esmeralda</option>
-                                            <option value="bg-blue-500 text-white">Azul</option>
-                                            <option value="bg-amber-500 text-white">Laranja</option>
-                                            <option value="bg-indigo-600 text-white">Índigo</option>
-                                            <option value="bg-slate-700 text-white">Cinza Escuro</option>
-                                            <option value="bg-cyan-600 text-white">Ciano</option>
-                                        </select>
-                                        <button
-                                            type="button"
-                                            onClick={() => setEditingFixedCat(null)}
-                                            className="btn btn-xs btn-primary rounded-lg text-[10px]"
-                                        >
-                                            OK
-                                        </button>
-                                    </div>
-                                ) : (
+                                <div key={cat.id} className="relative">
                                     <button
-                                        key={cat.id}
                                         type="button"
-                                        onClick={() => setEditingFixedCat(cat.id)}
+                                        onClick={() => setEditingFixedCat(editingFixedCat === cat.id ? null : cat.id)}
                                         className={`group relative px-4 py-2 rounded-xl text-xs font-black tracking-wider uppercase shadow-xs cursor-pointer overflow-hidden transition-transform active:scale-95 ${cat.cor}`}
                                         title="Clique para alterar a cor"
                                     >
@@ -474,7 +458,32 @@ export default function ConfiguracoesPage() {
                                             MUDAR COR
                                         </span>
                                     </button>
-                                )
+
+                                    {/* Popover Flutuante */}
+                                    {editingFixedCat === cat.id && (
+                                        <div className="absolute top-full left-0 mt-2 z-50 bg-base-100 rounded-2xl shadow-xl border border-base-300 p-3 w-[160px] animate-in fade-in slide-in-from-top-2 duration-150">
+                                            <div className="flex justify-between items-center mb-2 pb-1.5 border-b border-base-200">
+                                                <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Cor</span>
+                                                <button type="button" onClick={() => setEditingFixedCat(null)} className="text-slate-400 hover:text-slate-600 text-xs cursor-pointer">✕</button>
+                                            </div>
+                                            <div className="grid grid-cols-3 gap-2">
+                                                {CORES_PALETA.map(cor => (
+                                                    <button
+                                                        key={cor.value}
+                                                        type="button"
+                                                        onClick={() => {
+                                                            const novas = categoriasFixas.map(c => c.id === cat.id ? { ...c, cor: cor.value } : c);
+                                                            setCategoriasFixas(novas);
+                                                            setEditingFixedCat(null);
+                                                        }}
+                                                        className={`w-7 h-7 mx-auto rounded-full cursor-pointer transition-all hover:scale-110 flex items-center justify-center shadow-sm border-2 ${cat.cor === cor.value ? 'border-primary scale-110' : 'border-transparent'} ${cor.value.split(' ')[0]}`}
+                                                        title={cor.label}
+                                                    />
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
                             ))}
                         </div>
                     </div>
@@ -489,7 +498,7 @@ export default function ConfiguracoesPage() {
                             <button
                                 type="button"
                                 onClick={() => setShowAddCategoria(true)}
-                                className="btn btn-xs btn-primary rounded-xl font-bold gap-1 shadow-2xs"
+                                className="btn btn-sm btn-primary rounded-xl font-bold gap-1 shadow-2xs"
                             >
                                 <Plus size={13} /> Nova Categoria
                             </button>
@@ -532,30 +541,30 @@ export default function ConfiguracoesPage() {
                                     </div>
                                     <div className="space-y-1">
                                         <label className="text-[11px] font-bold text-slate-600">Cor do Badge</label>
-                                        <select
-                                            value={novaCategoriaCor}
-                                            onChange={(e) => setNovaCategoriaCor(e.target.value)}
-                                            className="select select-sm w-full bg-white border-base-300 rounded-xl text-xs font-bold"
-                                        >
-                                            <option value="bg-slate-700 text-white">Cinza Escuro</option>
-                                            <option value="bg-cyan-600 text-white">Ciano</option>
-                                            <option value="bg-pink-600 text-white">Rosa</option>
-                                            <option value="bg-amber-600 text-white">Laranja Queimado</option>
-                                            <option value="bg-emerald-600 text-white">Verde Floresta</option>
-                                        </select>
+                                        <div className="flex items-center gap-2 h-8">
+                                            {CORES_PALETA.map(cor => (
+                                                <button
+                                                    key={cor.value}
+                                                    type="button"
+                                                    onClick={() => setNovaCategoriaCor(cor.value)}
+                                                    className={`w-5 h-5 rounded-full cursor-pointer transition-all ${novaCategoriaCor === cor.value ? 'ring-2 ring-primary ring-offset-2 scale-110' : 'hover:scale-110'} ${cor.value.split(' ')[0]}`}
+                                                    title={cor.label}
+                                                />
+                                            ))}
+                                        </div>
                                     </div>
                                 </div>
                                 <div className="flex justify-end gap-2 pt-1">
                                     <button
                                         type="button"
                                         onClick={() => setShowAddCategoria(false)}
-                                        className="btn btn-xs btn-ghost rounded-xl"
+                                        className="btn btn-sm btn-ghost rounded-xl"
                                     >
                                         Cancelar
                                     </button>
                                     <button
                                         type="submit"
-                                        className="btn btn-xs btn-primary rounded-xl font-bold"
+                                        className="btn btn-sm btn-primary rounded-xl font-bold"
                                     >
                                         Salvar Categoria
                                     </button>

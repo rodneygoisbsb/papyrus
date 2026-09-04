@@ -59,10 +59,10 @@ export default function DailyGoalsList({
                         const getTagStyle = (type: string) => {
                             if (isCompact) return "bg-base-200 text-neutral-content group-hover:bg-base-300/60";
                             const t = (type || '').toUpperCase();
-                            if (t === 'THEORY' || t === 'TEORIA') return 'bg-purple-600 text-white font-bold';
-                            if (t === 'REVISION' || t === 'REVISÃO') return 'bg-rose-500 text-white font-bold';
+                            if (t === 'THEORY' || t === 'TEORIA') return 'bg-blue-500 text-white font-bold';
+                            if (t === 'REVISION' || t === 'REVISÃO') return 'bg-amber-500 text-white font-bold';
                             if (t === 'QUESTIONS' || t === 'QUESTÕES') return 'bg-emerald-500 text-white font-bold';
-                            if (t === 'SIMULADOS') return 'bg-blue-500 text-white font-bold';
+                            if (t === 'SIMULADOS') return 'bg-purple-600 text-white font-bold';
                             return "bg-base-200 text-neutral-content font-bold";
                         };
 
@@ -123,6 +123,12 @@ export default function DailyGoalsList({
                                                 {goal.topicName || goal.topicoNome || 'Sem título'}
                                             </span>
 
+                                            {isOverdue && !goal.completed && (
+                                                <span className="badge badge-sm bg-red-500 text-white font-bold px-2 py-0.5 rounded-md border-none uppercase text-[10px] tracking-wider">
+                                                    ATRASADA
+                                                </span>
+                                            )}
+
                                             <span className={`badge badge-sm border-none text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-md transition-colors ${getTagStyle(goal.type)}`}>
                                                 {typeLabel}
                                             </span>
@@ -175,19 +181,19 @@ export default function DailyGoalsList({
                                         <button
                                             type="button"
                                             onClick={(e) => { e.stopPropagation(); handleOpenStudy(goal); }}
-                                            className="btn btn-xs min-h-[28px] h-7 px-3 text-xs font-bold bg-primary text-primary-content hover:bg-primary/90 border-none rounded-lg shadow-2xs whitespace-nowrap transition-transform active:scale-95 flex items-center gap-1.5"
+                                            className="btn btn-sm px-4 font-bold bg-primary text-primary-content hover:bg-primary/90 border-none rounded-xl shadow-sm whitespace-nowrap transition-transform active:scale-95 flex items-center gap-1.5"
                                         >
-                                            <Play size={12} className="fill-current" /> INICIAR
+                                            <Play size={14} className="fill-current" /> INICIAR
                                         </button>
 
                                         {!isCompact && onManualRegister && (
                                             <button
                                                 type="button"
                                                 onClick={(e) => { e.stopPropagation(); onManualRegister(goal); }}
-                                                className="btn btn-xs btn-square min-h-[28px] h-7 w-7 bg-base-200 text-neutral-content hover:bg-primary hover:text-primary-content border-none rounded-lg transition-colors"
+                                                className="btn btn-sm btn-square bg-base-200 text-neutral-content hover:bg-primary hover:text-primary-content border-none rounded-xl transition-colors"
                                                 title="Registrar Estudo Manualmente"
                                             >
-                                                <PenLine size={13} />
+                                                <PenLine size={15} />
                                             </button>
                                         )}
                                     </div>

@@ -117,8 +117,8 @@ export default function DailyRevisionsList({
                                     {/* Badges */}
                                     <div className="flex items-center gap-1.5 ml-2">
                                         {isOverdue && !rev.completed && (
-                                            <span className="badge badge-xs bg-error/10 text-error font-bold px-1.5 py-2.5 rounded-md border-none flex items-center gap-1">
-                                                <span className="w-1.5 h-1.5 rounded-full bg-error animate-pulse" /> Atrasada
+                                            <span className="badge badge-sm bg-red-500 text-white font-bold px-2 py-0.5 rounded-md border-none uppercase text-[10px] tracking-wider">
+                                                ATRASADA
                                             </span>
                                         )}
                                         {rev.revisionTag && rev.type !== 'QUESTIONS' && (
@@ -175,19 +175,19 @@ export default function DailyRevisionsList({
                                         <button
                                             type="button"
                                             onClick={(e) => { e.stopPropagation(); onStartFocusSession(rev); }}
-                                            className="btn btn-xs min-h-[28px] h-7 px-3 text-xs font-bold bg-primary text-primary-content hover:bg-primary/90 border-none rounded-lg shadow-2xs whitespace-nowrap transition-transform active:scale-95 flex items-center gap-1.5"
+                                            className="btn btn-sm px-4 font-bold bg-primary text-primary-content hover:bg-primary/90 border-none rounded-xl shadow-sm whitespace-nowrap transition-transform active:scale-95 flex items-center gap-1.5"
                                         >
-                                            <Play size={12} className="fill-current" /> REVISAR
+                                            <Play size={14} className="fill-current" /> REVISAR
                                         </button>
 
                                         {onManualRegister && (
                                             <button
                                                 type="button"
                                                 onClick={(e) => { e.stopPropagation(); onManualRegister({ ...rev, type: 'REVISION' }); }}
-                                                className="btn btn-xs btn-square min-h-[28px] h-7 w-7 bg-base-200 text-neutral-content hover:bg-primary hover:text-primary-content border-none rounded-lg transition-colors"
+                                                className="btn btn-sm btn-square bg-base-200 text-neutral-content hover:bg-primary hover:text-primary-content border-none rounded-xl transition-colors"
                                                 title="Registrar Estudo Manualmente"
                                             >
-                                                <PenLine size={13} />
+                                                <PenLine size={15} />
                                             </button>
                                         )}
                                     </div>
