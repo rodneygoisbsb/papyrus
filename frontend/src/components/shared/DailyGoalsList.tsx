@@ -36,7 +36,7 @@ export default function DailyGoalsList({
                     <div className="flex items-center gap-3">
                         <button
                             type="button"
-                            onClick={() => setActiveTab('metas')}
+                            onClick={() => setActiveTab && setActiveTab('metas')}
                             className="text-xs font-semibold text-primary hover:underline flex items-center gap-1 cursor-pointer focus-visible:ring-2 focus-visible:ring-primary rounded-md"
                         >
                             Ver todas →
@@ -68,7 +68,7 @@ export default function DailyGoalsList({
 
                         const getCardStyle = (type: string) => {
                             if (isOverdue && !goal.completed) {
-                                return isCompact 
+                                return isCompact
                                     ? `bg-error/5 border-error/40 border-l-[5px] border-l-error hover:border-error/60`
                                     : `bg-error/5 border-error/40 hover:border-error/60`;
                             }
@@ -94,46 +94,46 @@ export default function DailyGoalsList({
                         return (
                             <div
                                 key={goal.id}
-                                className={`group relative flex flex-col sm:flex-row sm:items-center justify-between py-4 px-4 sm:px-5 rounded-2xl transition-transform duration-200 ease-out duration-200 ease-out gap-4 cursor-pointer transform-gpu hover:-translate-y-0.5 hover:shadow-md ${getCardStyle(goal.type)}`}
+                                className={`group relative flex flex-col sm:flex-row sm:items-center justify-between py-3.5 px-4 sm:px-5 rounded-2xl transition-[transform,colors] duration-150 ease-out gap-4 cursor-pointer transform-gpu hover:-translate-y-0.5 ${getCardStyle(goal.type)}`}
                             >
-                                <div className="flex items-start gap-3.5">
+                                <div className="flex items-start gap-3.5 min-w-0">
                                     <button
                                         type="button"
                                         onClick={(e) => {
                                             e.stopPropagation();
                                             toggleGoalCompletion(goal.id);
                                         }}
-                                        className="mt-0.5 text-neutral-content hover:text-primary transition-transform active:scale-90 focus-visible:ring-2 focus-visible:ring-primary rounded-full cursor-pointer shrink-0"
+                                        className="mt-0.5 text-neutral-content hover:text-primary transition-transform duration-100 active:scale-90 focus-visible:ring-2 focus-visible:ring-primary rounded-full cursor-pointer shrink-0"
                                         title={goal.completed ? "Desmarcar meta" : "Concluir meta"}
                                     >
                                         {goal.completed ? (
                                             <CheckCircle2 size={20} className="text-primary fill-primary/15" />
                                         ) : (
-                                            <Circle size={20} className="text-base-300 group-hover:text-primary transition-colors" />
+                                            <Circle size={20} className="text-base-300 group-hover:text-primary transition-colors duration-150" />
                                         )}
                                     </button>
 
-                                    <div className="space-y-1">
-                                        <h3 className={`${isCompact ? 'text-lx' : 'text-sm'} font-bold tracking-tight transition-colors ${getTitleStyle(goal.type)}`}>
+                                    <div className="space-y-1 min-w-0">
+                                        <h3 className={`${isCompact ? 'text-xs' : 'text-sm'} font-bold tracking-tight truncate transition-colors duration-150 ${getTitleStyle(goal.type)}`}>
                                             {toTitleCase(goal.subject || 'CONCURSO')}
                                         </h3>
 
                                         <div className="flex items-center gap-2 flex-wrap">
-                                            <span className={`${isCompact ? 'text-xs text-slate-500 font-normal' : 'text-[13px] font-medium text-base-content/80'} transition-colors ${goal.completed ? 'line-through opacity-60' : 'group-hover:text-base-content'}`}>
+                                            <span className={`${isCompact ? 'text-xs text-slate-500 font-normal' : 'text-[13px] font-medium text-base-content/80'} truncate transition-colors duration-150 ${goal.completed ? 'line-through opacity-60' : 'group-hover:text-base-content'}`}>
                                                 {goal.topicName || goal.topicoNome || 'Sem título'}
                                             </span>
 
                                             {isOverdue && !goal.completed && (
-                                                <span className="badge badge-sm bg-red-500 text-white font-bold px-2 py-0.5 rounded-md border-none uppercase text-[10px] tracking-wider">
+                                                <span className="badge badge-sm bg-red-500 text-white font-bold px-2 py-0.5 rounded-md border-none uppercase text-[10px] tracking-wider shrink-0">
                                                     ATRASADA
                                                 </span>
                                             )}
 
-                                            <span className={`badge badge-sm border-none text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-md transition-colors ${getTagStyle(goal.type)}`}>
+                                            <span className={`badge badge-sm border-none text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-md shrink-0 transition-colors duration-150 ${getTagStyle(goal.type)}`}>
                                                 {typeLabel}
                                             </span>
 
-                                            <span className="badge badge-sm bg-base-200 text-neutral-content border-none font-medium text-[11px] px-2 py-0.5 rounded-md flex items-center gap-1 group-hover:bg-base-300/60 transition-colors">
+                                            <span className="badge badge-sm bg-base-200 text-neutral-content border-none font-medium text-[11px] px-2 py-0.5 rounded-md flex items-center gap-1 shrink-0 group-hover:bg-base-300/60 transition-colors duration-150">
                                                 <Clock size={11} />
                                                 <span className="tabular-nums">{duration} min</span>
                                             </span>
@@ -142,9 +142,9 @@ export default function DailyGoalsList({
                                 </div>
 
                                 {/* Utilitários + Botões de Ação */}
-                                <div className="flex items-center gap-2 shrink-0 self-center">
+                                <div className="flex items-center gap-2 shrink-0 self-center ml-auto">
                                     {!isCompact && (
-                                        <div className="flex items-center gap-1 opacity-60 group-hover:opacity-100 transition-colors duration-150 ease-out">
+                                        <div className="flex items-center gap-1 opacity-60 group-hover:opacity-100 transition-opacity duration-150 ease-out">
                                             {goal.tecUrl && (
                                                 <a
                                                     href={goal.tecUrl}
@@ -176,24 +176,24 @@ export default function DailyGoalsList({
                                         </div>
                                     )}
 
-                                    {/* Botões de Ação (Iniciar / Adicionar) */}
-                                    <div className="flex items-center gap-1.5 overflow-hidden transition-all duration-200 ease-out max-w-0 opacity-0 group-hover:max-w-xs group-hover:opacity-100 pr-1">
+                                    {/* Botões de Ação: Instantâneo e isolado na GPU */}
+                                    <div className="flex items-center gap-1.5 overflow-hidden transition-[max-width,opacity] duration-150 ease-out max-w-0 opacity-0 group-hover:max-w-[165px] group-hover:opacity-100 transform-gpu will-change-[max-width,opacity] pr-1">
                                         <button
                                             type="button"
                                             onClick={(e) => { e.stopPropagation(); handleOpenStudy(goal); }}
-                                            className="btn btn-sm px-4 font-bold bg-primary text-primary-content hover:bg-primary/90 border-none rounded-xl shadow-sm whitespace-nowrap transition-transform active:scale-95 flex items-center gap-1.5"
+                                            className="btn btn-sm px-3.5 font-bold bg-primary text-primary-content hover:bg-primary/90 border-none rounded-xl shadow-sm whitespace-nowrap transition-transform duration-100 active:scale-95 flex items-center gap-1.5"
                                         >
-                                            <Play size={14} className="fill-current" /> INICIAR
+                                            <Play size={13} className="fill-current" /> INICIAR
                                         </button>
 
                                         {!isCompact && onManualRegister && (
                                             <button
                                                 type="button"
                                                 onClick={(e) => { e.stopPropagation(); onManualRegister(goal); }}
-                                                className="btn btn-sm btn-square bg-base-200 text-neutral-content hover:bg-primary hover:text-primary-content border-none rounded-xl transition-colors"
+                                                className="btn btn-sm btn-square bg-base-200 text-neutral-content hover:bg-primary hover:text-primary-content border-none rounded-xl transition-colors duration-150"
                                                 title="Registrar Estudo Manualmente"
                                             >
-                                                <PenLine size={15} />
+                                                <PenLine size={14} />
                                             </button>
                                         )}
                                     </div>

@@ -19,7 +19,7 @@ export default function DisciplinasPage({
             {/* 1. CABEÇALHO DA SEÇÃO DE DISCIPLINAS */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-base-100 p-6 rounded-3xl border border-base-300/70 shadow-xs">
                 <div>
-                    <div className="flex items-center gap-2 mb-1">
+                    <div className="flex items-center gap-2 mb-4">
                         <BookOpen size={20} className="text-primary" />
                         <h2 className="text-xl font-bold tracking-tight text-base-content uppercase">
                             {currentPlan?.nome || 'Suas Disciplinas'}
@@ -55,12 +55,12 @@ export default function DisciplinasPage({
                     disciplines.map((disc) => (
                         <div
                             key={disc.id}
-                            className="card-papyrus flex flex-col justify-between border-l-[6px] relative min-h-[160px]"
+                            className="card-papyrus flex flex-col justify-between border-l-[9px] relative min-h-[160px]"
                             style={{ borderLeftColor: disc.colorHex || '#2563EB' }}
                         >
                             {/* Top Bar: Title & Actions */}
                             <div className="flex justify-between items-start gap-2 mb-6">
-                                <h3 className="font-bold text-base tracking-tight text-base-content uppercase truncate">
+                                <h3 className="font-bold text-base tracking-tight text-base-content uppercase truncate mt-10">
                                     {disc.name}
                                 </h3>
                                 <div className="flex items-center gap-1 shrink-0">
@@ -93,9 +93,12 @@ export default function DisciplinasPage({
                                         / {disc.totalTopics || disc.topics?.length || 0} tópicos
                                     </span>
                                 </div>
-                                <span className="text-[#16A34A] flex items-center gap-1 mb-[2px]">
-                                    {disc.questionsDone || 0} questões
-                                </span>
+                                <div className="text-[#16A34A] flex items-baseline gap-1">
+                                    <span className="text-lg font-bold leading-none">
+                                        {disc.questionsDone || 0}
+                                    </span>
+                                    <span className="mb-[2px] text-success/60">questões</span>
+                                </div>
                             </div>
                         </div>
                     ))

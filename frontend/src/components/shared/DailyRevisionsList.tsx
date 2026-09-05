@@ -66,7 +66,6 @@ export default function DailyRevisionsList({
                 ) : (
                     revisions.map((rev) => {
                         const accent = getSubjectAccent(rev.subject);
-                        // DEMO: Forçando a primeira revisão (r1) a ser atrasada para demonstração visual
                         const isOverdue = rev.isOverdue || rev.daysOverdue > 0 || (!rev.completed && rev.id === 'r1');
 
                         const getCardStyle = (type: string) => {
@@ -84,19 +83,19 @@ export default function DailyRevisionsList({
                         return (
                             <div
                                 key={rev.id}
-                                className={`group relative p-4 rounded-2xl border ${getCardStyle(rev.type)} hover:shadow-sm transition-all duration-200 flex items-center justify-between overflow-hidden`}
+                                className={`group relative p-4 rounded-2xl border ${getCardStyle(rev.type)} transition-colors duration-150 flex items-center justify-between overflow-hidden transform-gpu`}
                             >
                                 {/* Listra lateral */}
                                 {!isOverdue && <div className={`absolute left-0 top-0 bottom-0 w-1 ${accent.bg}`} />}
 
-                                <div className="flex items-center gap-3.5 pl-2">
+                                <div className="flex items-center gap-3.5 pl-2 min-w-0">
                                     {/* Checkbox circular */}
                                     <button
                                         onClick={(e) => {
                                             e.stopPropagation();
                                             toggleRevisionCompletion(rev.id);
                                         }}
-                                        className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all cursor-pointer active:scale-90 shrink-0 ${rev.completed
+                                        className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-transform duration-100 cursor-pointer active:scale-90 shrink-0 ${rev.completed
                                             ? 'bg-secondary border-secondary text-white'
                                             : isOverdue ? 'border-error/40 hover:border-error text-transparent' : 'border-slate-300 hover:border-primary text-transparent'
                                             }`}
@@ -105,17 +104,17 @@ export default function DailyRevisionsList({
                                     </button>
 
                                     {/* Textos */}
-                                    <div className="flex flex-col gap-1">
-                                        <span className={`text-sm font-bold transition-colors ${rev.completed ? 'text-slate-400 line-through' : getTitleStyle(rev.type)}`}>
+                                    <div className="flex flex-col gap-1 min-w-0">
+                                        <span className={`text-sm font-bold truncate transition-colors duration-150 ${rev.completed ? 'text-slate-400 line-through' : getTitleStyle(rev.type)}`}>
                                             {toTitleCase(rev.subject || 'MATÉRIA')}
                                         </span>
-                                        <span className={`text-xs font-normal transition-colors ${rev.completed ? 'text-slate-400/70' : 'text-slate-500'}`}>
+                                        <span className={`text-xs font-normal truncate transition-colors duration-150 ${rev.completed ? 'text-slate-400/70' : 'text-slate-500'}`}>
                                             {rev.topicName || 'Tópico'}
                                         </span>
                                     </div>
 
                                     {/* Badges */}
-                                    <div className="flex items-center gap-1.5 ml-2">
+                                    <div className="flex items-center gap-1.5 ml-2 shrink-0">
                                         {isOverdue && !rev.completed && (
                                             <span className="badge badge-sm bg-red-500 text-white font-bold px-2 py-0.5 rounded-md border-none uppercase text-[10px] tracking-wider">
                                                 ATRASADA
@@ -138,8 +137,8 @@ export default function DailyRevisionsList({
                                 </div>
 
                                 {/* Utilitários + Botões de Ação */}
-                                <div className="flex items-center gap-2 shrink-0 self-center">
-                                    <div className="flex items-center gap-1 opacity-60 group-hover:opacity-100 transition-colors duration-150 ease-out">
+                                <div className="flex items-center gap-2 shrink-0 ml-2">
+                                    <div className="flex items-center gap-1 opacity-60 group-hover:opacity-100 transition-opacity duration-150 ease-out">
                                         {rev.tecUrl && (
                                             <a
                                                 href={rev.tecUrl}
@@ -170,14 +169,14 @@ export default function DailyRevisionsList({
                                         </button>
                                     </div>
 
-                                    {/* Botões de Ação (Iniciar / Adicionar) */}
-                                    <div className="flex items-center gap-1.5 overflow-hidden transition-all duration-200 ease-out max-w-0 opacity-0 group-hover:max-w-xs group-hover:opacity-100 pr-1">
+                                    {/* Botões de Ação: Otimizados para resposta instantânea */}
+                                    <div className="flex items-center gap-1.5 overflow-hidden transition-[max-width,opacity] duration-150 ease-out max-w-0 opacity-0 group-hover:max-w-[160px] group-hover:opacity-100 transform-gpu will-change-[max-width,opacity]">
                                         <button
                                             type="button"
                                             onClick={(e) => { e.stopPropagation(); onStartFocusSession(rev); }}
-                                            className="btn btn-sm px-4 font-bold bg-primary text-primary-content hover:bg-primary/90 border-none rounded-xl shadow-sm whitespace-nowrap transition-transform active:scale-95 flex items-center gap-1.5"
+                                            className="btn btn-sm px-3.5 font-bold bg-primary text-primary-content hover:bg-primary/90 border-none rounded-xl shadow-sm whitespace-nowrap transition-transform active:scale-95 flex items-center gap-1.5"
                                         >
-                                            <Play size={14} className="fill-current" /> REVISAR
+                                            <Play size={13} className="fill-current" /> REVISAR
                                         </button>
 
                                         {onManualRegister && (
@@ -187,7 +186,7 @@ export default function DailyRevisionsList({
                                                 className="btn btn-sm btn-square bg-base-200 text-neutral-content hover:bg-primary hover:text-primary-content border-none rounded-xl transition-colors"
                                                 title="Registrar Estudo Manualmente"
                                             >
-                                                <PenLine size={15} />
+                                                <PenLine size={14} />
                                             </button>
                                         )}
                                     </div>
