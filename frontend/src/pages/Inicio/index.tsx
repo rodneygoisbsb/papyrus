@@ -57,20 +57,11 @@ export default function InicioPage({
                         onRegisterStudy={() => setIsRegisterModalOpen(true)}
                         onStartFocusSession={handleOpenStudy}
                     />
-
-                    <DailyGoalsList
-                        dailyGoals={dailyGoals.filter(item => item.type === 'THEORY')}
-                        toggleGoalCompletion={toggleGoalCompletion}
-                        handleOpenStudy={handleOpenStudy}
-                        setIsRegisterModalOpen={setIsRegisterModalOpen}
-                        setActiveTab={setActiveTab}
-                        isCompact={true}
-                    />
                 </div>
 
                 {/* COLUNA DIREITA (4 COLS): CONSTÂNCIA & GRÁFICO SEMANAL */}
                 <div className="lg:col-span-4 space-y-6 w-full min-w-0">
-                    <ResumoDeHojeCard 
+                    <ResumoDeHojeCard
                         todayMinutesStudied={todayMinutesStudied}
                         todayQuestionsDone={todayQuestionsDone}
                     />

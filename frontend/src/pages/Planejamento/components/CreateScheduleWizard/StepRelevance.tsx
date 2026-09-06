@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { WizardState } from './index';
+import { calculateDisciplinePercentages } from '../../../../utils/scheduleCalculator';
 
 interface StepRelevanceProps {
     state: WizardState;
@@ -46,19 +47,7 @@ export default function StepRelevance({ state, updateState }: StepRelevanceProps
     };
 
     // Calculate percentages
-    const weights = state.disciplines.map(disc => {
-        const rel = state.relevance[disc] || { importance: 3, knowledge: 3 };
-        // Formula: Higher importance increases weight, Higher knowledge decreases weight (need to study less)
-        // Max importance = 5, Min knowledge = 1 -> Weight = 5 * (6 - 1) = 25
-        const weight = rel.importance * (6 - rel.knowledge);
-        return { disc, weight };
-    });
-
-    const totalWeight = weights.reduce((acc, curr) => acc + curr.weight, 0);
-    const percentages = weights.map(w => ({
-        disc: w.disc,
-        pct: totalWeight > 0 ? Math.round((w.weight / totalWeight) * 100) : 0
-    })).sort((a, b) => b.pct - a.pct);
+    const percentages = calculateDisciplinePercentages(state.disciplines, state.relevance);
 
     return (
         <div className="flex flex-col text-center space-y-6 animate-in fade-in slide-in-from-right-4 duration-300 h-full">
