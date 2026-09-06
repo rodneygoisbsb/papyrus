@@ -38,24 +38,19 @@ export default function Sidebar({ activeTab, setActiveTab }) {
 
     return (
         <aside
+            onMouseEnter={() => setExpanded(true)}
+            onMouseLeave={() => setExpanded(false)}
             className={[
                 expanded ? 'w-60' : 'w-[68px]',
                 'bg-base-100 flex flex-col justify-between shrink-0 h-screen sticky top-0 z-40 transition-all duration-300 ease-[cubic-bezier(0.2,0.8,0.2,1)] border-r border-base-300/60 shadow-[4px_0_24px_rgba(0,0,0,0.03)]',
                 'select-none hidden md:flex',
             ].join(' ')}
         >
-            {/* Botão flutuante para expandir/recolher */}
-            <button
-                onClick={() => setExpanded(!expanded)}
-                className="absolute -right-3 top-7 w-6 h-6 bg-white border border-slate-200 rounded-full flex items-center justify-center text-slate-400 hover:text-blue-600 hover:border-blue-300 hover:shadow-md transition-colors duration-150 z-50 cursor-pointer transform-gpu"
-            >
-                <ChevronRight size={14} className={`transition-transform duration-200 ${expanded ? 'rotate-180' : ''}`} />
-            </button>
             {/* ── TOPO ─────────────────────────────────────────────── */}
             <div className="flex flex-col flex-1 overflow-hidden">
 
                 {/* Logo */}
-                <div className="flex items-center gap-3 px-[14px] h-[68px] border-b border-base-300/60 shrink-0">
+                <div className="flex items-center gap-3 px-[14px] h-[68px] shrink-0">
                     <div
                         className="w-10 h-10 rounded-xl flex items-center justify-center font-black text-white text-base shrink-0 shadow-lg"
                         style={{

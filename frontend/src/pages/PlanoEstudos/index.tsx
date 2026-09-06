@@ -51,7 +51,7 @@ export default function PlanoEstudosPage({
                 <button
                     type="button"
                     onClick={() => setActiveTab && setActiveTab('criar-plano')}
-                    className="flex items-center gap-3 bg-primary text-primary-content px-5 py-2.5 rounded-xl transition-all shadow-sm hover:shadow-md hover:bg-primary/90 font-bold group"
+                    className="flex items-center gap-3 bg-primary text-primary-content px-5 py-2.5 rounded-xl transition-all shadow-sm hover:shadow-md hover:bg-primary/90 font-bold group cursor-pointer"
                 >
                     <Plus size={18} className="group-hover:rotate-90 transition-transform duration-300" />
                     <span>Criar Novo Plano</span>

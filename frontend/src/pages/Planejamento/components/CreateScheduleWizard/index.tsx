@@ -20,7 +20,7 @@ const STEPS = [
     { id: 4, title: 'Disponibilidade' },
 ];
 
-export default function CreateScheduleWizard({ onClose }: { onClose: () => void }) {
+export default function CreateScheduleWizard({ onClose, onComplete }: { onClose: () => void, onComplete?: () => void }) {
     const [currentStep, setCurrentStep] = useState(1);
     const [wizardState, setWizardState] = useState<WizardState>({
         disciplines: [],
@@ -46,7 +46,8 @@ export default function CreateScheduleWizard({ onClose }: { onClose: () => void 
         else {
             // Handle conclusion
             console.log('Wizard Finished:', wizardState);
-            onClose();
+            if (onComplete) onComplete();
+            else onClose();
         }
     };
 

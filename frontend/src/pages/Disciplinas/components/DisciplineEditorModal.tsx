@@ -84,7 +84,7 @@ export default function DisciplineEditorModal({
                                 onChange={(e) =>
                                     setActiveDisciplineEditor((prev: any) => ({ ...prev, name: e.target.value }))
                                 }
-                                className="input input-bordered w-full bg-base-200/40 focus:bg-base-100 focus:outline-none rounded-2xl font-bold text-sm text-base-content shadow-sm"
+                                className="input input-bordered w-full bg-base-200/40 focus:bg-base-100 focus:outline-none focus:ring-1 hover:ring-primary/60 rounded-2xl font-bold text-sm text-base-content shadow-sm"
                                 autoFocus
                             />
                         </div>

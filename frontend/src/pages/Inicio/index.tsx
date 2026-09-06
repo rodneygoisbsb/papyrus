@@ -3,9 +3,9 @@ import RegisterStudyModal from '../../components/modals/RegisterStudyModal';
 import TopKpiCards from './components/TopKpiCards';
 import DailyGoalsList from '../../components/shared/DailyGoalsList';
 import DailyRevisionsList from '../../components/shared/DailyRevisionsList';
-import MonthlyHeatmapCard from './components/MonthlyHeatmapCard';
 import TodaySessionsCard from './components/TodaySessionsCard';
 import AiDailySuggestionsCard from './components/AiDailySuggestionsCard';
+import ResumoDeHojeCard from './components/ResumoDeHojeCard';
 
 export default function InicioPage({
     weeklyHoursStudied = 14,
@@ -70,7 +70,10 @@ export default function InicioPage({
 
                 {/* COLUNA DIREITA (4 COLS): CONSTÂNCIA & GRÁFICO SEMANAL */}
                 <div className="lg:col-span-4 space-y-6 w-full min-w-0">
-                    <MonthlyHeatmapCard />
+                    <ResumoDeHojeCard 
+                        todayMinutesStudied={todayMinutesStudied}
+                        todayQuestionsDone={todayQuestionsDone}
+                    />
                     <TodaySessionsCard />
                 </div>
 
