@@ -5,6 +5,7 @@ import StepOrganization from './StepOrganization';
 import StepDisciplines from './StepDisciplines';
 import StepRelevance from './StepRelevance';
 import StepSchedules from './StepSchedules';
+import { useModalLenis } from '../../../../hooks/useModalLenis';
 
 export interface WizardState {
     disciplines: string[];
@@ -21,6 +22,7 @@ const STEPS = [
 ];
 
 export default function CreateScheduleWizard({ onClose, onComplete }: { onClose: () => void, onComplete?: () => void }) {
+    const { wrapperRef, contentRef } = useModalLenis();
     const [currentStep, setCurrentStep] = useState(1);
     const [wizardState, setWizardState] = useState<WizardState>({
         disciplines: [],
@@ -102,7 +104,7 @@ export default function CreateScheduleWizard({ onClose, onComplete }: { onClose:
                 </div>
 
                 {/* Right Content Area */}
-                <div className="flex-1 flex flex-col min-w-0 bg-white">
+                <div className="flex-1 flex flex-col h-full bg-white relative z-20">
                     {/* Header for mobile or just close button */}
                     <div className="flex items-center justify-end p-4 shrink-0">
                         <button
@@ -113,11 +115,13 @@ export default function CreateScheduleWizard({ onClose, onComplete }: { onClose:
                         </button>
                     </div>
 
-                    <div className="flex-1 p-6 md:p-8 overflow-y-auto">
-                        {currentStep === 1 && <StepOrganization />}
-                        {currentStep === 2 && <StepDisciplines state={wizardState} updateState={updateState} />}
-                        {currentStep === 3 && <StepRelevance state={wizardState} updateState={updateState} />}
-                        {currentStep === 4 && <StepSchedules state={wizardState} updateState={updateState} />}
+                    <div className="flex-1 overflow-y-auto p-6 md:p-8" data-lenis-prevent="true" ref={wrapperRef}>
+                        <div ref={contentRef} className="w-full h-full">
+                            {currentStep === 1 && <StepOrganization />}
+                            {currentStep === 2 && <StepDisciplines state={wizardState} updateState={updateState} />}
+                            {currentStep === 3 && <StepRelevance state={wizardState} updateState={updateState} />}
+                            {currentStep === 4 && <StepSchedules state={wizardState} updateState={updateState} />}
+                        </div>
                     </div>
 
                     {/* Footer Actions */}

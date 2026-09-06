@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { ChevronLeft, ChevronRight, Plus, CheckCircle2, Circle } from 'lucide-react';
-import ScheduleGoalModal from '../../components/modals/ScheduleGoalModal';
-import RegisterStudyModal from '../../components/modals/RegisterStudyModal';
+import ScheduleGoalModal from '../../../components/modals/ScheduleGoalModal';
+import RegisterStudyModal from '../../../components/modals/RegisterStudyModal';
 
 const MOCK_WEEK = [
     {

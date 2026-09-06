@@ -20,7 +20,6 @@ const MENU = [
     { id: 'disciplinas', label: 'Disciplinas', icon: BookOpen },
     { id: 'planejamento', label: 'Planejamento', icon: Sliders },
     { id: 'metas', label: 'Metas Diárias', icon: CheckCircle2 },
-    { id: 'quadro', label: 'Quadro Semanal', icon: CalendarDays },
     { id: 'edital', label: 'Edital Verticalizado', icon: ListOrdered },
     { id: 'desempenho', label: 'Desempenho', icon: BarChart3 },
 ];

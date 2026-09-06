@@ -20,12 +20,12 @@ function useScheduleConfig() {
     return { hasActiveSchedule, createSchedule, resetSchedule };
 }
 
-import QuadroSemanalPage from '../QuadroSemanal';
+import ScheduleView from './components/ScheduleView';
 
 function WeeklyScheduleView({ onReset }: { onReset: () => void }) {
     return (
         <div className="w-full max-w-full mx-auto animate-in fade-in zoom-in-95 duration-300">
-            <QuadroSemanalPage 
+            <ScheduleView 
                 hideHeader={false}
                 title="Planejamento Ativo"
                 subtitle="Visão geral da sua grade de estudos"

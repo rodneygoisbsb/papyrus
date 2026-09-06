@@ -13,7 +13,6 @@ import ConfiguracoesPage from './pages/Configuracoes';
 import DisciplinasPage from './pages/Disciplinas';
 import PlanoEstudosPage from './pages/PlanoEstudos';
 import PlanejamentoPage from './pages/Planejamento';
-import QuadroSemanalPage from './pages/QuadroSemanal';
 import DesempenhoPage from './pages/Desempenho';
 import EditalVerticalizadoPage from './pages/EditalVerticalizado';
 import CriarPlanoPage from './pages/CriarPlano';
@@ -357,9 +356,7 @@ export default function App() {
 
       {activeTab === 'planejamento' && <PlanejamentoPage />}
 
-      {activeTab === 'quadro' && <QuadroSemanalPage />}
-
-      {activeTab !== 'inicio' && activeTab !== 'disciplinas' && activeTab !== 'plano-estudos' && activeTab !== 'metas' && activeTab !== 'perfil' && activeTab !== 'configuracoes' && activeTab !== 'planejamento' && activeTab !== 'quadro' && !activeTab.startsWith('criar-plano') && (
+      {activeTab !== 'inicio' && activeTab !== 'disciplinas' && activeTab !== 'plano-estudos' && activeTab !== 'metas' && activeTab !== 'perfil' && activeTab !== 'configuracoes' && activeTab !== 'planejamento' && !activeTab.startsWith('criar-plano') && (
         <div className="card-papyrus !p-12 text-center space-y-4 flex flex-col items-center justify-center h-full min-h-[400px]">
           <Layers size={40} className="text-primary" />
           <h3 className="text-lg font-bold text-base-content capitalize">

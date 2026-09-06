@@ -36,12 +36,12 @@ export default function StepDisciplines({ state, updateState }: StepDisciplinesP
     };
 
     return (
-        <div className="flex flex-col items-start justify-center text-start space-y-6 animate-in fade-in slide-in-from-right-4 duration-300 h-full">
+        <div className="flex flex-col items-center justify-center text-start space-y-6 animate-in fade-in slide-in-from-right-4 duration-300 h-full">
             <div className="flex items-center gap-2">
                 <p className="text-sm font-medium text-slate-600">
                     Selecione as <span className="font-bold text-slate-800">disciplinas</span> para o seu ciclo
                 </p>
-                <div className="tooltip tooltip-bottom before:max-w-xs before:whitespace-normal" data-tip="Você não precisa escolher tudo agora. É possível adicionar ou remover matérias a qualquer momento">
+                <div className="tooltip tooltip-bottom before:max-w-xs before:whitespace-normal" data-tip="É possível adicionar ou remover matérias a qualquer momento">
                     <Info className="w-4 h-4 text-slate-400 hover:text-primary transition-colors cursor-help" />
                 </div>
             </div>

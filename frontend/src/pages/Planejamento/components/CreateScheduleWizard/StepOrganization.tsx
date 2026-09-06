@@ -5,11 +5,8 @@ export default function StepOrganization() {
     return (
         <div className="flex flex-col items-center justify-center text-center space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-300">
             <div className="space-y-2 max-w-md">
-                <h3 className="text-xl font-black text-slate-800">
-                    Como você deseja criar o seu Planejamento?
-                </h3>
                 <p className="text-sm font-medium text-slate-500">
-                    De forma <span className="font-bold text-slate-700">manual</span>, ou prefere a ajuda do <span className="font-bold text-primary">Gerador Automático</span>?
+                    Como podemos te ajudar a <span className="font-bold text-slate-700">organizar seus estudos</span> hoje?
                 </p>
             </div>
 
