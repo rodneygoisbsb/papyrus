@@ -279,6 +279,16 @@ export default function App() {
     window.dispatchEvent(new CustomEvent('papyrus:open-zen-focus', { detail: goal }));
   };
 
+  const handleReplanGoals = () => {
+    setDailyGoals((prev) => 
+      prev.map((g) => ({
+        ...g,
+        isOverdue: false,
+        daysOverdue: 0
+      }))
+    );
+  };
+
   return (
     <MainLayout
       activeTab={activeTab}
@@ -304,6 +314,7 @@ export default function App() {
           toggleGoalCompletion={toggleGoalCompletion}
           handleOpenStudy={handleOpenStudy}
           setActiveTab={setActiveTab}
+          handleReplanGoals={handleReplanGoals}
         />
       )}
 

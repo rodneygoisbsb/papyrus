@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
+import { AlertTriangle } from 'lucide-react';
 import RegisterStudyModal from '../../components/modals/RegisterStudyModal';
+import ReplanModal from '../../components/modals/ReplanModal';
 import TopKpiCards from './components/TopKpiCards';
 import DailyGoalsList from '../../components/shared/DailyGoalsList';
 import DailyRevisionsList from '../../components/shared/DailyRevisionsList';
@@ -19,12 +21,46 @@ export default function InicioPage({
     dailyGoals = [],
     toggleGoalCompletion = () => { },
     handleOpenStudy = () => { },
-    setActiveTab = () => { }
+    setActiveTab = () => { },
+    handleReplanGoals = () => { }
 }) {
     const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
+    const [isReplanModalOpen, setIsReplanModalOpen] = useState(false);
+
+    // Mock verification for overdue items (considering our mock logic that goal index 0 is overdue if not completed)
+    const hasOverdueGoals = dailyGoals.some((g, i) => {
+        const isTheoryGoal = g.type !== 'REVISION';
+        const regularGoals = dailyGoals.filter(goal => goal.type !== 'REVISION');
+        const indexInRegular = regularGoals.findIndex(rg => rg.id === g.id);
+        
+        return g.isOverdue || g.daysOverdue > 0 || (!g.completed && isTheoryGoal && indexInRegular === 0);
+    });
 
     return (
         <div className="space-y-6 animate-in fade-in duration-200 font-['Plus_Jakarta_Sans'] text-base-content w-full">
+            
+            {/* BANNER DE REPLANEJAMENTO */}
+            {hasOverdueGoals && (
+                <div className="bg-amber-50 border border-amber-200/60 rounded-[24px] p-4 flex flex-col sm:flex-row items-center justify-between gap-4 animate-in fade-in slide-in-from-top-4 duration-300">
+                    <div className="flex items-center gap-3">
+                        <div className="bg-amber-100 p-2.5 rounded-full shrink-0">
+                            <AlertTriangle size={24} className="text-amber-600" />
+                        </div>
+                        <div>
+                            <h3 className="text-base font-bold text-amber-900">As coisas acumularam?</h3>
+                            <p className="text-sm text-amber-800/80 mt-0.5">
+                                Você tem metas em atraso. Que tal recalcular a rota para voltar ao foco hoje?
+                            </p>
+                        </div>
+                    </div>
+                    <button 
+                        onClick={() => setIsReplanModalOpen(true)}
+                        className="btn bg-amber-500 text-white border-none hover:bg-amber-600 rounded-xl font-bold px-6 shrink-0"
+                    >
+                        Recalcular Rota
+                    </button>
+                </div>
+            )}
 
             {/* 1. LINHA SUPERIOR: 3 CARDS TOP */}
             <TopKpiCards
@@ -78,6 +114,16 @@ export default function InicioPage({
                 onSave={(dados) => {
                     console.log('Estudo registrado:', dados);
                     setIsRegisterModalOpen(false);
+                }}
+            />
+
+            {/* Modal de Replanejamento */}
+            <ReplanModal 
+                isOpen={isReplanModalOpen}
+                onClose={() => setIsReplanModalOpen(false)}
+                onSuccess={() => {
+                    handleReplanGoals();
+                    setIsReplanModalOpen(false);
                 }}
             />
 

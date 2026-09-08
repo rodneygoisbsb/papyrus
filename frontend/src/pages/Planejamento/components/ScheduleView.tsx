@@ -88,16 +88,16 @@ const getTypeLabel = (type: string) => {
     }
 };
 
-export default function QuadroSemanalPage({ 
+export default function QuadroSemanalPage({
     hideHeader = false,
     title = "Cronograma Semanal",
     subtitle = "Planeje e acompanhe suas tarefas de estudo",
     headerAction = null
-}: { 
-    hideHeader?: boolean, 
-    title?: string, 
-    subtitle?: string, 
-    headerAction?: React.ReactNode 
+}: {
+    hideHeader?: boolean,
+    title?: string,
+    subtitle?: string,
+    headerAction?: React.ReactNode
 }) {
     const [weekData, setWeekData] = useState(MOCK_WEEK);
     const [weekOffset, setWeekOffset] = useState(0);
@@ -113,17 +113,17 @@ export default function QuadroSemanalPage({
 
     const toggleGoalCompletion = (dayIndex: number, goalId: string) => {
         if (weekOffset !== 0) return;
-        
+
         const newData = [...weekData];
         const goalIndex = newData[dayIndex].goals.findIndex(g => g.id === goalId);
         if (goalIndex > -1) {
             const goal = newData[dayIndex].goals[goalIndex];
-            
+
             if (!goal.completed) {
                 setSelectedGoalToRegister(goal);
                 setIsRegisterModalOpen(true);
             }
-            
+
             goal.completed = !goal.completed;
             setWeekData(newData);
         }
@@ -133,11 +133,11 @@ export default function QuadroSemanalPage({
         const today = new Date();
         const currentDay = today.getDay();
         const daysToMonday = currentDay === 0 ? -6 : 1 - currentDay;
-        
+
         const monday = new Date(today);
         monday.setDate(today.getDate() + daysToMonday + (offset * 7));
         monday.setHours(0, 0, 0, 0);
-        
+
         const weekDates = [];
         for (let i = 0; i < 7; i++) {
             const d = new Date(monday);
@@ -155,12 +155,12 @@ export default function QuadroSemanalPage({
         const dateStr = date.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
         const dayNames = ['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB'];
         const dayName = dayNames[date.getDay()];
-        
+
         const today = new Date();
         const isToday = date.getDate() === today.getDate() && date.getMonth() === today.getMonth() && date.getFullYear() === today.getFullYear();
-        
+
         const goals = weekOffset === 0 ? weekData[index].goals : [];
-        
+
         return {
             date: dateStr,
             dayName,
@@ -177,12 +177,11 @@ export default function QuadroSemanalPage({
         <div className="space-y-4 animate-in fade-in duration-200 min-h-full flex flex-col font-['Plus_Jakarta_Sans']">
             {/* Header Unificado com Progresso e Controles */}
             <div className="bg-base-100 border border-base-200 rounded-2xl p-4 shadow-sm flex flex-col xl:flex-row gap-5 xl:items-center justify-between">
-                
+
                 {/* Título e Subtítulo (se não estiver escondido) */}
                 {!hideHeader && (
                     <div className="shrink-0 xl:mr-4">
                         <h2 className="text-xl font-black text-base-content tracking-tight">{title}</h2>
-                        <p className="text-xs font-bold uppercase tracking-wider text-neutral-content mt-0.5">{subtitle}</p>
                     </div>
                 )}
 
@@ -241,7 +240,7 @@ export default function QuadroSemanalPage({
                         {displayWeekData.map((day, dayIndex) => {
                             const isLast = dayIndex === displayWeekData.length - 1;
                             const goal = day.goals[rowIndex];
-                            
+
                             return (
                                 <div key={`cell-${day.date}-${rowIndex}`} className={`p-1.5 ${!isLast ? 'border-r border-base-200' : ''}`}>
                                     {goal ? (

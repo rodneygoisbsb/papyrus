@@ -93,51 +93,65 @@ export default function AiDailySuggestionsCard({
         {flatTopics.map((topic) => (
           <div
             key={topic.id}
-            className="group relative py-4 border-b border-base-200/60 last:border-0 hover:bg-base-200/30 transition-colors duration-200 -mx-5 px-5 space-y-2.5"
+            className="group relative py-4 border-b border-base-200/60 last:border-0 hover:bg-base-200/30 transition-colors duration-200 -mx-5 px-5 cursor-pointer"
+            onClick={() => onStartFocusSession && onStartFocusSession(topic)}
           >
-            {/* Textos */}
-            <div className="flex flex-col gap-0.5 min-w-0">
-              <span className="text-sm font-bold truncate transition-colors duration-150 text-base-content">
-                {toTitleCase(topic.subjectName)}
-              </span>
-              <span className="text-xs font-medium truncate transition-colors duration-150 text-neutral-content">
-                {topic.name}
-              </span>
-            </div>
+            <div className="flex items-start gap-3.5 min-w-0">
+              {/* Barra vertical colorida */}
+              <div className={`w-1.5 h-8 mt-1 rounded-full shrink-0 ${topic.subjectColor ? topic.subjectColor.replace('border-l-', 'bg-') : 'bg-primary'}`} />
+              
+              <div className="flex flex-col flex-1 min-w-0">
+                {/* Textos */}
+                <div className="flex flex-col gap-0.5 min-w-0">
+                  <span className="text-sm font-bold truncate transition-colors duration-150 text-base-content">
+                    {toTitleCase(topic.subjectName)}
+                  </span>
+                  <span className="text-xs font-medium truncate transition-colors duration-150 text-neutral-content">
+                    {topic.name}
+                  </span>
+                </div>
 
-            {/* Linha 3: Tags e Ações com Safe Zone */}
-            <div className="flex flex-wrap items-center justify-between gap-3 pt-2 mt-1">
-              {/* Lado Esquerdo: Tags */}
-              <div className="flex items-center gap-1.5 flex-wrap">
-                <span className="badge badge-xs border-none text-[10px] uppercase tracking-wider px-2 py-1.5 rounded bg-info/10 text-info font-bold">
-                  {topic.type}
-                </span>
-                <span className="badge badge-xs border-none text-[10px] uppercase tracking-wider px-2 py-1.5 rounded bg-accent/10 text-accent font-bold">
-                  {topic.statusTag}
-                </span>
-                <span className="badge badge-xs bg-base-200 text-neutral-content font-medium px-2 py-1.5 rounded-md border-none text-[10px]">
-                  {topic.durationMinutes} min
-                </span>
-              </div>
+                {/* Linha 3: Tags e Ações com Safe Zone */}
+                <div className="flex flex-wrap items-center justify-between gap-3 pt-2 mt-1">
+                  {/* Lado Esquerdo: Tags */}
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <span className="badge badge-xs border-none text-[10px] uppercase tracking-wider px-2 py-1.5 rounded bg-info/10 text-info font-bold">
+                      {topic.type}
+                    </span>
+                    <span className="badge badge-xs border-none text-[10px] uppercase tracking-wider px-2 py-1.5 rounded bg-accent/10 text-accent font-bold">
+                      {topic.statusTag}
+                    </span>
+                    <span className="badge badge-xs bg-base-200 text-neutral-content font-medium px-2 py-1.5 rounded-md border-none text-[10px]">
+                      {topic.durationMinutes} min
+                    </span>
+                  </div>
 
-              {/* Lado Direito: Ações (Safe Zone - Gap 4 = 16px) */}
-              <div className="flex items-center gap-4">
-                <button
-                  type="button"
-                  onClick={() => handleDismissTopic(topic.id)}
-                  className="btn btn-xs btn-ghost text-neutral-content hover:bg-base-200 px-2 h-8 min-h-0"
-                  title="Ocultar sugestão"
-                >
-                  <EyeOff size={14} />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => onStartFocusSession && onStartFocusSession(topic)}
-                  className="btn btn-sm bg-primary/10 text-primary hover:bg-primary/20 border-none rounded-xl px-5 font-bold gap-1.5 h-8 min-h-0 text-xs shadow-none"
-                >
-                  <Play size={12} fill="currentColor" />
-                  Estudar
-                </button>
+                  {/* Lado Direito: Ações (Safe Zone - Gap 4 = 16px) */}
+                  <div className="flex items-center gap-4">
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDismissTopic(topic.id);
+                      }}
+                      className="btn btn-xs btn-ghost text-neutral-content hover:bg-base-200 px-2 h-8 min-h-0"
+                      title="Ocultar sugestão"
+                    >
+                      <EyeOff size={14} />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onStartFocusSession && onStartFocusSession(topic);
+                      }}
+                      className="btn btn-sm bg-primary/10 text-primary hover:bg-primary/20 border-none rounded-xl px-5 font-bold gap-1.5 h-8 min-h-0 text-xs shadow-none"
+                    >
+                      <Play size={12} fill="currentColor" />
+                      Estudar
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

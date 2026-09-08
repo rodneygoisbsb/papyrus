@@ -1,5 +1,5 @@
 import React from 'react';
-import { Target, PenLine, RotateCcw, CheckCircle2, Circle, Clock, ExternalLink, Video, FileText, Play, FileWarning, BookOpen } from 'lucide-react';
+import { Target, Check, PenLine, Play, ExternalLink } from 'lucide-react';
 import { getSubjectAccent, toTitleCase } from '../../utils/studyCalculations';
 
 interface DailyGoalsListProps {
@@ -23,14 +23,20 @@ export default function DailyGoalsList({
 }: DailyGoalsListProps) {
     const safeGoals = Array.isArray(dailyGoals) ? dailyGoals : [];
     const regularMetas = safeGoals.filter((g) => g?.type !== 'REVISION');
-    const revisoesMetas = safeGoals.filter((g) => g?.type === 'REVISION');
+    const pendingMetas = regularMetas.filter((g) => !g.completed);
 
     return (
-        <div className={`card-papyrus-static ${isCompact ? '!p-5 space-y-3' : 'space-y-4'} font-['Plus_Jakarta_Sans']`}>
-            <div className="flex justify-between items-center pb-2 border-b border-base-300/60">
+        <div className="card-papyrus !p-0 flex flex-col justify-between overflow-hidden font-['Plus_Jakarta_Sans'] w-full">
+            {/* HEADER */}
+            <div className={`px-5 pt-5 pb-4 border-b border-base-200/60 flex items-center justify-between`}>
                 <div className="flex items-center gap-2">
-                    <Target size={18} className="text-primary" />
-                    <h2 className={`${isCompact ? 'text-sm' : 'text-base'} font-bold tracking-tight text-base-content`}>Metas de Hoje</h2>
+
+                    <span className="text-xs font-bold uppercase tracking-wider text-base-content/70">
+                        Metas de Hoje
+                    </span>
+                    <span className="badge badge-sm bg-base-200 text-neutral-content font-semibold py-2 px-2.5 rounded-lg border-base-300">
+                        {pendingMetas.length} pendentes
+                    </span>
                 </div>
                 {isCompact && (
                     <div className="flex items-center gap-3">
@@ -45,47 +51,19 @@ export default function DailyGoalsList({
                 )}
             </div>
 
-            <div className="space-y-3">
+            {/* LISTA DE MATÉRIAS */}
+            <div className="px-5 pb-2">
                 {regularMetas.length === 0 ? (
-                    <div className="p-6 text-center text-xs text-neutral-content bg-base-200/40 rounded-2xl border border-base-300/50">
+                    <div className="text-center py-6 text-sm text-neutral-content bg-base-200/50 rounded-xl mt-4 mb-4">
                         Nenhuma meta teórica cadastrada para hoje.
                     </div>
                 ) : (
-                    regularMetas.map((goal) => {
+                    regularMetas.map((goal, index) => {
                         const duration = goal.durationMinutes || goal.actualDurationMinutes || goal.targetDurationMinutes || 60;
-                        const accent = getSubjectAccent(goal.subject);
-                        const isOverdue = goal.isOverdue || goal.daysOverdue > 0;
+                        const isOverdue = goal.isOverdue || goal.daysOverdue > 0 || (!goal.completed && index === 0);
 
-                        const getTagStyle = (type: string) => {
-                            if (isCompact) return "bg-base-200 text-neutral-content group-hover:bg-base-300/60";
-                            const t = (type || '').toUpperCase();
-                            if (t === 'THEORY' || t === 'TEORIA') return 'bg-blue-500 text-white font-bold';
-                            if (t === 'REVISION' || t === 'REVISÃO') return 'bg-amber-500 text-white font-bold';
-                            if (t === 'QUESTIONS' || t === 'QUESTÕES') return 'bg-emerald-500 text-white font-bold';
-                            if (t === 'SIMULADOS') return 'bg-purple-600 text-white font-bold';
-                            return "bg-base-200 text-neutral-content font-bold";
-                        };
-
-                        const getCardStyle = (type: string) => {
-                            if (isOverdue && !goal.completed) {
-                                return isCompact
-                                    ? `bg-error/5 border-error/40 border-l-[5px] border-l-error hover:border-error/60`
-                                    : `bg-error/5 border-error/40 hover:border-error/60`;
-                            }
-                            if (isCompact) return `bg-base-100 border border-base-300/70 border-l-[5px] ${accent.border} hover:bg-base-200/40`;
-                            const t = (type || '').toUpperCase();
-                            if (t === 'QUESTIONS' || t === 'QUESTÕES') return 'bg-emerald-500/5 border border-emerald-500/20 hover:bg-emerald-500/10';
-                            return "bg-base-100 border border-base-300/70 hover:bg-base-200/40";
-                        };
-
-                        const getTitleStyle = (type: string) => {
-                            if (isOverdue && !goal.completed) return "text-error";
-                            if (isCompact) return "text-base-content group-hover:text-primary";
-                            const t = (type || '').toUpperCase();
-                            if (t === 'THEORY' || t === 'TEORIA') return 'text-base-content';
-                            if (t === 'REVISION' || t === 'REVISÃO') return 'text-rose-600 dark:text-rose-400';
-                            if (t === 'QUESTIONS' || t === 'QUESTÕES') return 'text-emerald-600 dark:text-emerald-400';
-                            if (t === 'SIMULADOS') return 'text-blue-600 dark:text-blue-400';
+                        const getTitleStyle = () => {
+                            if (isOverdue && !goal.completed) return "text-base-content";
                             return "text-base-content";
                         };
 
@@ -94,108 +72,91 @@ export default function DailyGoalsList({
                         return (
                             <div
                                 key={goal.id}
-                                className={`group relative flex flex-col sm:flex-row sm:items-center justify-between py-3.5 px-4 sm:px-5 rounded-2xl transition-[transform,colors] duration-150 ease-out gap-4 cursor-pointer transform-gpu hover:-translate-y-0.5 ${getCardStyle(goal.type)}`}
+                                className="group relative py-4 border-b border-base-200/60 last:border-0 flex items-center justify-between hover:bg-base-200/30 transition-colors duration-200 -mx-5 px-5 cursor-pointer"
+                                onClick={() => {
+                                    if (onManualRegister) {
+                                        onManualRegister(goal);
+                                    } else {
+                                        toggleGoalCompletion(goal.id);
+                                    }
+                                }}
                             >
-                                <div className="flex items-start gap-3.5 min-w-0">
-                                    <button
-                                        type="button"
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            toggleGoalCompletion(goal.id);
-                                        }}
-                                        className="mt-0.5 text-neutral-content hover:text-primary transition-transform duration-100 active:scale-90 focus-visible:ring-2 focus-visible:ring-primary rounded-full cursor-pointer shrink-0"
-                                        title={goal.completed ? "Desmarcar meta" : "Concluir meta"}
-                                    >
-                                        {goal.completed ? (
-                                            <CheckCircle2 size={20} className="text-primary fill-primary/15" />
-                                        ) : (
-                                            <Circle size={20} className="text-base-300 group-hover:text-primary transition-colors duration-150" />
-                                        )}
-                                    </button>
+                                <div className="flex items-center gap-3.5 min-w-0 pr-2">
+                                    {/* Barra vertical colorida (substitui checkbox) */}
+                                    <div className={`w-1.5 h-8 rounded-full shrink-0 ${goal.completed ? 'bg-base-300' : getSubjectAccent(goal.subject || '').border.replace('border-l-', 'bg-')}`} />
 
-                                    <div className="space-y-1 min-w-0">
-                                        <h3 className={`${isCompact ? 'text-xs' : 'text-sm'} font-bold tracking-tight truncate transition-colors duration-150 ${getTitleStyle(goal.type)}`}>
+                                    {/* Textos */}
+                                    <div className="flex flex-col gap-0.5 min-w-0">
+                                        <span className={`text-sm font-bold truncate transition-colors duration-150 ${goal.completed ? 'text-neutral-content line-through' : getTitleStyle()}`}>
                                             {toTitleCase(goal.subject || 'CONCURSO')}
-                                        </h3>
+                                        </span>
+                                        <span className={`text-xs font-medium truncate transition-colors duration-150 ${goal.completed ? 'text-neutral-content/70' : 'text-neutral-content'}`}>
+                                            {goal.topicName || goal.topicoNome || 'Sem título'}
+                                        </span>
+                                    </div>
 
-                                        <div className="flex items-center gap-2 flex-wrap">
-                                            <span className={`${isCompact ? 'text-xs text-slate-500 font-normal' : 'text-sm font-medium text-base-content/80'} truncate transition-colors duration-150 ${goal.completed ? 'line-through opacity-60' : 'group-hover:text-base-content'}`}>
-                                                {goal.topicName || goal.topicoNome || 'Sem título'}
+                                    {/* Badges */}
+                                    <div className="flex items-center gap-2 ml-2 shrink-0 hidden sm:flex">
+                                        {isOverdue && !goal.completed && (
+                                            <span className="badge badge-xs bg-error/10 text-error font-bold px-2 py-1.5 rounded-md border-none uppercase text-[10px] tracking-wider">
+                                                ATRASADA
                                             </span>
-
-                                            {isOverdue && !goal.completed && (
-                                                <span className="badge badge-sm bg-red-500 text-white font-bold px-2 py-0.5 rounded-md border-none uppercase text-xs tracking-wider shrink-0">
-                                                    ATRASADA
-                                                </span>
-                                            )}
-
-                                            <span className={`badge badge-sm border-none text-xs uppercase tracking-wider px-2 py-0.5 rounded-md shrink-0 transition-colors duration-150 ${getTagStyle(goal.type)}`}>
-                                                {typeLabel}
-                                            </span>
-
-                                            <span className="badge badge-sm bg-base-200 text-neutral-content border-none font-medium text-xs px-2 py-0.5 rounded-md flex items-center gap-1 shrink-0 group-hover:bg-base-300/60 transition-colors duration-150">
-                                                <Clock size={11} />
-                                                <span className="tabular-nums">{duration} min</span>
-                                            </span>
-                                        </div>
+                                        )}
+                                        <span className={`badge badge-xs font-bold px-2 py-1.5 rounded-md border-none uppercase text-[10px] tracking-wider ${
+                                            goal.completed ? 'bg-base-200 text-neutral-content/50' :
+                                            (goal.type === 'THEORY' || goal.type === 'Teoria') ? 'bg-blue-500/10 text-blue-600' :
+                                                (goal.type === 'QUESTIONS' || goal.type === 'Questões') ? 'bg-emerald-500/10 text-emerald-600' :
+                                                    'bg-base-200 text-neutral-content'
+                                            }`}>
+                                            {typeLabel}
+                                        </span>
+                                        <span className={`badge badge-xs font-medium px-2 py-1.5 rounded-md border-none text-[10px] ${goal.completed ? 'bg-base-200 text-neutral-content/50' : 'bg-base-200 text-neutral-content'}`}>
+                                            {duration} min
+                                        </span>
                                     </div>
                                 </div>
 
                                 {/* Utilitários + Botões de Ação */}
-                                <div className="flex items-center gap-2 shrink-0 self-center ml-auto">
-                                    {!isCompact && (
-                                        <div className="flex items-center gap-1 opacity-60 group-hover:opacity-100 transition-opacity duration-150 ease-out">
-                                            {goal.tecUrl && (
-                                                <a
-                                                    href={goal.tecUrl}
-                                                    target="_blank"
-                                                    rel="noreferrer"
-                                                    onClick={(e) => e.stopPropagation()}
-                                                    className="btn btn-ghost btn-xs btn-square text-neutral-content hover:text-primary rounded-lg"
-                                                    title="Caderno de Questões"
-                                                >
-                                                    <ExternalLink size={14} />
-                                                </a>
-                                            )}
-                                            <button
-                                                type="button"
-                                                onClick={(e) => e.stopPropagation()}
-                                                className="btn btn-ghost btn-xs btn-square text-neutral-content hover:text-secondary rounded-lg"
-                                                title="Resumo"
-                                            >
-                                                <BookOpen size={14} />
-                                            </button>
-                                            <button
-                                                type="button"
-                                                onClick={(e) => e.stopPropagation()}
-                                                className="btn btn-ghost btn-xs btn-square text-neutral-content hover:text-error rounded-lg"
-                                                title="Caderno de Erros"
-                                            >
-                                                <FileWarning size={14} />
-                                            </button>
-                                        </div>
+                                <div className="flex items-center gap-3 shrink-0 ml-auto">
+                                    {/* Micro-chips de atalho em vez de icones soltos */}
+                                    {goal.tecUrl && (
+                                        <a
+                                            href={goal.tecUrl}
+                                            target="_blank"
+                                            rel="noreferrer"
+                                            onClick={(e) => e.stopPropagation()}
+                                            className="text-neutral-content/60 hover:text-neutral-content hover:scale-110 transition-transform cursor-pointer hidden sm:inline-flex"
+                                            title="Caderno de Questões Externo"
+                                        >
+                                            <ExternalLink size={16} />
+                                        </a>
                                     )}
 
-                                    {/* Botões de Ação: Instantâneo e isolado na GPU */}
-                                    <div className="flex items-center gap-1.5 overflow-hidden transition-[max-width,opacity] duration-150 ease-out max-w-0 opacity-0 group-hover:max-w-[165px] group-hover:opacity-100 transform-gpu will-change-[max-width,opacity] pr-1">
-                                        <button
-                                            type="button"
-                                            onClick={(e) => { e.stopPropagation(); handleOpenStudy(goal); }}
-                                            className="btn btn-sm px-3.5 font-bold bg-primary text-primary-content hover:bg-primary/90 border-none rounded-xl shadow-sm whitespace-nowrap transition-transform duration-100 active:scale-95 flex items-center gap-1.5"
-                                        >
-                                            <Play size={13} className="fill-current" /> INICIAR
-                                        </button>
-
-                                        {!isCompact && onManualRegister && (
+                                    {/* Botões de Ação Sempre Visíveis (mas menores/mais integrados) */}
+                                    <div className="flex items-center gap-3">
+                                        {onManualRegister && (
                                             <button
                                                 type="button"
                                                 onClick={(e) => { e.stopPropagation(); onManualRegister(goal); }}
-                                                className="btn btn-sm btn-square bg-base-200 text-neutral-content hover:bg-primary hover:text-primary-content border-none rounded-xl transition-colors duration-150"
-                                                title="Registrar Estudo Manualmente"
+                                                className="text-neutral-content/60 hover:text-neutral-content hover:scale-110 transition-transform cursor-pointer"
+                                                title="Registrar Manualmente"
                                             >
-                                                <PenLine size={14} />
+                                                <PenLine size={15} />
                                             </button>
                                         )}
+                                        <button
+                                            type="button"
+                                            onClick={(e) => { e.stopPropagation(); handleOpenStudy(goal); }}
+                                            className={`btn btn-sm border-none rounded-xl px-5 font-bold gap-1.5 h-8 min-h-0 text-xs shadow-none ${
+                                                goal.completed 
+                                                ? 'bg-base-200 text-neutral-content/50 hover:bg-base-300' 
+                                                : isOverdue 
+                                                    ? 'bg-error/10 text-error hover:bg-error/20'
+                                                    : 'bg-primary/10 text-primary hover:bg-primary/20'
+                                                }`}
+                                        >
+                                            <Play size={12} className="fill-current" /> Iniciar
+                                        </button>
                                     </div>
                                 </div>
                             </div>

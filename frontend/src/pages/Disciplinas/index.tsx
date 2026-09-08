@@ -139,10 +139,10 @@ export default function DisciplinasPage({
                             {/* Bottom Stats */}
                             <div className="pt-4 flex justify-between items-end text-xs font-bold uppercase tracking-wider border-t border-base-300/60 mt-auto">
                                 <div className="flex items-baseline gap-1">
-                                    <span className="text-lg font-bold text-primary leading-none">
+                                    <span className="text-lg font-bold text-content leading-none">
                                         {disc.studiedTopics || 0}
                                     </span>
-                                    <span className="text-neutral-content/70">
+                                    <span className="text-neutral-content/90">
                                         / {disc.totalTopics || disc.topics?.length || 0} tópicos
                                     </span>
                                 </div>

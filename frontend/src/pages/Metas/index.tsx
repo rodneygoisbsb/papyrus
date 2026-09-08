@@ -19,13 +19,6 @@ export default function MetasPage({
         <div className="space-y-8 animate-in fade-in duration-200 w-full min-w-0">
             {/* Seção de Métricas de Estudo Diário */}
             <section className="space-y-4">
-                <div className="flex justify-between items-center">
-                    <div>
-                        <h2 className="text-2xl font-bold text-base-content tracking-tight">Metas de Hoje</h2>
-                        <p className="text-sm text-neutral-content mt-1">Gerencie suas metas de teoria e questões diárias.</p>
-                    </div>
-                </div>
-
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                     {/* Métricas de Estudo Diário (Mock) */}
                     {[

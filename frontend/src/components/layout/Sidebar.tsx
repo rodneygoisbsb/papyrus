@@ -63,14 +63,14 @@ export default function Sidebar({ activeTab, setActiveTab }) {
                     <div
                         className="overflow-hidden whitespace-nowrap"
                         style={{
-                            maxWidth: expanded ? '140px' : '0',
+                            maxWidth: expanded ? '200px' : '0',
                             opacity: expanded ? 1 : 0,
                             transition: 'max-width 150ms ease-out, opacity 150ms ease-out',
                         }}
                     >
-                        <h1 className="font-black text-sm text-slate-800 tracking-tight leading-none">Papyrus</h1>
+                        <h1 className="font-black text-sm uppercase text-slate-800 tracking-tight leading-none">Papyrus</h1>
                         <p className="text-xs font-bold uppercase tracking-[0.12em] mt-0.5 text-blue-600">
-                            Rumo à aprovação
+
                         </p>
                     </div>
                 </div>

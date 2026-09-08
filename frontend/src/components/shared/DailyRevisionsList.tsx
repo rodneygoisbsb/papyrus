@@ -1,5 +1,5 @@
 import React from 'react';
-import { RefreshCw, Play, Check, PenLine } from 'lucide-react';
+import { RefreshCw, Play, Check, PenLine, ExternalLink } from 'lucide-react';
 import { getSubjectAccent, toTitleCase } from '../../utils/studyCalculations';
 
 interface DailyRevisionsListProps {
@@ -78,22 +78,18 @@ export default function DailyRevisionsList({
                         return (
                             <div
                                 key={rev.id}
-                                className="group relative py-4 border-b border-base-200/60 last:border-0 flex items-center justify-between hover:bg-base-200/30 transition-colors duration-200 -mx-5 px-5"
+                                className="group relative py-4 border-b border-base-200/60 last:border-0 flex items-center justify-between hover:bg-base-200/30 transition-colors duration-200 -mx-5 px-5 cursor-pointer"
+                                onClick={() => {
+                                    if (onManualRegister) {
+                                        onManualRegister({ ...rev, type: 'REVISION' });
+                                    } else {
+                                        toggleRevisionCompletion(rev.id);
+                                    }
+                                }}
                             >
                                 <div className="flex items-center gap-3.5 min-w-0">
-                                    {/* Checkbox circular */}
-                                    <button
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            toggleRevisionCompletion(rev.id);
-                                        }}
-                                        className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all duration-100 cursor-pointer active:scale-90 shrink-0 ${rev.completed
-                                            ? 'bg-secondary border-secondary text-base-100'
-                                            : 'border-base-300 hover:border-secondary text-transparent'
-                                            }`}
-                                    >
-                                        <Check size={12} className={rev.completed ? 'opacity-100' : 'opacity-0'} strokeWidth={3} />
-                                    </button>
+                                    {/* Barra vertical colorida (substitui checkbox) */}
+                                    <div className={`w-1.5 h-8 rounded-full shrink-0 ${rev.completed ? 'bg-base-300' : accent.border.replace('border-l-', 'bg-')}`} />
 
                                     {/* Textos */}
                                     <div className="flex flex-col gap-0.5 min-w-0">
@@ -113,16 +109,22 @@ export default function DailyRevisionsList({
                                             </span>
                                         )}
                                         {rev.revisionTag && rev.type !== 'QUESTIONS' && (!isOverdue || rev.completed) && (
-                                            <span className="badge badge-xs bg-accent/10 text-accent font-bold px-2 py-1.5 rounded-md border-none uppercase text-[10px] tracking-wider">
+                                            <span className={`badge badge-xs font-bold px-2 py-1.5 rounded-md border-none uppercase text-[10px] tracking-wider ${
+                                                rev.completed ? 'bg-base-200 text-neutral-content/50' : 'bg-accent/10 text-accent'
+                                            }`}>
                                                 {rev.revisionTag}
                                             </span>
                                         )}
                                         {rev.type === 'QUESTIONS' && (
-                                            <span className="badge badge-xs bg-success/10 text-success font-bold px-2 py-1.5 rounded-md border-none uppercase text-[10px] tracking-wider">
+                                            <span className={`badge badge-xs font-bold px-2 py-1.5 rounded-md border-none uppercase text-[10px] tracking-wider ${
+                                                rev.completed ? 'bg-base-200 text-neutral-content/50' : 'bg-success/10 text-success'
+                                            }`}>
                                                 {rev.questionCount ? `${rev.questionCount} QUESTÕES` : 'QUESTÕES'}
                                             </span>
                                         )}
-                                        <span className="badge badge-xs bg-base-200 text-neutral-content font-medium px-2 py-1.5 rounded-md border-none text-[10px]">
+                                        <span className={`badge badge-xs font-medium px-2 py-1.5 rounded-md border-none text-[10px] ${
+                                            rev.completed ? 'bg-base-200 text-neutral-content/50' : 'bg-base-200 text-neutral-content'
+                                        }`}>
                                             {rev.durationMinutes || 0} min
                                         </span>
                                     </div>
@@ -137,31 +139,34 @@ export default function DailyRevisionsList({
                                             target="_blank"
                                             rel="noreferrer"
                                             onClick={(e) => e.stopPropagation()}
-                                            className="badge badge-xs bg-base-200 text-neutral-content hover:bg-base-300 font-bold px-2 py-1.5 rounded border-none cursor-pointer text-xs"
-                                            title="Caderno de Questões"
+                                            className="text-neutral-content/60 hover:text-neutral-content hover:scale-110 transition-transform cursor-pointer"
+                                            title="Caderno de Questões Externo"
                                         >
-                                            [TEC]
+                                            <ExternalLink size={16} />
                                         </a>
                                     )}
 
                                     {/* Botões de Ação Sempre Visíveis (mas menores/mais integrados) */}
-                                    <div className="flex items-center gap-2">
+                                    <div className="flex items-center gap-3">
                                         {onManualRegister && (
                                             <button
                                                 type="button"
                                                 onClick={(e) => { e.stopPropagation(); onManualRegister({ ...rev, type: 'REVISION' }); }}
-                                                className="btn btn-xs btn-ghost text-neutral-content hover:bg-base-200 px-2 h-7 min-h-0"
+                                                className="text-neutral-content/60 hover:text-neutral-content hover:scale-110 transition-transform cursor-pointer"
                                                 title="Registrar Manualmente"
                                             >
-                                                <PenLine size={13} />
+                                                <PenLine size={15} />
                                             </button>
                                         )}
                                         <button
                                             type="button"
                                             onClick={(e) => { e.stopPropagation(); onStartFocusSession(rev); }}
-                                            className={`btn btn-sm border-none rounded-xl px-5 font-bold gap-1.5 h-8 min-h-0 text-xs shadow-none ${isOverdue && !rev.completed
-                                                ? 'bg-error/10 text-error hover:bg-error/20'
-                                                : 'bg-primary/10 text-primary hover:bg-primary/20'
+                                            className={`btn btn-sm border-none rounded-xl px-5 font-bold gap-1.5 h-8 min-h-0 text-xs shadow-none ${
+                                                rev.completed 
+                                                ? 'bg-base-200 text-neutral-content/50 hover:bg-base-300' 
+                                                : isOverdue 
+                                                    ? 'bg-error/10 text-error hover:bg-error/20'
+                                                    : 'bg-primary/10 text-primary hover:bg-primary/20'
                                                 }`}
                                         >
                                             <Play size={12} className="fill-current" /> Iniciar

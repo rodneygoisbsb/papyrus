@@ -88,9 +88,6 @@ export default function DisciplineEditorModal({
                             <h3 className="font-extrabold text-lg text-base-content leading-tight">
                                 {activeDisciplineEditor.id ? 'Editar Disciplina' : 'Nova Disciplina'}
                             </h3>
-                            <p className="text-xs text-neutral-content font-medium mt-1.5">
-                                Configure os detalhes da matéria e seus tópicos do edital.
-                            </p>
                         </div>
                     </div>
                     <button

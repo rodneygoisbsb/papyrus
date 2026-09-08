@@ -17,6 +17,42 @@ const DAYS = [
     { key: 'SÁB', label: 'Sábado', short: 'Sáb' },
 ];
 
+// Custom Dropdown for elegant UI
+function CustomDropdown({ value, options, onChange }: { value: string, options: string[], onChange: (val: string) => void }) {
+    const [isOpen, setIsOpen] = React.useState(false);
+    return (
+        <div className="relative">
+            <button 
+                type="button" 
+                onClick={() => setIsOpen(!isOpen)} 
+                className="flex items-center gap-2 btn btn-sm h-9 bg-slate-50 hover:bg-slate-100 border-none font-bold text-slate-700 px-4 rounded-lg shadow-none"
+            >
+                {value}
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg" className={`transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}>
+                    <path d="M2.5 4.5L6 8L9.5 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+            </button>
+            {isOpen && (
+                <>
+                    <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)}></div>
+                    <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 z-50 w-full min-w-[110px] bg-white rounded-xl shadow-xl border border-slate-100 py-1.5 flex flex-col animate-in fade-in zoom-in-95 duration-100 origin-bottom">
+                        {options.map(opt => (
+                            <button
+                                key={opt}
+                                type="button"
+                                onClick={() => { onChange(opt); setIsOpen(false); }}
+                                className={`px-4 py-2 text-sm text-center hover:bg-slate-50 transition-colors ${value === opt ? 'text-primary font-bold bg-primary/5' : 'text-slate-600 font-medium'}`}
+                            >
+                                {opt}
+                            </button>
+                        ))}
+                    </div>
+                </>
+            )}
+        </div>
+    );
+}
+
 export default function StepSchedules({ state, updateState }: StepSchedulesProps) {
     
     const handleDayToggle = (dayKey: string) => {
@@ -132,26 +168,17 @@ export default function StepSchedules({ state, updateState }: StepSchedulesProps
                 </div>
                 
                 <div className="flex items-center gap-2 bg-white p-1.5 rounded-xl border border-slate-200 shadow-sm shrink-0 w-fit">
-                    <select 
-                        className="select select-sm border-none bg-slate-50 font-bold text-slate-700 focus:ring-0 hover:bg-slate-100 transition-colors"
+                    <CustomDropdown 
                         value={state.timeBlock.min}
-                        onChange={(e) => updateState({ timeBlock: { ...state.timeBlock, min: e.target.value } })}
-                    >
-                        <option>30min</option>
-                        <option>45min</option>
-                        <option>1h</option>
-                    </select>
+                        options={['30min', '45min', '1h']}
+                        onChange={(val) => updateState({ timeBlock: { ...state.timeBlock, min: val } })}
+                    />
                     <span className="text-xs font-black uppercase text-slate-300">até</span>
-                    <select 
-                        className="select select-sm border-none bg-slate-50 font-bold text-slate-700 focus:ring-0 hover:bg-slate-100 transition-colors"
+                    <CustomDropdown 
                         value={state.timeBlock.max}
-                        onChange={(e) => updateState({ timeBlock: { ...state.timeBlock, max: e.target.value } })}
-                    >
-                        <option>1h</option>
-                        <option>1h30min</option>
-                        <option>2h</option>
-                        <option>2h30min</option>
-                    </select>
+                        options={['1h', '1h30min', '2h', '2h30min']}
+                        onChange={(val) => updateState({ timeBlock: { ...state.timeBlock, max: val } })}
+                    />
                 </div>
             </div>
         </div>
