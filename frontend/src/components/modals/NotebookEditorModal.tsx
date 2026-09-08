@@ -87,7 +87,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
                 <AlignRight size={15} />
             </button>
             <button onClick={() => editor.chain().focus().setTextAlign('justify').run()} className={btnClass(editor.isActive({ textAlign: 'justify' }))} title="Justificar">
-                <span className="text-[10px] font-bold">JUST</span>
+                <span className="text-xs font-bold">JUST</span>
             </button>
         </div>
     );

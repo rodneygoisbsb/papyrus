@@ -18,6 +18,7 @@ export default function PlanoEstudosPage({
     setActiveTab,
     onSelectPlan,
     onEditPlan,
+    onOpenNewDiscipline,
     onDeletePlan
 }: PlanoEstudosPageProps) {
     const [editingPlan, setEditingPlan] = useState<any>(null);
@@ -39,24 +40,25 @@ export default function PlanoEstudosPage({
     };
 
     return (
-        <div className="space-y-8 font-['Plus_Jakarta_Sans'] text-base-content animate-in fade-in duration-200">
+        <div className="space-y-8 text-base-content animate-in fade-in duration-200">
             {/* CABEÇALHO E AÇÃO PRINCIPAL */}
-            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-4 border-b border-base-300/70">
+            <div className="bg-base-100 p-6 rounded-[22px] border border-base-200 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                     <h2 className="text-2xl font-black text-base-content tracking-tight">Meu Plano</h2>
-                    <p className="text-xs text-neutral-content mt-1">Gerencie seus planos de estudo e acompanhe sua evolução.</p>
+                    <p className="text-sm text-neutral-content mt-1">Gerencie seus planos de estudo e acompanhe sua evolução</p>
                 </div>
 
-                {/* CRIAR NOVO PLANO (Botão estreito horizontal) */}
+                {/* CRIAR NOVO PLANO */}
                 <button
                     type="button"
                     onClick={() => setActiveTab && setActiveTab('criar-plano')}
-                    className="flex items-center gap-3 bg-primary text-primary-content px-5 py-2.5 rounded-xl transition-all shadow-sm hover:shadow-md hover:bg-primary/90 font-bold group cursor-pointer"
+                    className="btn btn-primary flex items-center gap-2 bg-primary text-primary-content  rounded-xl transition-all shadow-sm hover:shadow-md hover:bg-primary/90 font-bold group cursor-pointer shrink-0"
                 >
-                    <Plus size={18} className="group-hover:rotate-90 transition-transform duration-300" />
+                    <Plus size={16} className="group-hover:rotate-90 transition-transform duration-300" />
                     <span>Criar Novo Plano</span>
                 </button>
             </div>
+
 
             {/* GRID DE PLANOS */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -67,10 +69,10 @@ export default function PlanoEstudosPage({
                         <div
                             key={plano.id}
                             onClick={() => handlePlanClick(plano)}
-                            className={`card-papyrus group cursor-pointer flex flex-col justify-between min-h-[220px] 
+                            className={`card-papyrus group cursor-pointer flex flex-col min-h-[140px] transition-all duration-300
                             ${isSelected
-                                    ? 'border-l-[6px] border-l-primary relative overflow-hidden hover:-translate-y-0.5'
-                                    : ''
+                                    ? 'border-2 border-primary bg-base-100 shadow-md shadow-primary/10 hover:-translate-y-1'
+                                    : 'border border-base-200 bg-base-100 hover:border-primary/40 hover:-translate-y-1 hover:shadow-sm'
                                 }`}
                         >
 
@@ -110,58 +112,46 @@ export default function PlanoEstudosPage({
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-2 mb-1">
-                                    <h3 className={`font-extrabold text-lg leading-tight transition-colors ${isSelected ? 'text-primary' : 'text-base-content group-hover:text-primary'}`}>
+                                    <h3 className={`font-extrabold text-xl leading-tight transition-colors ${isSelected ? 'text-primary' : 'text-base-content group-hover:text-primary'}`}>
                                         {plano.nome}
                                     </h3>
                                     {isSelected && (
-                                        <span className="bg-primary text-primary-content text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full">
+                                        <span className="bg-primary text-primary-content text-xs font-black uppercase tracking-wider px-2 py-0.5 rounded-full">
                                             Atual
                                         </span>
                                     )}
                                 </div>
-                                <p className="text-xs font-semibold text-neutral-content/70">
+                                <p className="text-xs font-semibold text-neutral-content/70 mt-2">
                                     {plano.orgao}
                                 </p>
                             </div>
-
                             {/* MÉTRICAS */}
-                            <div className="grid grid-cols-3 gap-2 mt-6 pt-5 border-t border-base-200/60">
+                            <div className="flex items-center justify-between mt-6 pt-5 border-t border-base-200/60">
                                 {/* Questões */}
-                                <div className="flex flex-col gap-1">
+                                <div className="flex items-baseline gap-1.5">
                                     <span className="text-base font-black text-base-content">
                                         {plano.questoes === 0 ? '--' : plano.questoes}
                                     </span>
-                                    <div className="flex items-center gap-1.5 text-neutral-content">
-                                        <CheckSquare size={12} />
-                                        <span className="text-[10px] uppercase tracking-wider font-bold">Questões</span>
-                                    </div>
-
+                                    <span className="text-[10px] text-neutral-content uppercase tracking-wider font-bold">Questões</span>
                                 </div>
 
                                 {/* Acerto */}
-                                <div className="flex flex-col gap-1">
-                                    <span className="text-base font-black text-emerald-600">
+                                <div className="flex items-baseline gap-1.5">
+                                    <span className="text-base font-black text-success">
                                         {plano.acerto === 0 ? '--' : `${plano.acerto}%`}
                                     </span>
-                                    <div className="flex items-center gap-1.5 text-neutral-content">
-                                        <Target size={12} />
-                                        <span className="text-[10px] uppercase tracking-wider font-bold">Acerto</span>
-                                    </div>
-
+                                    <span className="text-[10px] text-neutral-content uppercase tracking-wider font-bold">Acerto</span>
                                 </div>
 
                                 {/* Tempo */}
-                                <div className="flex flex-col gap-1">
+                                <div className="flex items-baseline gap-1.5">
                                     <span className="text-base font-black text-base-content">
                                         {plano.horas === 0 ? '--' : `${plano.horas}h`}
                                     </span>
-                                    <div className="flex items-center gap-1.5 text-neutral-content">
-                                        <Clock size={12} />
-                                        <span className="text-[10px] uppercase tracking-wider font-bold">Tempo</span>
-                                    </div>
-
+                                    <span className="text-[10px] text-neutral-content uppercase tracking-wider font-bold">Tempo</span>
                                 </div>
                             </div>
+
                         </div>
                     );
                 })}

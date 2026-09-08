@@ -46,7 +46,7 @@ export default function MonthlyHeatmapCard() {
 
             {/* GRADE DO CALENDÁRIO */}
             <div className="w-full">
-                <div className="grid grid-cols-7 gap-1 text-center text-[10px] font-bold text-neutral-content uppercase mb-2">
+                <div className="grid grid-cols-7 gap-1 text-center text-xs font-bold text-neutral-content uppercase mb-2">
                     <span>Seg</span>
                     <span>Ter</span>
                     <span>Qua</span>
@@ -68,10 +68,10 @@ export default function MonthlyHeatmapCard() {
                         return (
                             <div 
                                 key={day}
-                                className={`tooltip tooltip-top tooltip-primary before:text-[10px] before:font-bold`}
+                                className={`tooltip tooltip-top tooltip-primary before:text-xs before:font-bold`}
                                 data-tip={getTooltipText(day)}
                             >
-                                <div className={`aspect-square rounded-lg flex items-center justify-center text-[11px] sm:text-xs font-bold transition-transform duration-200 ease-out hover:scale-110 cursor-pointer ${bgClass} transform-gpu`}>
+                                <div className={`aspect-square rounded-lg flex items-center justify-center text-xs sm:text-xs font-bold transition-transform duration-200 ease-out hover:scale-110 cursor-pointer ${bgClass} transform-gpu`}>
                                     {day}
                                 </div>
                             </div>
@@ -81,7 +81,7 @@ export default function MonthlyHeatmapCard() {
             </div>
 
             {/* FOOTER */}
-            <div className="pt-3 border-t border-base-200 flex justify-between items-center text-[11px] font-medium text-slate-500">
+            <div className="pt-3 border-t border-base-200 flex justify-between items-center text-xs font-medium text-slate-500">
                 <span>22 de 31 dias cumpridos</span>
                 <span className="font-bold text-primary">71%</span>
             </div>

@@ -69,7 +69,7 @@ export default function StepSchedules({ state, updateState }: StepSchedulesProps
                 <div className="flex items-center gap-3 bg-white px-4 py-2.5 rounded-xl border border-primary/20 shadow-sm shrink-0">
                     <Clock className="text-primary" size={18} />
                     <div className="flex flex-col">
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 leading-none">Total na semana</span>
+                        <span className="text-xs font-bold uppercase tracking-wider text-slate-400 leading-none">Total na semana</span>
                         <span className="text-lg font-black text-primary leading-tight">{totalHours}h</span>
                     </div>
                 </div>
@@ -141,7 +141,7 @@ export default function StepSchedules({ state, updateState }: StepSchedulesProps
                         <option>45min</option>
                         <option>1h</option>
                     </select>
-                    <span className="text-[11px] font-black uppercase text-slate-300">até</span>
+                    <span className="text-xs font-black uppercase text-slate-300">até</span>
                     <select 
                         className="select select-sm border-none bg-slate-50 font-bold text-slate-700 focus:ring-0 hover:bg-slate-100 transition-colors"
                         value={state.timeBlock.max}

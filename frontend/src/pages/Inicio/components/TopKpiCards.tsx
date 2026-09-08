@@ -1,22 +1,30 @@
 import React from 'react';
-import { Clock, Target, BookOpen, RefreshCw } from 'lucide-react';
 import AnimatedCounter from '../../../components/ui/AnimatedCounter';
 import { calculateWeeklyProgress } from '../../../utils/studyCalculations';
+
+interface TopKpiCardsProps {
+    weeklyHoursStudied?: number;
+    weeklyHoursGoal?: number;
+    totalQuestionsDone?: number;
+    weeklyQuestionsGoal?: number;
+    weeklyTopicsStudied?: number;
+    weeklyTopicsGoal?: number;
+    streakDays?: number;
+    streakRecord?: number;
+    weekDayCompletion?: boolean[];
+}
 
 export default function TopKpiCards({
     weeklyHoursStudied = 14,
     weeklyHoursGoal = 25,
-    overallAccuracy = '81.7',
-    totalQuestionsCorrect = 98,
     totalQuestionsDone = 120,
     weeklyQuestionsGoal = 300,
-    weeklyAccuracyVariation = 4.2,
-    todayMinutesStudied = 90,
-    todayQuestionsDone = 35,
-    editalProgress = 42,
-    topicsStudied = 18,
-    totalTopics = 45,
-}) {
+    weeklyTopicsStudied = 5,
+    weeklyTopicsGoal = 8,
+    streakDays = 12,
+    streakRecord = 24,
+    weekDayCompletion = [true, true, true, true, true, false, false],
+}: TopKpiCardsProps) {
     // 1. Cálculos de Estudo Semanal
     const progressoSemanalCalculado = calculateWeeklyProgress(weeklyHoursStudied, weeklyHoursGoal);
     const faltamHoras = Math.max(0, Number((weeklyHoursGoal - weeklyHoursStudied).toFixed(1)));
@@ -27,37 +35,47 @@ export default function TopKpiCards({
         : 0;
     const faltamQuestoes = Math.max(0, weeklyQuestionsGoal - totalQuestionsDone);
 
+    // 3. Cálculos de Tópicos Semanais
+    const progressoTopicosCalculado = weeklyTopicsGoal > 0
+        ? Math.min(100, Math.round((weeklyTopicsStudied / weeklyTopicsGoal) * 100))
+        : 0;
+    const faltamTopicos = Math.max(0, weeklyTopicsGoal - weeklyTopicsStudied);
+
     return (
-        <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch w-full">
+        <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 items-stretch w-full">
             {/* Card 1: Estudo Semanal */}
-            <div className="card-papyrus flex flex-col justify-between">
-                <div className="flex justify-between items-center h-8 mb-4">
-                    <span className="text-xs uppercase tracking-wider font-bold text-neutral-content">
-                        ESTUDO SEMANAL
+            <div className="card-papyrus flex flex-col justify-between hover:-translate-y-0.5 hover:shadow-sm transition-all duration-150">
+                <div className="flex justify-between items-center pb-2.5 mb-3 border-b border-base-200/60">
+                    <span className="text-xs font-bold uppercase tracking-wider text-slate-600">
+                        Estudo Semanal
                     </span>
-                    <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary shrink-0">
-                        <Clock size={16} />
-                    </div>
+                    <span className="text-xs font-semibold text-primary bg-primary/10 px-2 py-0.5 rounded-full tabular-nums bg-opacity-10">
+                        {progressoSemanalCalculado}%
+                    </span>
                 </div>
 
                 <div>
-                    <div className="flex items-baseline gap-0.5">
-                        <span className="text-3xl font-semibold tracking-tight text-base-content leading-none">
-                            <AnimatedCounter value={weeklyHoursStudied} duration={700} decimals={Number.isInteger(weeklyHoursStudied) ? 0 : 1} />
+                    <div className="flex items-baseline gap-0.5 tabular-nums">
+                        <span className="text-3xl font-bold tracking-tight text-slate-900 leading-none tabular-nums">
+                            <AnimatedCounter
+                                value={weeklyHoursStudied}
+                                duration={700}
+                                decimals={Number.isInteger(weeklyHoursStudied) ? 0 : 1}
+                            />
                         </span>
-                        <span className="text-xl font-semibold text-base-content leading-none">h</span>
-
-                        <span className="text-[10px] font-bold text-neutral-content leading-none ml-2">
+                        <span className="text-base font-semibold text-slate-700 ml-0.5">h</span>
+                        <span className="text-xs font-medium text-slate-400 ml-1.5">
                             / {weeklyHoursGoal}h
                         </span>
                     </div>
-                    <div className="text-[11px] font-medium text-neutral-content mt-1.5">
-                        {faltamHoras > 0 ? `Faltam ${faltamHoras}h para a meta` : 'Meta alcançada! 🎉'}
-                    </div>
 
-                    <div className="w-full bg-base-200 rounded-full h-1.5 mt-4 overflow-hidden border border-base-300">
+                    <p className="text-xs font-medium text-slate-500 mt-1.5 truncate">
+                        {faltamHoras > 0 ? `Faltam ${faltamHoras}h para a meta` : 'Meta alcançada! 🎉'}
+                    </p>
+
+                    <div className="h-1.5 rounded-full bg-slate-100 overflow-hidden mt-3.5 w-full">
                         <div
-                            className="bg-primary h-full rounded-full transition-[width] duration-500 ease-out"
+                            className="bg-primary h-full rounded-full transition-[width] duration-700 ease-out"
                             style={{ width: `${progressoSemanalCalculado}%` }}
                         />
                     </div>
@@ -65,100 +83,106 @@ export default function TopKpiCards({
             </div>
 
             {/* Card 2: Questões Semanais */}
-            <div className="card-papyrus flex flex-col justify-between">
-                <div className="flex justify-between items-center h-8 mb-4">
-                    <span className="text-xs uppercase tracking-wider font-bold text-neutral-content">
-                        QUESTÕES SEMANAIS
+            <div className="card-papyrus flex flex-col justify-between hover:-translate-y-0.5 hover:shadow-sm transition-all duration-150">
+                <div className="flex justify-between items-center pb-2.5 mb-3 border-b border-base-200/60">
+                    <span className="text-xs font-bold uppercase tracking-wider text-slate-600">
+                        Questões Semanais
                     </span>
-                    <div className="w-8 h-8 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-500 shrink-0">
-                        <Target size={16} />
-                    </div>
+                    <span className="text-xs font-semibold text-secondary bg-secondary/10 px-2 py-0.5 rounded-full tabular-nums bg-opacity-10">
+                        {progressoQuestoesCalculado}%
+                    </span>
                 </div>
 
                 <div>
-                    <div className="flex items-baseline gap-0.5">
-                        <span className="text-3xl font-semibold tracking-tight text-base-content leading-none">
+                    <div className="flex items-baseline gap-0.5 tabular-nums">
+                        <span className="text-3xl font-bold tracking-tight text-slate-900 leading-none tabular-nums">
                             <AnimatedCounter value={totalQuestionsDone} duration={700} />
                         </span>
-                        <span className="text-[10px] font-bold text-neutral-content leading-none ml-2">
+                        <span className="text-xs font-medium text-slate-400 ml-1.5">
                             / {weeklyQuestionsGoal}
                         </span>
                     </div>
-                    <div className="text-[11px] font-medium text-neutral-content mt-1.5">
-                        {faltamQuestoes > 0 ? `Faltam ${faltamQuestoes} questões` : 'Meta alcançada! 🎉'}
-                    </div>
 
-                    <div className="w-full bg-base-200 rounded-full h-1.5 mt-4 overflow-hidden border border-base-300">
+                    <p className="text-xs font-medium text-slate-500 mt-1.5 truncate">
+                        {faltamQuestoes > 0 ? `Faltam ${faltamQuestoes} questões` : 'Meta alcançada! 🎉'}
+                    </p>
+
+                    <div className="h-1.5 rounded-full bg-slate-100 overflow-hidden mt-3.5 w-full">
                         <div
-                            className="bg-emerald-500 h-full rounded-full transition-[width] duration-500 ease-out"
+                            className="bg-secondary h-full rounded-full transition-[width] duration-700 ease-out"
                             style={{ width: `${progressoQuestoesCalculado}%` }}
                         />
                     </div>
                 </div>
             </div>
 
-            {/* Card 3: Progresso no Edital */}
-            <div className="card-papyrus flex flex-col justify-between">
-                <div className="flex justify-between items-center h-8 mb-4">
-                    <span className="text-xs uppercase tracking-wider font-bold text-neutral-content">
-                        PROGRESSO NO EDITAL
+            {/* Card 3: Tópicos na Semana */}
+            <div className="card-papyrus flex flex-col justify-between hover:-translate-y-0.5 hover:shadow-sm transition-all duration-150">
+                <div className="flex justify-between items-center pb-2.5 mb-3 border-b border-base-200/60">
+                    <span className="text-xs font-bold uppercase tracking-wider text-slate-600">
+                        Tópicos na Semana
                     </span>
-                    <div className="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-500 shrink-0">
-                        <BookOpen size={16} />
-                    </div>
+                    <span className="text-xs font-semibold text-info bg-info/10 px-2 py-0.5 rounded-full tabular-nums bg-opacity-10">
+                        {progressoTopicosCalculado}%
+                    </span>
                 </div>
 
                 <div>
-                    <div className="flex items-baseline gap-0.5">
-                        <span className="text-3xl font-semibold tracking-tight text-base-content leading-none">
-                            <AnimatedCounter value={editalProgress} duration={750} />
+                    <div className="flex items-baseline gap-0.5 tabular-nums">
+                        <span className="text-3xl font-bold tracking-tight text-slate-900 leading-none tabular-nums">
+                            <AnimatedCounter value={weeklyTopicsStudied} duration={750} />
                         </span>
-                        <span className="text-xl font-semibold text-base-content leading-none">%</span>
-                        <span className="text-[10px] font-bold text-neutral-content leading-none ml-2">
-                            / {topicsStudied} tópicos
+                        <span className="text-xs font-medium text-slate-400 ml-1.5">
+                            / {weeklyTopicsGoal} tópicos
                         </span>
-                    </div>
-                    <div className="text-[11px] font-medium text-neutral-content mt-1.5">
-                        Faltam {totalTopics - topicsStudied} tópicos para fechar
                     </div>
 
-                    <div className="w-full bg-base-200 rounded-full h-1.5 mt-4 overflow-hidden border border-base-300">
+                    <p className="text-xs font-medium text-slate-500 mt-1.5 truncate">
+                        {faltamTopicos > 0 ? `Faltam ${faltamTopicos} tópicos na semana` : 'Meta alcançada! 🎉'}
+                    </p>
+
+                    <div className="h-1.5 rounded-full bg-slate-100 overflow-hidden mt-3.5 w-full">
                         <div
-                            className="bg-blue-500 h-full rounded-full transition-[width] duration-500 ease-out"
-                            style={{ width: `${editalProgress}%` }}
+                            className="bg-info h-full rounded-full transition-[width] duration-700 ease-out"
+                            style={{ width: `${progressoTopicosCalculado}%` }}
                         />
                     </div>
                 </div>
             </div>
 
             {/* Card 4: Ofensiva */}
-            <div className="card-papyrus flex flex-col justify-between">
-                <div className="flex justify-between items-center h-8 mb-4">
-                    <span className="text-xs uppercase tracking-wider font-bold text-neutral-content">
-                        OFENSIVA (STREAK)
+            <div className="card-papyrus flex flex-col justify-between hover:-translate-y-0.5 hover:shadow-sm transition-all duration-150">
+                <div className="flex justify-between items-center pb-2.5 mb-3 border-b border-base-200/60">
+                    <span className="text-xs font-bold uppercase tracking-wider text-slate-600">
+                        Ofensiva (Streak)
                     </span>
-                    <div className="w-8 h-8 rounded-full bg-orange-500/10 flex items-center justify-center text-orange-500 shrink-0">
-                        <RefreshCw size={16} />
-                    </div>
+                    <span className="text-xs font-semibold text-accent bg-accent/10 px-2 py-0.5 rounded-full tabular-nums bg-opacity-10">
+                        Meta 7d
+                    </span>
                 </div>
 
                 <div>
-                    <div className="flex items-baseline gap-1">
-                        <span className="text-3xl font-semibold tracking-tight text-base-content leading-none">
-                            12
+                    <div className="flex items-baseline gap-0.5 tabular-nums">
+                        <span className="text-3xl font-bold tracking-tight text-slate-900 leading-none tabular-nums">
+                            {streakDays}
                         </span>
-                        <span className="text-sm font-bold text-neutral-content leading-none">
+                        <span className="text-xs font-medium text-slate-500 ml-1.5">
                             dias seguidos
                         </span>
                     </div>
-                    <div className="text-[11px] font-medium text-neutral-content mt-1.5">
-                        Seu recorde é de 24 dias
-                    </div>
 
-                    {/* Pontinhos simulando dias da semana */}
+                    <p className="text-xs font-medium text-slate-500 mt-1.5 truncate">
+                        Seu recorde é de {streakRecord} dias
+                    </p>
+
+                    {/* Grade de 7 dias da semana */}
                     <div className="flex items-center gap-1.5 mt-4">
-                        {[1, 2, 3, 4, 5, 6, 7].map(i => (
-                            <div key={i} className={`h-1.5 flex-1 rounded-full ${i <= 5 ? 'bg-orange-500' : 'bg-base-200'}`}></div>
+                        {weekDayCompletion.map((completed, index) => (
+                            <div
+                                key={index}
+                                className={`h-2 flex-1 rounded-full transition-colors duration-300 ${completed ? 'bg-accent' : 'bg-base-200'
+                                    }`}
+                            />
                         ))}
                     </div>
                 </div>

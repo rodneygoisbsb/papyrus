@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Sparkles, Lightbulb, TrendingUp, EyeOff, Play, CheckCircle2 } from 'lucide-react';
+import { Lightbulb, EyeOff, Play, CheckCircle2, Sparkles } from 'lucide-react';
 import { toTitleCase } from '../../../utils/studyCalculations';
 
 const defaultSuggestions = [
@@ -24,8 +24,8 @@ const defaultSuggestions = [
   {
     subjectId: 's2',
     subjectName: 'LÍNGUA PORTUGUESA',
-    colorClass: 'border-l-emerald-500',
-    dotColor: 'bg-emerald-500',
+    colorClass: 'border-l-success',
+    dotColor: 'bg-success',
     totalEstimatedTime: '40m',
     topics: [
       {
@@ -59,114 +59,96 @@ export default function AiDailySuggestionsCard({
     );
   };
 
-  if (!items.length) {
+  const flatTopics = items.flatMap(group =>
+    group.topics.map(topic => ({ ...topic, subjectName: group.subjectName, subjectColor: group.colorClass }))
+  );
+
+  if (!flatTopics.length) {
     return (
       <div className="rounded-[22px] border border-base-300/80 bg-base-100 p-5 shadow-sm text-center">
-        <div className="w-8 h-8 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto mb-2">
+        <div className="w-8 h-8 rounded-full bg-success/10 text-success flex items-center justify-center mx-auto mb-2">
           <CheckCircle2 size={18} />
         </div>
         <p className="text-xs font-bold text-base-content">Todas as sugestões foram concluídas!</p>
-        <p className="text-[11px] text-slate-400 mt-0.5">A IA atualizará sua fila no próximo ciclo.</p>
+        <p className="text-xs text-neutral-content mt-0.5">A IA atualizará sua fila no próximo ciclo.</p>
       </div>
     );
   }
 
   return (
-    <div className="font-['Plus_Jakarta_Sans'] rounded-[22px] border-2 border-primary/20 bg-gradient-to-br from-primary/5 via-base-100 to-base-100 p-5 shadow-md space-y-4 relative">
+    <div className="card-papyrus !p-0 flex flex-col justify-between h-full overflow-hidden font-['Plus_Jakarta_Sans']">
       {/* Header */}
-      <div className="flex items-center justify-between pb-3 border-b border-base-200">
-        <div className="flex items-center gap-2">
-          <div className="p-2 rounded-xl bg-primary/10 text-primary">
-            <Sparkles size={16} />
-          </div>
-          <div>
-            <h3 className="text-sm font-bold text-base-content">Sugestões do Dia</h3>
-            <p className="text-[11px] text-slate-400">Baseado no seu histórico e retenção</p>
-          </div>
+      <div className="px-5 pt-5 pb-4 border-b border-base-200/60 flex items-center justify-between">
+        <div className="flex flex-col gap-0.5">
+          <span className="text-xs uppercase tracking-wider font-bold text-base-content/70">Sugestões do Dia</span>
+
         </div>
-        <span className="badge badge-sm bg-primary/10 text-primary border border-primary/20 font-black px-2.5 py-1 rounded-md">
-          ✨ IA
+        <span className="badge badge-sm bg-accent/15 text-accent border-none font-bold px-3 py-2.5 rounded-lg shadow-sm flex items-center gap-1.5">
+          <Sparkles size={13} className="fill-accent" /> IA
         </span>
       </div>
 
-      {/* Lista de Matérias Agrupadas */}
-      <div className="space-y-3">
-        {items.map((group) => (
+      {/* Lista de Sugestões Nivelada (Flat) */}
+      <div className="px-5 pb-2 overflow-y-auto flex-1">
+        {flatTopics.map((topic) => (
           <div
-            key={group.subjectId}
-            className="card-papyrus !p-3.5 !rounded-2xl space-y-3"
+            key={topic.id}
+            className="group relative py-4 border-b border-base-200/60 last:border-0 hover:bg-base-200/30 transition-colors duration-200 -mx-5 px-5 space-y-2.5"
           >
-            {/* Header da Matéria */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Sparkles size={16} className="text-primary" />
-                <span className="text-sm font-bold tracking-tight text-base-content">
-                  {toTitleCase(group.subjectName)}
-                </span>
-              </div>
-              <span className="text-[11px] font-semibold text-slate-500">
-                {group.totalEstimatedTime}
+            {/* Textos */}
+            <div className="flex flex-col gap-0.5 min-w-0">
+              <span className="text-sm font-bold truncate transition-colors duration-150 text-base-content">
+                {toTitleCase(topic.subjectName)}
+              </span>
+              <span className="text-xs font-medium truncate transition-colors duration-150 text-neutral-content">
+                {topic.name}
               </span>
             </div>
 
-            {/* Tópicos da Matéria */}
-            <div className="space-y-2">
-              {group.topics.map((topic) => (
-                <div
-                  key={topic.id}
-                  className="bg-base-100 p-3 rounded-xl border border-base-200 flex items-center justify-between gap-3 hover:border-primary/30 transition-colors"
+            {/* Linha 3: Tags e Ações com Safe Zone */}
+            <div className="flex flex-wrap items-center justify-between gap-3 pt-2 mt-1">
+              {/* Lado Esquerdo: Tags */}
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span className="badge badge-xs border-none text-[10px] uppercase tracking-wider px-2 py-1.5 rounded bg-info/10 text-info font-bold">
+                  {topic.type}
+                </span>
+                <span className="badge badge-xs border-none text-[10px] uppercase tracking-wider px-2 py-1.5 rounded bg-accent/10 text-accent font-bold">
+                  {topic.statusTag}
+                </span>
+                <span className="badge badge-xs bg-base-200 text-neutral-content font-medium px-2 py-1.5 rounded-md border-none text-[10px]">
+                  {topic.durationMinutes} min
+                </span>
+              </div>
+
+              {/* Lado Direito: Ações (Safe Zone - Gap 4 = 16px) */}
+              <div className="flex items-center gap-4">
+                <button
+                  type="button"
+                  onClick={() => handleDismissTopic(topic.id)}
+                  className="btn btn-xs btn-ghost text-neutral-content hover:bg-base-200 px-2 h-8 min-h-0"
+                  title="Ocultar sugestão"
                 >
-                  <div className="space-y-1 min-w-0 flex-1 pl-1">
-                    <div className="flex items-center gap-1.5 flex-wrap">
-                      <TrendingUp size={14} className="text-amber-500 shrink-0" />
-                      <span className="text-[13px] font-medium text-base-content/80 truncate group-hover:text-base-content transition-colors">
-                        {topic.name}
-                      </span>
-                    </div>
-
-                    <div className="flex items-center gap-1.5 flex-wrap pt-0.5 pl-5">
-                      <span className="badge badge-sm border-none text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-md bg-blue-500 text-white font-bold">
-                        {topic.type}
-                      </span>
-                      <span className="badge badge-sm border-none text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-md bg-amber-50 text-amber-700 font-bold">
-                        {topic.statusTag}
-                      </span>
-                      <span className="badge badge-sm bg-base-200 text-neutral-content border-none font-medium text-[11px] px-2 py-0.5 rounded-md flex items-center gap-1">
-                        ⏱ {topic.durationMinutes}m • {topic.questionsCount} questões
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-1 shrink-0">
-                    <button
-                      type="button"
-                      onClick={() => handleDismissTopic(topic.id)}
-                      className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
-                      title="Ocultar sugestão"
-                    >
-                      <EyeOff size={14} />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => onStartFocusSession && onStartFocusSession(topic)}
-                      className="btn btn-sm btn-primary rounded-xl px-4 font-bold gap-1.5 shadow-sm"
-                    >
-                      <Play size={13} fill="currentColor" />
-                      Estudar
-                    </button>
-                  </div>
-                </div>
-              ))}
+                  <EyeOff size={14} />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onStartFocusSession && onStartFocusSession(topic)}
+                  className="btn btn-sm bg-primary/10 text-primary hover:bg-primary/20 border-none rounded-xl px-5 font-bold gap-1.5 h-8 min-h-0 text-xs shadow-none"
+                >
+                  <Play size={12} fill="currentColor" />
+                  Estudar
+                </button>
+              </div>
             </div>
           </div>
         ))}
       </div>
 
       {/* Footer Dica Pedagógica */}
-      <div className="pt-3 border-t border-base-200 flex items-start gap-2 text-[11px] text-slate-500">
-        <Lightbulb size={14} className="text-amber-500 shrink-0 mt-0.5" />
+      <div className="px-4 py-3.5 bg-base-100 border-t border-base-200 flex items-start gap-2 text-xs text-neutral-content mt-auto">
+        <Lightbulb size={14} className="text-accent shrink-0 mt-0.5" />
         <span>
-          <strong className="text-slate-700">Dica da IA:</strong> Priorize resolver questões nos tópicos de retenção baixa (&lt;70%) antes de avançar na teoria.
+          <strong className="text-base-content">Dica da IA:</strong> Priorize resolver questões nos tópicos de retenção baixa (&lt;70%) antes de avançar na teoria.
         </span>
       </div>
     </div>

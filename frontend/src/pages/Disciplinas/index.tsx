@@ -21,7 +21,7 @@ export default function DisciplinasPage({
         <div className="space-y-6 font-['Plus_Jakarta_Sans'] text-base-content animate-in fade-in duration-200">
             {/* 1. CABEÇALHO DA SEÇÃO DE DISCIPLINAS */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 bg-base-100 p-6 rounded-3xl border border-base-300/70 shadow-xs">
-                
+
                 <div className="flex items-center gap-5 w-full">
                     {/* Imagem do Plano / Logo */}
                     {currentPlan?.imagemUrl ? (
@@ -33,13 +33,13 @@ export default function DisciplinasPage({
                             <BookOpen size={32} />
                         </div>
                     )}
-                    
+
                     <div className="flex-1 w-full min-w-0">
                         <div className="flex flex-col lg:flex-row lg:items-center gap-2 lg:gap-4 mb-1">
                             <h2 className="text-xl sm:text-2xl font-black tracking-tight text-base-content uppercase truncate">
                                 {currentPlan?.nome || 'Suas Disciplinas'}
                             </h2>
-                            <div className="badge badge-sm bg-blue-500/10 text-blue-600 border-none font-bold px-2 py-2 shrink-0">
+                            <div className="badge badge-sm bg-blue-500/10 text-blue-600 border-none font-bold px-2 py-2 shrink-0 rounded-lg">
                                 {planProgressPercent}% Concluído
                             </div>
                         </div>
@@ -49,13 +49,13 @@ export default function DisciplinasPage({
 
                         {/* Barra de Progresso Real do Edital */}
                         <div className="w-full max-w-md">
-                            <div className="flex justify-between items-center text-[10px] font-bold text-neutral-content mb-1 uppercase tracking-wider">
+                            <div className="flex justify-between items-center text-xs font-bold text-neutral-content mb-1 uppercase tracking-wider">
                                 <span>Progresso Geral</span>
                                 <span>{studiedTopicsInPlan} / {totalTopicsInPlan} tópicos</span>
                             </div>
                             <div className="w-full bg-base-200 rounded-full h-1.5 overflow-hidden border border-base-300">
-                                <div 
-                                    className="bg-blue-500 h-full rounded-full transition-[width] duration-700 ease-out" 
+                                <div
+                                    className="bg-blue-500 h-full rounded-full transition-[width] duration-700 ease-out"
                                     style={{ width: `${planProgressPercent}%` }}
                                 ></div>
                             </div>
@@ -67,9 +67,9 @@ export default function DisciplinasPage({
                     <button
                         type="button"
                         onClick={onOpenNewDiscipline}
-                        className="btn btn-primary text-primary-content font-bold gap-2 rounded-xl shadow-xs w-full sm:w-auto"
+                        className="btn btn-primary flex items-center gap-2 bg-primary text-primary-content  rounded-xl transition-all shadow-sm hover:shadow-md hover:bg-primary/90 font-bold group cursor-pointer shrink-0"
                     >
-                        <Plus size={16} /> Nova Disciplina
+                        <Plus size={16} className="group-hover:rotate-90 transition-transform duration-300" /><span>Nova Disciplina</span>
                     </button>
                 </div>
             </div>
@@ -90,15 +90,26 @@ export default function DisciplinasPage({
                     disciplines.map((disc) => (
                         <div
                             key={disc.id}
-                            className="card-papyrus flex flex-col justify-between border-l-[9px] relative min-h-[160px]"
-                            style={{ borderLeftColor: disc.colorHex || '#2563EB' }}
+                            className="card-papyrus flex flex-col justify-between relative min-h-[160px] group transition-all duration-300 hover:-translate-y-1 bg-base-100"
                         >
-                            {/* Top Bar: Title & Actions */}
-                            <div className="flex justify-between items-start gap-2 mb-6">
-                                <h3 className="font-bold text-base tracking-tight text-base-content uppercase truncate mt-10">
-                                    {disc.name}
-                                </h3>
-                                <div className="flex items-center gap-1 shrink-0">
+                            {/* Hover Efeito: Borda Sutil + Sombra com a cor da disciplina */}
+                            <div
+                                className="absolute inset-0 rounded-[inherit] opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+                                style={{
+                                    boxShadow: `0 12px 30px -10px ${disc.colorHex}40`,
+                                    border: `1px solid ${disc.colorHex}40`
+                                }}
+                            />
+
+                            {/* Top row: Dot and Actions */}
+                            <div className="flex justify-between items-start relative z-10 w-full mb-3">
+                                <div
+                                    className="w-4 h-4 rounded-full shrink-0 mt-1 opacity-60"
+                                    style={{
+                                        backgroundColor: disc.colorHex || '#2563EB'
+                                    }}
+                                />
+                                <div className="flex items-center gap-1 shrink-0 -mr-2 -mt-2">
                                     <button
                                         type="button"
                                         onClick={() => onEditDiscipline(disc)}
@@ -118,8 +129,15 @@ export default function DisciplinasPage({
                                 </div>
                             </div>
 
+                            {/* Title */}
+                            <div className="mb-6 relative z-10 min-w-0">
+                                <h3 className="font-extrabold text-base tracking-tight text-base-content uppercase truncate">
+                                    {disc.name}
+                                </h3>
+                            </div>
+
                             {/* Bottom Stats */}
-                            <div className="pt-4 flex justify-between items-end text-[11px] font-bold uppercase tracking-wider border-t border-base-300/60 mt-auto">
+                            <div className="pt-4 flex justify-between items-end text-xs font-bold uppercase tracking-wider border-t border-base-300/60 mt-auto">
                                 <div className="flex items-baseline gap-1">
                                     <span className="text-lg font-bold text-primary leading-none">
                                         {disc.studiedTopics || 0}

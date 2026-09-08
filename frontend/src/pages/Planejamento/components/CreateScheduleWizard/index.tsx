@@ -88,7 +88,7 @@ export default function CreateScheduleWizard({ onClose, onComplete }: { onClose:
                                         {isPast ? <Check size={14} strokeWidth={3} /> : step.id}
                                     </div>
                                     <div className="flex flex-col">
-                                        <span className={`text-[10px] uppercase tracking-wider font-bold ${isActive ? 'text-primary' : isPast ? 'text-emerald-500' : 'text-slate-400'
+                                        <span className={`text-xs uppercase tracking-wider font-bold ${isActive ? 'text-primary' : isPast ? 'text-emerald-500' : 'text-slate-400'
                                             }`}>
                                             Passo {step.id}
                                         </span>

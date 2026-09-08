@@ -94,7 +94,7 @@ export default function PlanejamentoTab() {
                         <RotateCcw size={28} className="text-base-content/50" />
                         <div className="flex items-center gap-2">
                             <h4 className="font-extrabold text-base-content/70 text-lg">Ciclo de Estudos</h4>
-                            <span className="text-[10px] font-bold bg-base-300 text-base-content px-2 py-0.5 rounded-full uppercase tracking-wider">Breve</span>
+                            <span className="text-xs font-bold bg-base-300 text-base-content px-2 py-0.5 rounded-full uppercase tracking-wider">Breve</span>
                         </div>
                         <p className="text-sm text-base-content/50">Sequência fluida de matérias por horas estudadas.</p>
                     </button>

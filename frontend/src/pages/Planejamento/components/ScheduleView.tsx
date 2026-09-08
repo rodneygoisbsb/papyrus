@@ -182,15 +182,15 @@ export default function QuadroSemanalPage({
                 {!hideHeader && (
                     <div className="shrink-0 xl:mr-4">
                         <h2 className="text-xl font-black text-base-content tracking-tight">{title}</h2>
-                        <p className="text-[11px] font-bold uppercase tracking-wider text-neutral-content mt-0.5">{subtitle}</p>
+                        <p className="text-xs font-bold uppercase tracking-wider text-neutral-content mt-0.5">{subtitle}</p>
                     </div>
                 )}
 
                 {/* Progresso */}
                 <div className="flex-1 w-full min-w-[200px] xl:max-w-[400px]">
                     <div className="flex justify-between items-center mb-1.5">
-                        <span className="text-[10px] font-bold text-base-content uppercase tracking-wider">Progresso da Semana</span>
-                        <span className="text-[10px] font-bold text-success">{completedGoals}/{totalGoals} ({progressPercent}%)</span>
+                        <span className="text-xs font-bold text-base-content uppercase tracking-wider">Progresso da Semana</span>
+                        <span className="text-xs font-bold text-success">{completedGoals}/{totalGoals} ({progressPercent}%)</span>
                     </div>
                     <div className="w-full h-2 bg-base-200 rounded-full overflow-hidden">
                         <div
@@ -230,7 +230,7 @@ export default function QuadroSemanalPage({
                     return (
                         <div key={`header-${day.date}`} className={`p-3 text-center border-b border-base-200 bg-base-50 ${!isLast ? 'border-r border-base-200' : ''}`}>
                             <h3 className={`text-xs font-black uppercase ${day.isToday ? 'text-primary' : 'text-base-content'}`}>{day.dayName}</h3>
-                            <p className={`text-[10px] font-bold mt-0.5 ${day.isToday ? 'text-primary' : 'text-neutral-content'}`}>{day.date}</p>
+                            <p className={`text-xs font-bold mt-0.5 ${day.isToday ? 'text-primary' : 'text-neutral-content'}`}>{day.date}</p>
                         </div>
                     );
                 })}
@@ -256,19 +256,19 @@ export default function QuadroSemanalPage({
                                             </button>
 
                                             <div className="flex flex-col gap-1 flex-1">
-                                                <span className={`text-[10px] font-bold leading-tight pr-4 ${goal.completed ? 'line-through opacity-80' : ''}`}>
+                                                <span className={`text-xs font-bold leading-tight pr-4 ${goal.completed ? 'line-through opacity-80' : ''}`}>
                                                     {goal.subject}
                                                 </span>
                                                 {goal.topicName && (
-                                                    <span className={`text-[9px] font-medium leading-tight opacity-90 ${goal.completed ? 'line-through' : ''}`}>
+                                                    <span className={`text-xs font-medium leading-tight opacity-90 ${goal.completed ? 'line-through' : ''}`}>
                                                         {goal.topicName}
                                                     </span>
                                                 )}
                                                 <div className="mt-auto pt-2 flex flex-col items-start gap-1">
-                                                    <span className="text-[9px] font-extrabold tracking-wide text-black/40 mix-blend-multiply leading-none">
+                                                    <span className="text-xs font-extrabold tracking-wide text-black/40 mix-blend-multiply leading-none">
                                                         {getTypeLabel(goal.type)}
                                                     </span>
-                                                    <span className="text-[9px] font-bold bg-black/5 border border-black/5 px-1.5 py-0.5 rounded text-slate-600 inline-block">
+                                                    <span className="text-xs font-bold bg-black/5 border border-black/5 px-1.5 py-0.5 rounded text-slate-600 inline-block">
                                                         {Math.floor(goal.durationMinutes / 60)}h{(goal.durationMinutes % 60).toString().padStart(2, '0')}min
                                                     </span>
                                                 </div>
@@ -290,7 +290,7 @@ export default function QuadroSemanalPage({
                         <div key={`footer-${day.date}`} className={`p-1.5 border-t border-base-200 mt-auto bg-base-50/40 ${!isLast ? 'border-r border-base-200' : ''}`}>
                             <button
                                 onClick={() => handleAddGoalClick(day.date)}
-                                className="w-full py-2 rounded-lg text-[10px] font-bold transition-colors text-slate-400 hover:bg-base-200 hover:text-slate-600"
+                                className="w-full py-2 rounded-lg text-xs font-bold transition-colors text-slate-400 hover:bg-base-200 hover:text-slate-600"
                             >
                                 <Plus size={14} className="mx-auto" />
                             </button>

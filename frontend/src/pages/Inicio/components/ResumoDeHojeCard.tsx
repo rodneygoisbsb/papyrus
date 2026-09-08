@@ -1,92 +1,116 @@
 import React from 'react';
-import { Clock, Target, BookOpen } from 'lucide-react';
 
 export default function ResumoDeHojeCard({
     todayMinutesStudied = 90,
     todayQuestionsDone = 35,
     dailyMinutesGoal = 240,
-    disciplinesStudied = 3
+    disciplinesStudied = 3,
+    todayAccuracy = 82
 }) {
     return (
-        <div className="relative overflow-hidden rounded-[22px] border border-blue-500/30 bg-gradient-to-br from-white via-white to-blue-50/40 p-6 shadow-[0_10px_30px_-6px_rgba(37,99,235,0.09)] transition-all duration-200 ease-out hover:-translate-y-1 hover:border-blue-500/45 hover:shadow-[0_16px_35px_-6px_rgba(37,99,235,0.14)] active:scale-[0.99] flex flex-col h-full min-h-[220px]">
-            
-            {/* Linha de acento luminoso superior */}
-            <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-blue-200 via-blue-600 to-blue-200" />
-
+        <div className="card-papyrus flex flex-col justify-between h-full min-h-[220px]">
             {/* Cabeçalho */}
-            <div className="flex justify-between items-center h-8 mb-6">
-                <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-600 shrink-0">
-                        <Clock size={16} />
-                    </div>
-                    <span className="text-xs uppercase tracking-wider font-bold text-neutral-content">
-                        RESUMO DE HOJE
-                    </span>
-                </div>
-                
-                <div className="badge badge-sm bg-blue-500/10 text-blue-600 border border-blue-500/30 font-bold text-[10px] gap-1.5 py-2 px-2.5 rounded-full shadow-2xs shrink-0">
-                    Meta Diária: {Math.floor(dailyMinutesGoal / 60)}h
-                </div>
+            <div className="flex justify-between items-center pb-4 border-b border-base-200/60 mb-5">
+                <span className="text-xs font-bold uppercase tracking-wider text-base-content/70">
+                    Resumo de Hoje
+                </span>
+
+                <span className="badge badge-sm bg-base-200 text-neutral-content font-semibold py-2 px-2.5 rounded-lg border-base-300">
+                    Meta diária: <strong className="font-bold text-neutarl-content ml-1">{Math.floor(dailyMinutesGoal / 60)}h</strong>
+                </span>
             </div>
 
-            <div className="flex flex-col sm:flex-row justify-center sm:justify-around items-center gap-6 mt-2 w-full">
-                
-                {/* Gráfico Circular Central */}
-                <div className="relative flex flex-col items-center justify-center shrink-0">
-                    <div 
-                        className="radial-progress text-blue-500 transition-all duration-1000 ease-out" 
-                        style={{
-                            "--value": Math.min(100, Math.round((todayMinutesStudied / dailyMinutesGoal) * 100)), 
-                            "--size": "9.5rem", 
-                            "--thickness": "14px"
-                        } as any}
-                        role="progressbar"
-                    >
-                        {/* Círculo de fundo cinza */}
-                        <div className="absolute inset-0 rounded-full border-[14px] border-base-200 -z-10" />
-                        
-                        <div className="flex flex-col items-center justify-center mt-2">
-                            <div className="flex items-baseline gap-0.5">
-                                <span className="text-3xl font-black tracking-tight text-base-content leading-none">
-                                    {Math.floor(todayMinutesStudied / 60)}
+            <div className="flex flex-col items-center gap-8 mt-2 w-full px-2">
+
+                {/* Área Central com Gráfico e Métricas */}
+                <div className="flex w-full items-center justify-center gap-8">
+
+                    {/* Gráfico Circular Central */}
+                    <div className="relative flex flex-col items-center justify-center shrink-0">
+                        <div
+                            className="radial-progress text-primary transition-all duration-1000 ease-out drop-shadow-sm"
+                            style={{
+                                "--value": Math.min(100, Math.round((todayMinutesStudied / dailyMinutesGoal) * 100)),
+                                "--size": "9.5rem",
+                                "--thickness": "14px"
+                            } as any}
+                            role="progressbar"
+                        >
+                            {/* Círculo de fundo cinza */}
+                            <div className="absolute inset-0 rounded-full border-[14px] border-base-200 -z-10" />
+
+                            <div className="flex flex-col items-center justify-center mt-2">
+                                <div className="flex items-baseline gap-0.5">
+                                    <span className="text-3xl font-black tracking-tight text-base-content leading-none">
+                                        {Math.floor(todayMinutesStudied / 60)}
+                                    </span>
+                                    <span className="text-lg font-bold text-base-content leading-none">h</span>
+                                    <span className="text-3xl font-black tracking-tight text-base-content leading-none ml-1">
+                                        {todayMinutesStudied % 60}
+                                    </span>
+                                    <span className="text-lg font-bold text-base-content leading-none">m</span>
+                                </div>
+                                <span className="text-[10px] font-bold text-neutral-content uppercase tracking-widest mt-2">
+                                    Estudados
                                 </span>
-                                <span className="text-lg font-bold text-base-content leading-none">h</span>
-                                <span className="text-3xl font-black tracking-tight text-base-content leading-none ml-1">
-                                    {todayMinutesStudied % 60}
-                                </span>
-                                <span className="text-lg font-bold text-base-content leading-none">m</span>
                             </div>
-                            <span className="text-[10px] font-bold text-neutral-content uppercase tracking-widest mt-1">
-                                Estudados
-                            </span>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Estatísticas Rápidas */}
-                <div className="flex flex-row sm:flex-col gap-3 w-full sm:w-auto">
-                    {/* Questões */}
-                    <div className="flex-1 bg-white border border-base-200 rounded-2xl p-3 shadow-xs flex flex-col items-center sm:items-start text-center sm:text-left hover:border-emerald-500/40 transition-colors">
-                        <div className="flex items-center gap-1.5 text-emerald-500 mb-1">
-                            <Target size={14} />
-                            <span className="text-[10px] font-bold uppercase tracking-wider">Questões</span>
-                        </div>
-                        <div className="flex items-baseline gap-1">
-                            <span className="text-xl font-black text-base-content leading-none">{todayQuestionsDone}</span>
-                            <span className="text-xs font-medium text-neutral-content leading-none">resolvidas</span>
                         </div>
                     </div>
 
-                    {/* Disciplinas */}
-                    <div className="flex-1 bg-white border border-base-200 rounded-2xl p-3 shadow-xs flex flex-col items-center sm:items-start text-center sm:text-left hover:border-purple-500/40 transition-colors">
-                        <div className="flex items-center gap-1.5 text-purple-500 mb-1">
-                            <BookOpen size={14} />
-                            <span className="text-[10px] font-bold uppercase tracking-wider">Disciplinas</span>
+                    {/* Container de Métricas na Direita */}
+                    <div className="flex flex-col gap-4 justify-center w-full max-w-[140px]">
+
+                        {/* Métrica 1: Questões */}
+                        <div className="flex items-center gap-3 border-b border-base-200/60 pb-3">
+                            <div className="w-9 h-9 rounded-full bg-info/15 text-info flex items-center justify-center shrink-0">
+                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                                </svg>
+                            </div>
+                            <div className="flex flex-col">
+                                <span className="text-[17px] font-black text-base-content leading-none tabular-nums">
+                                    {todayQuestionsDone}
+                                </span>
+                                <span className="text-[10px] font-bold text-neutral-content uppercase tracking-widest mt-0.5">
+                                    Questões
+                                </span>
+                            </div>
                         </div>
-                        <div className="flex items-baseline gap-1">
-                            <span className="text-xl font-black text-base-content leading-none">{disciplinesStudied}</span>
-                            <span className="text-xs font-medium text-neutral-content leading-none">revisadas</span>
+
+                        {/* Métrica 2: Acertos */}
+                        <div className="flex items-center gap-3 border-b border-base-200/60 pb-3">
+                            <div className="w-9 h-9 rounded-full bg-success/15 text-success flex items-center justify-center shrink-0">
+                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </div>
+                            <div className="flex flex-col">
+                                <span className="text-[17px] font-black text-success leading-none tabular-nums">
+                                    {todayAccuracy}%
+                                </span>
+                                <span className="text-[10px] font-bold text-neutral-content uppercase tracking-widest mt-0.5">
+                                    Acertos
+                                </span>
+                            </div>
                         </div>
+
+                        {/* Métrica 3: Tópicos */}
+                        <div className="flex items-center gap-3">
+                            <div className="w-9 h-9 rounded-full bg-[var(--theme-tertiary)]/15 text-[var(--theme-tertiary)] flex items-center justify-center shrink-0">
+                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                                </svg>
+                            </div>
+                            <div className="flex flex-col">
+                                <span className="text-[17px] font-black text-base-content leading-none tabular-nums">
+                                    {disciplinesStudied}
+                                </span>
+                                <span className="text-[10px] font-bold text-neutral-content uppercase tracking-widest mt-0.5">
+                                    Tópicos
+                                </span>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
 

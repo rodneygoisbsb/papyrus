@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BookOpen, X, ListChecks, Plus, Trash2 } from 'lucide-react';
+import { BookOpen, X, ListChecks, Plus, Trash2, GripVertical } from 'lucide-react';
 import { useDisciplineEditor } from '../../../hooks/useDisciplineEditor';
 
 interface DisciplineEditorModalProps {
@@ -23,6 +23,40 @@ export default function DisciplineEditorModal({
 
     const [isBulkMode, setIsBulkMode] = useState(false);
     const [bulkText, setBulkText] = useState('');
+
+    // Drag and Drop States
+    const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+    const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
+
+    const handleDragStart = (e: React.DragEvent, index: number) => {
+        setDraggedIndex(index);
+    };
+
+    const handleDragOver = (e: React.DragEvent, index: number) => {
+        e.preventDefault();
+        setDragOverIndex(index);
+    };
+
+    const handleDragLeave = (e: React.DragEvent) => {
+        e.preventDefault();
+        if (e.currentTarget === e.target) {
+            setDragOverIndex(null);
+        }
+    };
+
+    const handleDrop = (e: React.DragEvent, dropIndex: number) => {
+        e.preventDefault();
+        setDragOverIndex(null);
+        if (draggedIndex === null || draggedIndex === dropIndex) return;
+
+        setActiveDisciplineEditor((prev: any) => {
+            const newTopics = [...(prev.topics || [])];
+            const [draggedItem] = newTopics.splice(draggedIndex, 1);
+            newTopics.splice(dropIndex, 0, draggedItem);
+            return { ...prev, topics: newTopics };
+        });
+        setDraggedIndex(null);
+    };
 
     const onBulkAdd = () => {
         handleAddTopicsBulk(bulkText);
@@ -74,24 +108,25 @@ export default function DisciplineEditorModal({
                     <div className="w-full md:w-2/5 p-8 border-b md:border-b-0 md:border-r border-base-300/60 flex flex-col gap-8 bg-base-100">
                         {/* Nome da Matéria */}
                         <div className="space-y-2.5">
-                            <label className="text-[11px] font-bold uppercase tracking-wider text-neutral-content flex items-center gap-2">
+                            <label className="text-xs font-bold uppercase tracking-wider text-neutral-content flex items-center gap-2">
                                 Nome da Matéria
                             </label>
                             <input
                                 type="text"
-                                placeholder="Ex: DIREITO PROCESSUAL PENAL"
+                                placeholder="Ex: Banco de Dados"
                                 value={activeDisciplineEditor.name || ''}
                                 onChange={(e) =>
                                     setActiveDisciplineEditor((prev: any) => ({ ...prev, name: e.target.value }))
                                 }
-                                className="input input-bordered w-full bg-base-200/40 focus:bg-base-100 focus:outline-none focus:ring-1 hover:ring-primary/60 rounded-2xl font-bold text-sm text-base-content shadow-sm"
+                                className="input w-full h-12 bg-base-100 border border-base-300/50 shadow-sm rounded-2xl mt-3 mb-2 focus:outline-none focus:ring-0 focus:border-base-300/50"
+
                                 autoFocus
                             />
                         </div>
 
                         {/* Cor de Identificação */}
                         <div className="space-y-3">
-                            <label className="text-[11px] font-bold uppercase tracking-wider text-neutral-content">
+                            <label className="text-xs font-bold uppercase tracking-wider text-neutral-content">
                                 Cor de Identificação
                             </label>
                             <div className="grid grid-cols-4 gap-3 mt-3 w-70">
@@ -120,14 +155,14 @@ export default function DisciplineEditorModal({
                     {/* RIGHT COLUMN - TOPICS */}
                     <div className="w-full md:w-3/5 p-8 bg-base-200/30 flex flex-col">
                         <div className="flex justify-between items-center mb-5">
-                            <label className="text-[11px] font-bold uppercase tracking-wider text-neutral-content">
+                            <label className="text-xs font-bold uppercase tracking-wider text-neutral-content">
                                 Tópicos do Edital
                             </label>
                             <div className="flex items-center gap-3">
                                 <button
                                     type="button"
                                     onClick={() => setIsBulkMode(!isBulkMode)}
-                                    className="text-[10px] font-bold uppercase text-primary hover:text-primary-focus transition-colors flex items-center gap-1.5 bg-primary/10 px-2.5 py-1.5 rounded-lg"
+                                    className="text-xs font-bold uppercase text-primary hover:text-primary-focus transition-colors flex items-center gap-1.5 bg-primary/10 px-2.5 py-1.5 rounded-lg"
                                 >
                                     <ListChecks size={14} />
                                     {isBulkMode ? 'Adicionar Unitário' : 'Adicionar em Lote'}
@@ -158,7 +193,7 @@ export default function DisciplineEditorModal({
                             <div className="flex gap-2 relative">
                                 <input
                                     type="text"
-                                    placeholder="Ex: Inquérito Policial (Art. 4º ao 23)"
+                                    placeholder="Ex: Conceitos de banco de dados e SGBD"
                                     value={newTopicText}
                                     onChange={(e) => setNewTopicText(e.target.value)}
                                     onKeyDown={(e) => {
@@ -192,11 +227,22 @@ export default function DisciplineEditorModal({
                                 activeDisciplineEditor.topics.map((topic: any, index: number) => (
                                     <div
                                         key={topic.id || index}
-                                        className="group flex items-center justify-between p-3 rounded-2xl bg-base-100 border border-base-300/50 shadow-sm hover:border-primary/30 hover:shadow-md transition-all"
+                                        draggable
+                                        onDragStart={(e) => handleDragStart(e, index)}
+                                        onDragOver={(e) => handleDragOver(e, index)}
+                                        onDragLeave={handleDragLeave}
+                                        onDrop={(e) => handleDrop(e, index)}
+                                        className={`group flex items-center justify-between p-3 rounded-2xl bg-base-100 border transition-all cursor-move
+                                            ${dragOverIndex === index ? 'border-primary shadow-md border-dashed bg-primary/5' : 'border-base-300/50 shadow-sm hover:border-primary/30 hover:shadow-md'}
+                                            ${draggedIndex === index ? 'opacity-40' : 'opacity-100'}
+                                        `}
                                     >
-                                        <span className="truncate pr-4 text-sm font-medium text-base-content">
-                                            <b className="text-primary/70 mr-2">{index + 1}.</b> {topic.name}
-                                        </span>
+                                        <div className="flex items-center gap-3 overflow-hidden">
+                                            <GripVertical size={16} className="text-neutral-content/40 group-hover:text-neutral-content shrink-0" />
+                                            <span className="truncate pr-4 text-sm font-medium text-base-content">
+                                                <b className="text-primary/70 mr-2">{index + 1}.</b> {topic.name}
+                                            </span>
+                                        </div>
                                         <button
                                             type="button"
                                             onClick={() => handleRemoveTopic(topic.id)}

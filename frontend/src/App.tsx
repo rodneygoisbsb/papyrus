@@ -16,7 +16,7 @@ import PlanejamentoPage from './pages/Planejamento';
 import DesempenhoPage from './pages/Desempenho';
 import EditalVerticalizadoPage from './pages/EditalVerticalizado';
 import CriarPlanoPage from './pages/CriarPlano';
-import CriarPlanoEditaisProntosPage from './pages/CriarPlanoEditaisProntos';
+import PlanTemplates from './pages/CriarPlano/components/PlanTemplates';
 
 // 3. Hooks personalizados
 import { useLocalStorage } from './hooks/useLocalStorage';
@@ -338,7 +338,7 @@ export default function App() {
       )}
 
       {activeTab === 'criar-plano-editais-prontos' && (
-        <CriarPlanoEditaisProntosPage setActiveTab={setActiveTab} />
+        <PlanTemplates setActiveTab={setActiveTab} />
       )}
 
       {activeTab === 'metas' && (

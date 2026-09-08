@@ -71,7 +71,7 @@ export default function StepRelevance({ state, updateState }: StepRelevanceProps
                                     <h4 className="font-bold text-sm text-slate-800 text-center leading-tight">{disc}</h4>
 
                                     <div className="space-y-2 mt-2">
-                                        <div className="flex justify-between items-center text-[10px] font-bold uppercase tracking-wider">
+                                        <div className="flex justify-between items-center text-xs font-bold uppercase tracking-wider">
                                             <span className="text-slate-400">Importância</span>
                                             <span className="text-primary bg-primary/10 px-2 py-0.5 rounded-full">{rel.importance}</span>
                                         </div>
@@ -85,7 +85,7 @@ export default function StepRelevance({ state, updateState }: StepRelevanceProps
                                     </div>
 
                                     <div className="space-y-2 mt-1">
-                                        <div className="flex justify-between items-center text-[10px] font-bold uppercase tracking-wider">
+                                        <div className="flex justify-between items-center text-xs font-bold uppercase tracking-wider">
                                             <span className="text-slate-400">Conhecimento</span>
                                             <span className="text-emerald-600 bg-emerald-100 px-2 py-0.5 rounded-full">{rel.knowledge}</span>
                                         </div>

@@ -34,8 +34,8 @@ export default function CriarPlanoPage({ setActiveTab, onPlanCreated }: CriarPla
     const options = [
         {
             id: 'editais-prontos',
-            title: 'Editais Prontos',
-            description: 'Escolha um edital já cadastrado e tenha todas as disciplinas e assuntos configurados automaticamente.',
+            title: 'Escolha Seu Plano',
+            description: 'Escolha um plano já cadastrado e tenha todas as disciplinas e assuntos configurados automaticamente.',
             icon: <FileCheck size={28} />,
             colorClass: 'text-primary',
             bgLightClass: 'bg-primary/10',
@@ -45,36 +45,32 @@ export default function CriarPlanoPage({ setActiveTab, onPlanCreated }: CriarPla
         {
             id: 'manual',
             title: 'Criar Plano Manualmente',
-            description: 'Cadastre suas disciplinas e cole a lista de assuntos de forma flexível.',
+            description: 'Cadastre suas disciplinas e cole a lista de assuntos de forma flexível',
             icon: <PencilRuler size={28} />,
-            colorClass: 'text-emerald-600',
-            bgLightClass: 'bg-emerald-600/10',
-            hoverClass: 'hover:border-emerald-600/40 hover:shadow-emerald-600/10',
+            colorClass: 'text-success',
+            bgLightClass: 'bg-success/10',
+            hoverClass: 'hover:border-success/40 hover:shadow-success/10',
             action: () => handleOptionClick('disciplinas')
         }
     ];
 
     return (
-        <div className="space-y-8 font-['Plus_Jakarta_Sans'] text-base-content animate-in fade-in duration-300">
-            {/* CABEÇALHO */}
-            <div className="flex flex-col gap-4 pb-6 border-b border-base-300/70">
+        <div className="space-y-8 text-base-content animate-in fade-in duration-300">
+            {/* HEADER AREA */}
+            <div className="flex flex-col gap-3">
+                {/* AÇÃO DE VOLTAR */}
                 <button
                     onClick={() => setActiveTab('plano-estudos')}
-                    className="flex items-center gap-2 text-sm font-bold text-neutral-content hover:text-base-content transition-colors w-fit"
+                    className="flex items-center gap-2 text-sm font-bold text-neutral-content hover:text-base-content/60 transition-colors w-fit cursor-pointer"
                 >
                     <ArrowLeft size={16} />
-                    <span>Voltar para Meus Planos</span>
+                    <span>Voltar</span>
                 </button>
-                <div>
-                    <h2 className="text-3xl font-black text-base-content tracking-tight">Como você quer criar seu Plano?</h2>
-                    <p className="text-sm text-neutral-content mt-2 max-w-2xl">
-                        Escolha a forma que melhor se adapta a sua necessidade para cadastrar as disciplinas e assuntos do seu novo plano de estudos.
-                    </p>
-                </div>
+
             </div>
 
             {/* GRID DE OPÇÕES */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
                 {options.map((option) => (
                     <div
                         key={option.id}
@@ -97,13 +93,13 @@ export default function CriarPlanoPage({ setActiveTab, onPlanCreated }: CriarPla
             </div>
 
             {/* MODAL DE DADOS INICIAIS */}
-            <PlanModal 
+            <PlanModal
                 isOpen={isModalOpen}
                 onClose={() => {
                     setIsModalOpen(false);
                     setSelectedFlow(null);
                 }}
-                onSave={(nome, cargo) => handleAvançar(nome, cargo)}
+                onSave={(nome, cargo, imagem) => handleAvançar(nome, cargo, imagem)}
             />
         </div>
     );

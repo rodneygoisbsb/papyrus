@@ -142,7 +142,7 @@ export default function RegisterStudyModal({
                             <h2 className="text-xl font-bold text-slate-900 tracking-tight leading-tight">
                                 Registrar estudo
                             </h2>
-                            <p className="text-[12px] text-slate-400 mt-0.5">
+                            <p className="text-xs text-slate-400 mt-0.5">
                                 Preencha os dados da sessão e configure as revisões
                             </p>
                         </div>
@@ -160,7 +160,7 @@ export default function RegisterStudyModal({
                     <div className="space-y-6" ref={contentRef}>
                         <div className="bg-blue-50/70 rounded-2xl border border-blue-100 p-5 flex items-center justify-between gap-4 flex-wrap shadow-sm">
                         <div className="flex items-center gap-3">
-                            <label className="text-[10px] font-bold uppercase tracking-widest text-blue-400 whitespace-nowrap">
+                            <label className="text-xs font-bold uppercase tracking-widest text-blue-400 whitespace-nowrap">
                                 Tipo de estudo
                             </label>
                             <select
@@ -176,7 +176,7 @@ export default function RegisterStudyModal({
                         </div>
 
                         <div className="flex items-center gap-4 flex-wrap">
-                            <label className="text-[10px] font-bold uppercase tracking-widest text-blue-400 whitespace-nowrap">
+                            <label className="text-xs font-bold uppercase tracking-widest text-blue-400 whitespace-nowrap">
                                 Data do estudo
                             </label>
                             <div className="flex items-center gap-2">
@@ -200,7 +200,7 @@ export default function RegisterStudyModal({
 
                     <div className="bg-white rounded-2xl border border-slate-200 p-5 space-y-4 shadow-sm">
                         <div className="relative">
-                            <label className="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">
+                            <label className="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-2">
                                 Disciplina
                             </label>
                             <div className="relative flex items-center">
@@ -248,7 +248,7 @@ export default function RegisterStudyModal({
                         </div>
 
                         <div className="relative">
-                            <label className="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">
+                            <label className="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-2">
                                 Assunto / Tópico
                             </label>
                             <div className="relative flex items-center">
@@ -295,7 +295,7 @@ export default function RegisterStudyModal({
                                 <div className={`w-3.5 h-3.5 rounded-[3px] border flex items-center justify-center transition-colors ${teoriaFinalizada ? 'bg-emerald-500 border-emerald-500' : 'bg-white border-slate-300 group-hover:border-slate-400'}`}>
                                     {teoriaFinalizada && <Check size={10} className="text-white" strokeWidth={3} />}
                                 </div>
-                                <span className={`text-[10px] font-bold uppercase tracking-widest select-none mt-[1px] ${teoriaFinalizada ? 'text-slate-800' : 'text-slate-500'}`}>
+                                <span className={`text-xs font-bold uppercase tracking-widest select-none mt-[1px] ${teoriaFinalizada ? 'text-slate-800' : 'text-slate-500'}`}>
                                     Teoria Finalizada
                                 </span>
                                 <input
@@ -311,7 +311,7 @@ export default function RegisterStudyModal({
                     <div className="flex items-center justify-between px-4 py-3.5 bg-white rounded-xl border border-blue-100 shadow-sm">
                         <div className="flex items-center gap-2.5 text-blue-500">
                             <Clock size={16} />
-                            <span className="text-[10px] font-bold uppercase tracking-widest text-blue-400">
+                            <span className="text-xs font-bold uppercase tracking-widest text-blue-400">
                                 Duração registrada
                             </span>
                         </div>
@@ -349,7 +349,7 @@ export default function RegisterStudyModal({
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="bg-white rounded-2xl border border-slate-200 p-5 space-y-3 shadow-sm">
-                            <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                            <p className="text-xs font-bold uppercase tracking-widest text-slate-400">
                                 Material utilizado
                             </p>
                             <div className="flex flex-wrap gap-2">
@@ -374,10 +374,10 @@ export default function RegisterStudyModal({
 
                         <div className="bg-white rounded-2xl border border-slate-200 p-5 space-y-3 shadow-sm">
                             <div className="flex items-center justify-between">
-                                <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                                <p className="text-xs font-bold uppercase tracking-widest text-slate-400">
                                     Desempenho em questões
                                 </p>
-                                <span className="flex items-center gap-1 text-[11px] font-bold text-emerald-600 bg-emerald-50 border border-emerald-200 rounded-full px-2 py-0.5">
+                                <span className="flex items-center gap-1 text-xs font-bold text-emerald-600 bg-emerald-50 border border-emerald-200 rounded-full px-2 py-0.5">
                                     <Sparkles size={10} />
                                     Taxa: {taxaAcertos}%
                                 </span>
@@ -408,7 +408,7 @@ export default function RegisterStudyModal({
                                     },
                                 ].map(({ label, value, onDec, onInc, onChange, numClass }) => (
                                     <div key={label}>
-                                        <span className="block text-[11px] font-semibold text-slate-400 mb-1.5">{label}</span>
+                                        <span className="block text-xs font-semibold text-slate-400 mb-1.5">{label}</span>
                                         <div className="flex items-center border border-slate-200 rounded-xl overflow-hidden bg-slate-50 shadow-2xs">
                                             <button type="button" onClick={onDec}
                                                 className="w-9 h-9 flex items-center justify-center text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-colors cursor-pointer border-r border-slate-200 transform-gpu">
@@ -432,7 +432,7 @@ export default function RegisterStudyModal({
                     </div>
 
                     <div className="bg-white rounded-2xl border border-slate-200 p-5 space-y-4 shadow-sm">
-                        <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                        <p className="text-xs font-bold uppercase tracking-widest text-slate-400">
                             Agendamento de revisões periódicas
                         </p>
 
@@ -479,7 +479,7 @@ export default function RegisterStudyModal({
                                     <span className={`block text-sm font-bold transition-colors duration-300 ${agendarEmBloco ? 'text-white' : 'text-slate-800'}`}>
                                         Agendar revisão em bloco
                                     </span>
-                                    <span className={`block text-[11px] mt-0.5 transition-colors duration-300 ${agendarEmBloco ? 'text-blue-200' : 'text-slate-400'}`}>
+                                    <span className={`block text-xs mt-0.5 transition-colors duration-300 ${agendarEmBloco ? 'text-blue-200' : 'text-slate-400'}`}>
                                         Dispara revisão automática a cada 3 tópicos desta matéria
                                     </span>
                                 </div>

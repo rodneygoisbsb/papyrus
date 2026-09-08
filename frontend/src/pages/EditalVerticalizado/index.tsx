@@ -30,7 +30,7 @@ export default function EditalVerticalizadoTab({ editalTopics, toggleEditalCheck
                         {editalTopics.map((topic) => (
                             <tr key={topic.id} className="hover:bg-base-200/50 transition-colors">
                                 <td className="p-4 font-semibold text-base-content">
-                                    <span className="text-[10px] uppercase block font-bold text-primary">{topic.subject}</span>
+                                    <span className="text-xs uppercase block font-bold text-primary">{topic.subject}</span>
                                     {topic.name}
                                 </td>
                                 {colunasRevisao.map((col) => (
@@ -43,7 +43,7 @@ export default function EditalVerticalizadoTab({ editalTopics, toggleEditalCheck
                                         />
                                     </td>
                                 ))}
-                                <td className="p-4 text-center text-neutral-content font-mono text-[11px]">
+                                <td className="p-4 text-center text-neutral-content font-mono text-xs">
                                     {topic.lastStudied}
                                 </td>
                                 <td className="p-4 text-center font-bold">

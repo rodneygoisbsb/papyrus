@@ -33,7 +33,7 @@ export default function StudyHeatmap() {
             <div className="space-y-1.5 my-3">
                 {diasSemanaLabels.map((dia, rowIdx) => (
                     <div key={dia} className="flex items-center gap-2">
-                        <span className="text-[11px] font-semibold text-neutral-content w-6 shrink-0">
+                        <span className="text-xs font-semibold text-neutral-content w-6 shrink-0">
                             {dia}
                         </span>
 
@@ -56,14 +56,14 @@ export default function StudyHeatmap() {
 
             {/* Barra Inferior de Legenda Contínua (Full-Width Gradient) */}
             <div className="pt-3 border-t border-base-300/60 space-y-1.5">
-                <div className="flex justify-between items-center text-[10px] font-semibold text-neutral-content px-0.5">
+                <div className="flex justify-between items-center text-xs font-semibold text-neutral-content px-0.5">
                     <span>0h</span>
                     <span>2h</span>
                     <span>4h</span>
                     <span>4h+</span>
                 </div>
                 <div className="w-full h-2 rounded-full bg-gradient-to-r from-base-200 via-primary/50 to-primary border border-base-300/60" />
-                <span className="text-[10px] font-medium text-neutral-content/80 text-center block pt-0.5">
+                <span className="text-xs font-medium text-neutral-content/80 text-center block pt-0.5">
                     Horas líquidas (Horas de Estudo Efetivo)
                 </span>
             </div>

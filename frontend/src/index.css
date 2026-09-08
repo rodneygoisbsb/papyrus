@@ -4,6 +4,10 @@
 @theme {
   --font-sans: 'Plus Jakarta Sans', sans-serif;
 
+  /* Custom Colors mapped to DaisyUI themes */
+  --color-tertiary: var(--theme-tertiary);
+  --color-tertiary-content: var(--theme-tertiary-content);
+
   /* Custom Animations */
   --animate-shimmer: shimmer 2s infinite linear;
 
@@ -44,6 +48,11 @@
   /* #10B981 Verde Menta */
   --color-secondary-content: oklch(100% 0 0);
   /* #FFFFFF */
+
+  /* Disciplinas (Roxo) */
+  --theme-tertiary: oklch(58% 0.21 300);
+  /* Purple 500 equivalent */
+  --theme-tertiary-content: oklch(100% 0 0);
 
   /* Alertas e Variações */
   --color-accent: oklch(60.6% 0.207 37.1);
@@ -98,6 +107,10 @@
   --color-secondary: oklch(75.0% 0.150 162.5);
   /* #34D399 Menta Luminoso */
   --color-secondary-content: oklch(12.0% 0.030 162.5);
+
+  /* Disciplinas (Roxo Claro) */
+  --theme-tertiary: oklch(75% 0.18 300);
+  --theme-tertiary-content: oklch(12% 0 300);
 
   /* Alertas e Streak */
   --color-accent: oklch(70.0% 0.180 37.1);

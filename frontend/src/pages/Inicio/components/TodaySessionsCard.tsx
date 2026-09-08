@@ -33,35 +33,32 @@ export default function TodaySessionsCard({ sessoes = defaultSessoes }) {
         return `${String(h).padStart(2, '0')}h ${String(m).padStart(2, '0')}min`;
     };
 
-    const getBorderColor = (disciplina = '') => {
+    const getCardBg = (disciplina = '') => {
         const d = disciplina.toLowerCase();
-        if (d.includes('constitucional')) return 'bg-primary';
-        if (d.includes('portuguesa') || d.includes('português')) return 'bg-secondary';
-        if (d.includes('administrativo')) return 'bg-accent';
-        return 'bg-primary';
+        if (d.includes('constitucional')) return 'bg-primary/5';
+        if (d.includes('portuguesa') || d.includes('português')) return 'bg-secondary/10';
+        if (d.includes('administrativo')) return 'bg-accent/10';
+        return 'bg-primary/5';
     };
 
     return (
-        <div className="rounded-[22px] border border-base-300 bg-base-100 shadow-sm overflow-hidden flex flex-col justify-between h-full">
+        <div className="card-papyrus !p-0 flex flex-col justify-between h-full overflow-hidden">
             {/* HEADER */}
-            <div className="p-4 pb-3 border-b border-base-200 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                    <div className="w-7 h-7 rounded-lg bg-blue-50 text-primary flex items-center justify-center">
-                        <FileEdit size={15} />
-                    </div>
-                    <h3 className="text-sm font-bold text-base-content">Estudo Detalhado de Hoje</h3>
-                </div>
-                <span className="badge badge-xs bg-slate-100 text-slate-600 font-semibold py-2 px-2.5 rounded-full border-slate-200">
+            <div className="px-5 pt-5 pb-4 border-b border-base-200/60 flex items-center justify-between">
+                <span className="text-xs uppercase tracking-wider font-bold text-base-content/70">
+                    ESTUDO DE HOJE
+                </span>
+                <span className="badge badge-sm bg-base-200 text-neutral-content font-semibold py-2 px-2.5 rounded-lg border-base-300">
                     {sessoes.length} {sessoes.length === 1 ? 'sessão' : 'sessões'} hoje
                 </span>
             </div>
 
             {/* LISTA DE MATÉRIAS */}
-            <div className="p-3.5 space-y-2.5 flex-1">
+            <div className="px-5 pb-2 flex-1 overflow-y-auto">
                 {sessoes.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center h-36 text-center text-slate-400 gap-1.5">
+                    <div className="flex flex-col items-center justify-center h-36 text-center text-neutral-content gap-1.5 mt-4">
                         <p className="text-xs font-medium">Nenhum estudo registrado hoje.</p>
-                        <span className="text-[11px] text-slate-400">Inicie uma sessão para ver os detalhes aqui.</span>
+                        <span className="text-xs opacity-70">Inicie uma sessão para ver os detalhes aqui.</span>
                     </div>
                 ) : (
                     sessoes.map((sessao) => {
@@ -69,29 +66,25 @@ export default function TodaySessionsCard({ sessoes = defaultSessoes }) {
                         return (
                             <div
                                 key={sessao.id}
-                                className="relative pl-3.5 pr-3 py-2.5 rounded-xl border border-base-300 bg-white hover:border-slate-300 hover:shadow-xs transition-colors duration-150 space-y-2 overflow-hidden"
+                                className={`group relative py-4 border-b border-base-200/60 last:border-0 hover:bg-base-200/30 transition-colors duration-200 -mx-5 px-5`}
                             >
-                                {/* Listra Lateral */}
-                                <div className={`absolute left-0 top-0 bottom-0 w-1 rounded-l-xl ${getBorderColor(sessao.disciplina)}`} />
-
-                                <div>
-                                    <h4 className="text-sm font-bold text-base-content tracking-wide">
-                                        {toTitleCase(sessao.disciplina)}
-                                    </h4>
-                                    <p className="text-xs text-slate-500 font-normal mt-0.5">
-                                        {sessao.topico}
-                                    </p>
-                                </div>
-
-                                <div className="border-t border-slate-100 pt-2 flex items-center justify-between gap-2">
-                                    <div className="flex items-center gap-1.5 text-xs text-slate-600 bg-slate-50 px-2 py-1 rounded-lg border border-slate-100 font-medium">
-                                        <Clock className="text-slate-400" size={13} />
-                                        <span>{sessao.minutos} min líquidas</span>
-                                    </div>
-
-                                    <div className="flex items-center gap-1.5 text-xs text-emerald-700 bg-emerald-50 px-2 py-1 rounded-lg border border-emerald-100 font-semibold">
-                                        <Target className="text-emerald-600" size={13} />
-                                        <span>{sessao.questoes} questões</span>
+                                <div className="flex items-center gap-2">
+                                    <div className={`w-1.5 h-6 rounded-full shrink-0 ${getCardBg(sessao.disciplina).replace('/5', '').replace('/10', '')}`} />
+                                    <div>
+                                        <h4 className="text-sm font-bold text-base-content tracking-wide">
+                                            {toTitleCase(sessao.disciplina)}
+                                        </h4>
+                                        <div className="text-xs font-medium text-neutral-content flex items-center gap-1.5 mt-0.5">
+                                            <span>⏱ {formatHoraTotal(sessao.minutos)}</span>
+                                            {sessao.questoes > 0 && (
+                                                <>
+                                                    <span className="opacity-50">|</span>
+                                                    <span>{sessao.questoes} Questões</span>
+                                                    <span className="opacity-50">|</span>
+                                                    <span>{perc}% Acerto</span>
+                                                </>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -101,14 +94,7 @@ export default function TodaySessionsCard({ sessoes = defaultSessoes }) {
             </div>
 
             {/* RODAPÉ INTEGRADO */}
-            <div className="px-4 py-3 bg-slate-50/80 border-t border-base-200 flex items-center justify-between text-xs mt-auto">
-                <span className="text-slate-500 font-medium">
-                    Total: <strong className="font-bold text-base-content tabular-nums">{formatHoraTotal(totalMinutos)}</strong>
-                </span>
-                <span className="text-slate-500 font-medium">
-                    Questões: <strong className="font-bold text-secondary tabular-nums">{totalQuestoes} feitas</strong>
-                </span>
-            </div>
+
         </div>
     );
 }

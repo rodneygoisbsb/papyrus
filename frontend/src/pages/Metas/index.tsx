@@ -47,7 +47,7 @@ export default function MetasPage({
                                 </span>
                                 <span className="text-xs font-medium text-neutral-content mt-0.5">{metric.title}</span>
                                 {metric.subtitle && (
-                                    <span className={`text-[11px] font-medium mt-1.5 ${metric.subtitleColor}`}>
+                                    <span className={`text-xs font-medium mt-1.5 ${metric.subtitleColor}`}>
                                         {metric.subtitle}
                                     </span>
                                 )}

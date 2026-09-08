@@ -119,21 +119,21 @@ export default function DailyGoalsList({
                                         </h3>
 
                                         <div className="flex items-center gap-2 flex-wrap">
-                                            <span className={`${isCompact ? 'text-xs text-slate-500 font-normal' : 'text-[13px] font-medium text-base-content/80'} truncate transition-colors duration-150 ${goal.completed ? 'line-through opacity-60' : 'group-hover:text-base-content'}`}>
+                                            <span className={`${isCompact ? 'text-xs text-slate-500 font-normal' : 'text-sm font-medium text-base-content/80'} truncate transition-colors duration-150 ${goal.completed ? 'line-through opacity-60' : 'group-hover:text-base-content'}`}>
                                                 {goal.topicName || goal.topicoNome || 'Sem título'}
                                             </span>
 
                                             {isOverdue && !goal.completed && (
-                                                <span className="badge badge-sm bg-red-500 text-white font-bold px-2 py-0.5 rounded-md border-none uppercase text-[10px] tracking-wider shrink-0">
+                                                <span className="badge badge-sm bg-red-500 text-white font-bold px-2 py-0.5 rounded-md border-none uppercase text-xs tracking-wider shrink-0">
                                                     ATRASADA
                                                 </span>
                                             )}
 
-                                            <span className={`badge badge-sm border-none text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-md shrink-0 transition-colors duration-150 ${getTagStyle(goal.type)}`}>
+                                            <span className={`badge badge-sm border-none text-xs uppercase tracking-wider px-2 py-0.5 rounded-md shrink-0 transition-colors duration-150 ${getTagStyle(goal.type)}`}>
                                                 {typeLabel}
                                             </span>
 
-                                            <span className="badge badge-sm bg-base-200 text-neutral-content border-none font-medium text-[11px] px-2 py-0.5 rounded-md flex items-center gap-1 shrink-0 group-hover:bg-base-300/60 transition-colors duration-150">
+                                            <span className="badge badge-sm bg-base-200 text-neutral-content border-none font-medium text-xs px-2 py-0.5 rounded-md flex items-center gap-1 shrink-0 group-hover:bg-base-300/60 transition-colors duration-150">
                                                 <Clock size={11} />
                                                 <span className="tabular-nums">{duration} min</span>
                                             </span>
