@@ -290,13 +290,13 @@ export default function RegisterStudyModal({
                                 </ul>
                             )}
 
-                            {/* Teoria Finalizada Checkbox */}
+                            {/* Meta Finalizada Checkbox */}
                             <label className="mt-6 ml-1 flex items-center gap-2 cursor-pointer w-fit group">
                                 <div className={`w-3.5 h-3.5 rounded-[3px] border flex items-center justify-center transition-colors ${teoriaFinalizada ? 'bg-emerald-500 border-emerald-500' : 'bg-white border-slate-300 group-hover:border-slate-400'}`}>
                                     {teoriaFinalizada && <Check size={10} className="text-white" strokeWidth={3} />}
                                 </div>
                                 <span className={`text-xs font-bold uppercase tracking-widest select-none mt-[1px] ${teoriaFinalizada ? 'text-slate-800' : 'text-slate-500'}`}>
-                                    Teoria Finalizada
+                                    Meta Finalizada
                                 </span>
                                 <input
                                     type="checkbox"
@@ -431,10 +431,15 @@ export default function RegisterStudyModal({
                         </div>
                     </div>
 
-                    <div className="bg-white rounded-2xl border border-slate-200 p-5 space-y-4 shadow-sm">
+                    <div className={`bg-white rounded-2xl border border-slate-200 p-5 space-y-4 shadow-sm transition-opacity duration-300 relative ${!teoriaFinalizada ? 'opacity-50 pointer-events-none select-none' : ''}`}>
                         <p className="text-xs font-bold uppercase tracking-widest text-slate-400">
                             Agendamento de revisões periódicas
                         </p>
+                        {!teoriaFinalizada && (
+                            <p className="text-xs font-medium text-slate-400 mt-1 absolute right-5 top-4 italic">
+                                Finalize a meta para habilitar
+                            </p>
+                        )}
 
                         <div className="flex flex-wrap gap-2">
                             {REVISION_CYCLES.map(({ id, label }) => {

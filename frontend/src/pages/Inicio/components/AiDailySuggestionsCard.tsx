@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Lightbulb, EyeOff, Play, CheckCircle2, Sparkles } from 'lucide-react';
+import { Lightbulb, EyeOff, Play, CheckCircle2, Sparkles, PenLine } from 'lucide-react';
 import { toTitleCase } from '../../../utils/studyCalculations';
 
 const defaultSuggestions = [
@@ -44,7 +44,10 @@ const defaultSuggestions = [
 export default function AiDailySuggestionsCard({
   suggestions = defaultSuggestions,
   onStartFocusSession,
-  onRegisterStudy
+  onRegisterStudy,
+  registeredGoalIds = new Set(),
+  completedSuggestionIds = new Set(),
+  toggleSuggestionCompletion
 }) {
   const [items, setItems] = useState(suggestions);
 
@@ -60,7 +63,12 @@ export default function AiDailySuggestionsCard({
   };
 
   const flatTopics = items.flatMap(group =>
-    group.topics.map(topic => ({ ...topic, subjectName: group.subjectName, subjectColor: group.colorClass }))
+    group.topics.map(topic => ({
+      ...topic,
+      subjectName: group.subjectName,
+      subjectColor: group.colorClass,
+      completed: completedSuggestionIds.has(topic.id)
+    }))
   );
 
   if (!flatTopics.length) {
@@ -76,9 +84,9 @@ export default function AiDailySuggestionsCard({
   }
 
   return (
-    <div className="card-papyrus !p-0 flex flex-col justify-between h-full overflow-hidden font-['Plus_Jakarta_Sans']">
+    <div className="card-papyrus !p-0 flex flex-col justify-between h-full overflow-hidden font-['Plus_Jakarta_Sans'] !bg-amber-50/40 !border-amber-200/60">
       {/* Header */}
-      <div className="px-5 pt-5 pb-4 border-b border-base-200/60 flex items-center justify-between">
+      <div className="px-5 pt-5 pb-4 border-b border-amber-200/60 flex items-center justify-between">
         <div className="flex flex-col gap-0.5">
           <span className="text-xs uppercase tracking-wider font-bold text-base-content/70">Sugestões do Dia</span>
 
@@ -93,20 +101,26 @@ export default function AiDailySuggestionsCard({
         {flatTopics.map((topic) => (
           <div
             key={topic.id}
-            className="group relative py-4 border-b border-base-200/60 last:border-0 hover:bg-base-200/30 transition-colors duration-200 -mx-5 px-5 cursor-pointer"
-            onClick={() => onStartFocusSession && onStartFocusSession(topic)}
+            className="group relative py-4 border-b border-amber-100 last:border-0 hover:bg-amber-100/40 transition-colors duration-200 -mx-5 px-5 cursor-pointer"
+            onClick={() => {
+              if (!topic.completed && !registeredGoalIds?.has(topic.id) && onRegisterStudy) {
+                onRegisterStudy(topic);
+              } else if (toggleSuggestionCompletion) {
+                toggleSuggestionCompletion(topic.id);
+              }
+            }}
           >
             <div className="flex items-start gap-3.5 min-w-0">
               {/* Barra vertical colorida */}
-              <div className={`w-1.5 h-8 mt-1 rounded-full shrink-0 ${topic.subjectColor ? topic.subjectColor.replace('border-l-', 'bg-') : 'bg-primary'}`} />
-              
+              <div className={`w-1.5 h-8 mt-1 rounded-full shrink-0 ${topic.completed ? 'bg-base-300' : (topic.subjectColor ? topic.subjectColor.replace('border-l-', 'bg-') : 'bg-primary')}`} />
+
               <div className="flex flex-col flex-1 min-w-0">
                 {/* Textos */}
                 <div className="flex flex-col gap-0.5 min-w-0">
-                  <span className="text-sm font-bold truncate transition-colors duration-150 text-base-content">
+                  <span className={`text-sm font-bold truncate transition-colors duration-150 ${topic.completed ? 'text-neutral-content line-through' : 'text-base-content'}`}>
                     {toTitleCase(topic.subjectName)}
                   </span>
-                  <span className="text-xs font-medium truncate transition-colors duration-150 text-neutral-content">
+                  <span className={`text-xs font-medium truncate transition-colors duration-150 ${topic.completed ? 'text-neutral-content/70' : 'text-neutral-content'}`}>
                     {topic.name}
                   </span>
                 </div>
@@ -115,37 +129,53 @@ export default function AiDailySuggestionsCard({
                 <div className="flex flex-wrap items-center justify-between gap-3 pt-2 mt-1">
                   {/* Lado Esquerdo: Tags */}
                   <div className="flex items-center gap-1.5 flex-wrap">
-                    <span className="badge badge-xs border-none text-[10px] uppercase tracking-wider px-2 py-1.5 rounded bg-info/10 text-info font-bold">
+                    <span className={`badge badge-xs border-none text-[10px] uppercase tracking-wider px-2 py-1.5 rounded font-bold ${topic.completed ? 'bg-base-200 text-neutral-content/50' : 'bg-info/10 text-info'
+                      }`}>
                       {topic.type}
                     </span>
-                    <span className="badge badge-xs border-none text-[10px] uppercase tracking-wider px-2 py-1.5 rounded bg-accent/10 text-accent font-bold">
+                    <span className={`badge badge-xs border-none text-[10px] uppercase tracking-wider px-2 py-1.5 rounded font-bold ${topic.completed ? 'bg-base-200 text-neutral-content/50' : 'bg-accent/10 text-accent'
+                      }`}>
                       {topic.statusTag}
                     </span>
-                    <span className="badge badge-xs bg-base-200 text-neutral-content font-medium px-2 py-1.5 rounded-md border-none text-[10px]">
+                    <span className={`badge badge-xs font-medium px-2 py-1.5 rounded-md border-none text-[10px] ${topic.completed ? 'bg-base-200 text-neutral-content/50' : 'bg-base-200 text-neutral-content'
+                      }`}>
                       {topic.durationMinutes} min
                     </span>
                   </div>
 
                   {/* Lado Direito: Ações (Safe Zone - Gap 4 = 16px) */}
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-3">
                     <button
                       type="button"
                       onClick={(e) => {
                         e.stopPropagation();
                         handleDismissTopic(topic.id);
                       }}
-                      className="btn btn-xs btn-ghost text-neutral-content hover:bg-base-200 px-2 h-8 min-h-0"
+                      className="text-neutral-content/60 hover:text-neutral-content hover:scale-110 transition-transform cursor-pointer"
                       title="Ocultar sugestão"
                     >
-                      <EyeOff size={14} />
+                      <EyeOff size={15} />
                     </button>
+                    {onRegisterStudy && (
+                      <button
+                        type="button"
+                        onClick={(e) => { e.stopPropagation(); onRegisterStudy(topic); }}
+                        className="text-neutral-content/60 hover:text-neutral-content hover:scale-110 transition-transform cursor-pointer"
+                        title="Registrar Manualmente"
+                      >
+                        <PenLine size={15} />
+                      </button>
+                    )}
                     <button
                       type="button"
                       onClick={(e) => {
                         e.stopPropagation();
                         onStartFocusSession && onStartFocusSession(topic);
                       }}
-                      className="btn btn-sm bg-primary/10 text-primary hover:bg-primary/20 border-none rounded-xl px-5 font-bold gap-1.5 h-8 min-h-0 text-xs shadow-none"
+                      className={`btn btn-sm border-none rounded-xl px-5 font-bold gap-1.5 h-8 min-h-0 text-xs shadow-none ${topic.completed
+                          ? 'bg-base-200 text-neutral-content/50 hover:bg-base-300'
+                          : 'bg-primary/10 text-primary hover:bg-primary/20'
+                        }`}
                     >
                       <Play size={12} fill="currentColor" />
                       Estudar
@@ -159,10 +189,10 @@ export default function AiDailySuggestionsCard({
       </div>
 
       {/* Footer Dica Pedagógica */}
-      <div className="px-4 py-3.5 bg-base-100 border-t border-base-200 flex items-start gap-2 text-xs text-neutral-content mt-auto">
-        <Lightbulb size={14} className="text-accent shrink-0 mt-0.5" />
-        <span>
-          <strong className="text-base-content">Dica da IA:</strong> Priorize resolver questões nos tópicos de retenção baixa (&lt;70%) antes de avançar na teoria.
+      <div className="px-4 py-3.5 !bg-amber-100/40 border-t border-amber-200/60 flex items-start gap-2 text-xs text-neutral-content mt-auto">
+        <Lightbulb size={14} className="text-amber-600 shrink-0 mt-0.5" />
+        <span className="text-amber-900/80">
+          <strong className="text-amber-900">Dica da IA:</strong> Priorize resolver questões nos tópicos de retenção baixa (&lt;70%) antes de avançar na teoria.
         </span>
       </div>
     </div>

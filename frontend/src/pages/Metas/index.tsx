@@ -12,6 +12,7 @@ export default function MetasPage({
 }) {
     const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
     const [initialRegisterData, setInitialRegisterData] = useState<any>(null);
+    const [registeredGoalIds, setRegisteredGoalIds] = useState<Set<string>>(new Set());
 
     const metasCadastradas = dailyGoals.filter(g => g.type !== 'REVISION').length;
 
@@ -58,11 +59,12 @@ export default function MetasPage({
                     onStartFocusSession={handleOpenStudy}
                     onOpenRegisterModal={() => setIsRegisterModalOpen(true)}
                     onManualRegister={(goal) => {
-                        setInitialRegisterData({ subject: goal.subject, topicName: goal.topicName, type: 'REVISION' });
+                        setInitialRegisterData({ id: goal.id, subject: goal.subject, topicName: goal.topicName, type: 'REVISION' });
                         setIsRegisterModalOpen(true);
                     }}
                     setActiveTab={setActiveTab}
                     isCompact={false}
+                    registeredGoalIds={registeredGoalIds}
                 />
             </section>
 
@@ -76,11 +78,12 @@ export default function MetasPage({
                     handleOpenStudy={handleOpenStudy}
                     setIsRegisterModalOpen={setIsRegisterModalOpen}
                     onManualRegister={(goal) => {
-                        setInitialRegisterData({ subject: goal.subject, topicName: goal.topicName });
+                        setInitialRegisterData({ id: goal.id, subject: goal.subject, topicName: goal.topicName });
                         setIsRegisterModalOpen(true);
                     }}
                     setActiveTab={setActiveTab}
                     isCompact={false}
+                    registeredGoalIds={registeredGoalIds}
                 />
             </section>
 
@@ -94,6 +97,10 @@ export default function MetasPage({
                 initialData={initialRegisterData}
                 onSave={(dados) => {
                     console.log('Estudo registrado a partir de metas:', dados);
+                    if (initialRegisterData?.id) {
+                        setRegisteredGoalIds(prev => new Set(prev).add(initialRegisterData.id));
+                        toggleGoalCompletion(initialRegisterData.id);
+                    }
                     setIsRegisterModalOpen(false);
                     setInitialRegisterData(null);
                 }}

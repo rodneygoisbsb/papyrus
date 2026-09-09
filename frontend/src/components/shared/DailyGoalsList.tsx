@@ -10,6 +10,7 @@ interface DailyGoalsListProps {
     onManualRegister?: (goal: any) => void;
     setActiveTab?: (tab: string) => void;
     isCompact?: boolean;
+    registeredGoalIds?: Set<string>;
 }
 
 export default function DailyGoalsList({
@@ -19,7 +20,8 @@ export default function DailyGoalsList({
     setIsRegisterModalOpen,
     onManualRegister,
     setActiveTab,
-    isCompact = false
+    isCompact = false,
+    registeredGoalIds = new Set()
 }: DailyGoalsListProps) {
     const safeGoals = Array.isArray(dailyGoals) ? dailyGoals : [];
     const regularMetas = safeGoals.filter((g) => g?.type !== 'REVISION');
@@ -74,7 +76,7 @@ export default function DailyGoalsList({
                                 key={goal.id}
                                 className="group relative py-4 border-b border-base-200/60 last:border-0 flex items-center justify-between hover:bg-base-200/30 transition-colors duration-200 -mx-5 px-5 cursor-pointer"
                                 onClick={() => {
-                                    if (onManualRegister) {
+                                    if (!goal.completed && !registeredGoalIds.has(goal.id) && onManualRegister) {
                                         onManualRegister(goal);
                                     } else {
                                         toggleGoalCompletion(goal.id);

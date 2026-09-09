@@ -25,6 +25,9 @@ export default function InicioPage({
     handleReplanGoals = () => { }
 }) {
     const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
+    const [initialRegisterData, setInitialRegisterData] = useState<any>(null);
+    const [registeredGoalIds, setRegisteredGoalIds] = useState<Set<string>>(new Set());
+    const [completedSuggestionIds, setCompletedSuggestionIds] = useState<Set<string>>(new Set());
     const [isReplanModalOpen, setIsReplanModalOpen] = useState(false);
 
     // Mock verification for overdue items (considering our mock logic that goal index 0 is overdue if not completed)
@@ -85,13 +88,31 @@ export default function InicioPage({
                         toggleRevisionCompletion={toggleGoalCompletion}
                         onStartFocusSession={handleOpenStudy}
                         onOpenRegisterModal={() => setIsRegisterModalOpen(true)}
+                        onManualRegister={(goal) => {
+                            setInitialRegisterData({ id: goal.id, subject: goal.subject, topicName: goal.topicName, type: 'REVISION' });
+                            setIsRegisterModalOpen(true);
+                        }}
                         setActiveTab={setActiveTab}
                         isCompact={true}
+                        registeredGoalIds={registeredGoalIds}
                     />
 
                     <AiDailySuggestionsCard
-                        onRegisterStudy={() => setIsRegisterModalOpen(true)}
+                        onRegisterStudy={(topic) => {
+                            setInitialRegisterData({ id: topic.id, subject: topic.subjectName, topicName: topic.name, isSuggestion: true });
+                            setIsRegisterModalOpen(true);
+                        }}
                         onStartFocusSession={handleOpenStudy}
+                        registeredGoalIds={registeredGoalIds}
+                        completedSuggestionIds={completedSuggestionIds}
+                        toggleSuggestionCompletion={(id) => {
+                            setCompletedSuggestionIds(prev => {
+                                const next = new Set(prev);
+                                if (next.has(id)) next.delete(id);
+                                else next.add(id);
+                                return next;
+                            });
+                        }}
                     />
                 </div>
 
@@ -109,11 +130,24 @@ export default function InicioPage({
             {/* Modal de Registro de Estudo */}
             <RegisterStudyModal
                 isOpen={isRegisterModalOpen}
-                onClose={() => setIsRegisterModalOpen(false)}
+                onClose={() => {
+                    setIsRegisterModalOpen(false);
+                    setInitialRegisterData(null);
+                }}
                 initialTime={{ hours: 0, minutes: 0 }}
+                initialData={initialRegisterData}
                 onSave={(dados) => {
                     console.log('Estudo registrado:', dados);
+                    if (initialRegisterData?.id) {
+                        setRegisteredGoalIds(prev => new Set(prev).add(initialRegisterData.id));
+                        if (initialRegisterData.isSuggestion) {
+                            setCompletedSuggestionIds(prev => new Set(prev).add(initialRegisterData.id));
+                        } else {
+                            toggleGoalCompletion(initialRegisterData.id);
+                        }
+                    }
                     setIsRegisterModalOpen(false);
+                    setInitialRegisterData(null);
                 }}
             />
 

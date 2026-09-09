@@ -10,6 +10,7 @@ interface DailyRevisionsListProps {
     onManualRegister?: (goal: any) => void;
     setActiveTab?: (tab: string) => void;
     isCompact?: boolean;
+    registeredGoalIds?: Set<string>;
 }
 
 export default function DailyRevisionsList({
@@ -20,6 +21,7 @@ export default function DailyRevisionsList({
     onManualRegister,
     setActiveTab = () => { },
     isCompact = false,
+    registeredGoalIds = new Set(),
 }: DailyRevisionsListProps) {
     const totalMinutes = revisions.reduce((acc, rev) => acc + (rev.durationMinutes || 0), 0);
     const isHeavyLoad = totalMinutes > 180;
@@ -80,7 +82,7 @@ export default function DailyRevisionsList({
                                 key={rev.id}
                                 className="group relative py-4 border-b border-base-200/60 last:border-0 flex items-center justify-between hover:bg-base-200/30 transition-colors duration-200 -mx-5 px-5 cursor-pointer"
                                 onClick={() => {
-                                    if (onManualRegister) {
+                                    if (!rev.completed && !registeredGoalIds.has(rev.id) && onManualRegister) {
                                         onManualRegister({ ...rev, type: 'REVISION' });
                                     } else {
                                         toggleRevisionCompletion(rev.id);
@@ -133,7 +135,7 @@ export default function DailyRevisionsList({
                                 {/* Utilitários + Botões de Ação */}
                                 <div className="flex items-center gap-3 shrink-0 ml-4">
                                     {/* Micro-chips de atalho em vez de icones soltos */}
-                                    {rev.tecUrl && (
+                                    {rev.tecUrl && !isCompact && (
                                         <a
                                             href={rev.tecUrl}
                                             target="_blank"
