@@ -10,12 +10,21 @@ export default function Header({
     streakDays = 0,
 }) {
     const [isPlanOpen, setIsPlanOpen] = useState(false);
+    const [isScrolled, setIsScrolled] = useState(false);
 
     const planoAtivo = planosDisponiveis.find((p) => p.id === selectedPlanId);
 
-    return (
-        <header className="h-[68px] px-7 flex items-center justify-between bg-base-100 border-b border-base-300/60 sticky top-0 z-30 shrink-0 shadow-sm">
+    // Monitora o scroll para fixar apenas o cronômetro
+    React.useEffect(() => {
+        const handleScroll = () => {
+            setIsScrolled(window.scrollY > 10);
+        };
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
 
+    return (
+        <header className="h-[68px] px-7 flex items-center justify-between bg-base-100 border-b border-base-300/60 relative z-20 shrink-0 shadow-sm">
             {/* ESQUERDA: Seletor de plano */}
             <div className="flex items-center gap-3 pl-4">
                 <span className="text-xs uppercase font-bold tracking-widest text-neutral-content">
@@ -58,10 +67,6 @@ export default function Header({
 
             {/* DIREITA: Cronômetro + Streak */}
             <div className="flex items-center gap-3">
-
-                {/* Cronômetro Oficial (Isolado e Reativo) */}
-                <StudyTimer />
-
                 {/* Badge streak */}
                 <div className="flex items-center gap-1.5 bg-orange-50 border border-orange-200 text-accent font-bold text-xs rounded-full px-3.5 py-1.5 shadow-2xs">
                     <Flame size={15} className="text-accent fill-accent/80 shrink-0" />
@@ -69,6 +74,10 @@ export default function Header({
                     <span className="sm:hidden">{streakDays}d</span>
                 </div>
 
+                {/* Cronômetro Oficial (Flex quando no topo, Fixed quando rola) */}
+                <div className={isScrolled ? "fixed top-[12px] right-7 z-50 animate-in fade-in slide-in-from-top-2 duration-300" : "relative z-30"}>
+                    <StudyTimer isFloating={isScrolled} />
+                </div>
             </div>
         </header>
     );

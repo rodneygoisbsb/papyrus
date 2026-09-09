@@ -6,25 +6,35 @@ export interface UseStudyTimerOptions {
 }
 
 export function useStudyTimer(options?: UseStudyTimerOptions) {
-  const [seconds, setSeconds] = useLocalStorage<number>('@papyrus:timerSeconds', 0);
+  const [accumulated, setAccumulated] = useLocalStorage<number>('@papyrus:timerAccumulated', 0);
+  const [startTime, setStartTime] = useLocalStorage<number | null>('@papyrus:timerStartTime', null);
   const [activeContext, setActiveContext] = useLocalStorage<Record<string, any> | null>('@papyrus:activeContext', null);
-  const [isRunning, setIsRunning] = useState<boolean>(false);
+  
+  const [seconds, setSeconds] = useState<number>(0);
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
+  const isRunning = startTime !== null;
+
+  // Sync visual seconds
   useEffect(() => {
     let interval: ReturnType<typeof setInterval> | undefined;
 
     if (isRunning) {
+      // Immediate update
+      setSeconds(accumulated + Math.floor((Date.now() - startTime) / 1000));
+      
       interval = setInterval(() => {
-        setSeconds((prev) => prev + 1);
+        setSeconds(accumulated + Math.floor((Date.now() - startTime) / 1000));
       }, 1000);
+    } else {
+      setSeconds(accumulated);
     }
 
     return () => {
       if (interval) clearInterval(interval);
     };
-  }, [isRunning, setSeconds]);
+  }, [isRunning, startTime, accumulated]);
 
   useEffect(() => {
     const handleOpenFocus = (e: Event) => {
@@ -32,24 +42,34 @@ export function useStudyTimer(options?: UseStudyTimerOptions) {
       const goal = customEvent.detail;
       
       setActiveContext(goal);
-      setSeconds(0);
-      setIsRunning(true);
-      // setIsFullscreen(true); // Opcional: abre a tela cheia. O usuário pediu para "abrir o cronometro e comecar a contabilizar"
-      // Se não abrirmos o fullscreen, ele só começa a rodar no header. Vamos abrir o fullscreen por padrão se era "zen-focus"
+      setAccumulated(0);
+      setStartTime(Date.now());
       setIsFullscreen(true);
     };
 
     window.addEventListener('papyrus:open-zen-focus', handleOpenFocus);
     return () => window.removeEventListener('papyrus:open-zen-focus', handleOpenFocus);
-  }, [setActiveContext, setSeconds]);
+  }, [setActiveContext, setAccumulated, setStartTime]);
 
   const handleToggleTimer = () => {
-    setIsRunning((prev) => !prev);
+    if (isRunning) {
+      // Pause
+      setAccumulated(accumulated + Math.floor((Date.now() - startTime!) / 1000));
+      setStartTime(null);
+    } else {
+      // Play manual
+      if (accumulated === 0) {
+        setActiveContext(null);
+      }
+      setStartTime(Date.now());
+    }
   };
 
   const handleReset = () => {
-    setIsRunning(false);
+    setStartTime(null);
+    setAccumulated(0);
     setSeconds(0);
+    setActiveContext(null);
   };
 
   const handleOpenFocus = () => {
@@ -62,14 +82,16 @@ export function useStudyTimer(options?: UseStudyTimerOptions) {
 
   const handleOpenManualRegister = () => {
     setActiveContext(null);
-    setSeconds(0);
-    setIsRunning(false);
+    handleReset();
     setIsFullscreen(false);
     setIsModalOpen(true);
   };
 
   const handleOpenSaveModal = () => {
-    setIsRunning(false);
+    if (isRunning) {
+      setAccumulated(accumulated + Math.floor((Date.now() - startTime!) / 1000));
+      setStartTime(null);
+    }
     setIsFullscreen(false);
     setIsModalOpen(true);
   };
@@ -86,8 +108,7 @@ export function useStudyTimer(options?: UseStudyTimerOptions) {
       });
     }
     setIsModalOpen(false);
-    setSeconds(0);
-    setIsRunning(false);
+    handleReset();
     setActiveContext(null);
   };
 

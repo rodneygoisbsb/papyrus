@@ -21,7 +21,7 @@ export default function MainLayout({
                     setSelectedPlanId={setSelectedPlanId}
                     streakDays={streakDays}
                 />
-                <main className="p-6 max-w-7xl w-full mx-auto flex-1">
+                <main className={`p-6 w-full mx-auto flex-1 ${activeTab === 'planejamento' ? 'max-w-[1600px]' : 'max-w-7xl'}`}>
                     {children}
                 </main>
             </div>

@@ -43,7 +43,7 @@ export default function RichTextEditorModal({
                         </div>
                         <div>
                             <h3 className="text-base font-extrabold text-base-content">{title}</h3>
-                            <p className="text-[11px] text-neutral-content">
+                            <p className="text-xs text-neutral-content">
                                 {activeStudyModal?.subject} • {activeStudyModal?.topicName}
                             </p>
                         </div>

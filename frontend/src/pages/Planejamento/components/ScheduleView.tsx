@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { ChevronLeft, ChevronRight, Plus, CheckCircle2, Circle } from 'lucide-react';
-import ScheduleGoalModal from '../../components/modals/ScheduleGoalModal';
-import RegisterStudyModal from '../../components/modals/RegisterStudyModal';
+import ScheduleGoalModal from '../../../components/modals/ScheduleGoalModal';
+import RegisterStudyModal from '../../../components/modals/RegisterStudyModal';
 
 const MOCK_WEEK = [
     {
@@ -88,7 +88,17 @@ const getTypeLabel = (type: string) => {
     }
 };
 
-export default function QuadroSemanalPage() {
+export default function QuadroSemanalPage({
+    hideHeader = false,
+    title = "Cronograma Semanal",
+    subtitle = "Planeje e acompanhe suas tarefas de estudo",
+    headerAction = null
+}: {
+    hideHeader?: boolean,
+    title?: string,
+    subtitle?: string,
+    headerAction?: React.ReactNode
+}) {
     const [weekData, setWeekData] = useState(MOCK_WEEK);
     const [weekOffset, setWeekOffset] = useState(0);
     const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
@@ -102,20 +112,18 @@ export default function QuadroSemanalPage() {
     };
 
     const toggleGoalCompletion = (dayIndex: number, goalId: string) => {
-        // Only allow toggling if we are in the current week (where mock data lives)
         if (weekOffset !== 0) return;
-        
+
         const newData = [...weekData];
         const goalIndex = newData[dayIndex].goals.findIndex(g => g.id === goalId);
         if (goalIndex > -1) {
             const goal = newData[dayIndex].goals[goalIndex];
-            
-            // If the goal is being marked as completed (was false), open the register modal
+
             if (!goal.completed) {
                 setSelectedGoalToRegister(goal);
                 setIsRegisterModalOpen(true);
             }
-            
+
             goal.completed = !goal.completed;
             setWeekData(newData);
         }
@@ -123,13 +131,13 @@ export default function QuadroSemanalPage() {
 
     const getDatesForWeekOffset = (offset: number) => {
         const today = new Date();
-        const currentDay = today.getDay(); // 0 is Sunday, 1 is Monday
+        const currentDay = today.getDay();
         const daysToMonday = currentDay === 0 ? -6 : 1 - currentDay;
-        
+
         const monday = new Date(today);
         monday.setDate(today.getDate() + daysToMonday + (offset * 7));
         monday.setHours(0, 0, 0, 0);
-        
+
         const weekDates = [];
         for (let i = 0; i < 7; i++) {
             const d = new Date(monday);
@@ -147,13 +155,12 @@ export default function QuadroSemanalPage() {
         const dateStr = date.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
         const dayNames = ['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB'];
         const dayName = dayNames[date.getDay()];
-        
+
         const today = new Date();
         const isToday = date.getDate() === today.getDate() && date.getMonth() === today.getMonth() && date.getFullYear() === today.getFullYear();
-        
-        // Use mock goals only for the current week
+
         const goals = weekOffset === 0 ? weekData[index].goals : [];
-        
+
         return {
             date: dateStr,
             dayName,
@@ -162,53 +169,55 @@ export default function QuadroSemanalPage() {
         };
     });
 
-    // Cálculos de progresso
     const totalGoals = displayWeekData.reduce((acc, day) => acc + day.goals.length, 0);
     const completedGoals = displayWeekData.reduce((acc, day) => acc + day.goals.filter(g => g.completed).length, 0);
     const progressPercent = totalGoals > 0 ? Math.round((completedGoals / totalGoals) * 100) : 0;
 
     return (
-        <div className="space-y-6 animate-in fade-in duration-200 min-h-full flex flex-col font-['Plus_Jakarta_Sans']">
-            {/* Header */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                    <h2 className="text-2xl font-black text-base-content tracking-tight">Cronograma Semanal</h2>
-                    <p className="text-sm font-medium text-neutral-content mt-1">Planeje e acompanhe suas tarefas de estudo</p>
-                </div>
-                
-                {/* Legenda e Navegação de Data */}
-                <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
-                    <div className="flex items-center gap-3 bg-base-100 border border-base-200 px-3 py-1.5 rounded-xl shadow-sm">
-                        <div className="flex items-center gap-1.5"><div className="w-2.5 h-2.5 rounded-full bg-[#409cf0]"></div><span className="text-[11px] font-bold text-base-content">Estudo</span></div>
-                        <div className="flex items-center gap-1.5"><div className="w-2.5 h-2.5 rounded-full bg-orange-500"></div><span className="text-[11px] font-bold text-base-content">Revisão</span></div>
-                        <div className="flex items-center gap-1.5"><div className="w-2.5 h-2.5 rounded-full bg-emerald-500"></div><span className="text-[11px] font-bold text-base-content">Questões</span></div>
-                    </div>
+        <div className="space-y-4 animate-in fade-in duration-200 min-h-full flex flex-col font-['Plus_Jakarta_Sans']">
+            {/* Header Unificado com Progresso e Controles */}
+            <div className="bg-base-100 border border-base-200 rounded-2xl p-4 shadow-sm flex flex-col xl:flex-row gap-5 xl:items-center justify-between">
 
+                {/* Título e Subtítulo (se não estiver escondido) */}
+                {!hideHeader && (
+                    <div className="shrink-0 xl:mr-4">
+                        <h2 className="text-xl font-black text-base-content tracking-tight">{title}</h2>
+                    </div>
+                )}
+
+                {/* Progresso */}
+                <div className="flex-1 w-full min-w-[200px] xl:max-w-[400px]">
+                    <div className="flex justify-between items-center mb-1.5">
+                        <span className="text-xs font-bold text-base-content uppercase tracking-wider">Progresso da Semana</span>
+                        <span className="text-xs font-bold text-success">{completedGoals}/{totalGoals} ({progressPercent}%)</span>
+                    </div>
+                    <div className="w-full h-2 bg-base-200 rounded-full overflow-hidden">
+                        <div
+                            className="h-full bg-success transition-all duration-500 rounded-full"
+                            style={{ width: `${progressPercent}%` }}
+                        />
+                    </div>
+                </div>
+
+                {/* Navegação de Data e Ações extras */}
+                <div className="flex flex-col sm:flex-row items-center gap-4 shrink-0">
                     <div className="flex items-center gap-1">
                         <button onClick={() => setWeekOffset(prev => prev - 1)} className="btn btn-sm btn-square btn-ghost text-slate-500 hover:bg-base-200 cursor-pointer">
                             <ChevronLeft size={18} />
                         </button>
-                        <div className="px-3 py-1.5 rounded-xl bg-base-100 border border-base-200 shadow-sm text-sm font-bold text-base-content">
+                        <div className="px-3 py-1.5 rounded-xl bg-base-50/50 border border-base-200 shadow-xs text-sm font-bold text-base-content">
                             {startDateStr} - {endDateStr} {weekOffset === 0 && <span className="text-primary ml-1">(atual)</span>}
                         </div>
                         <button onClick={() => setWeekOffset(prev => prev + 1)} className="btn btn-sm btn-square btn-ghost text-slate-500 hover:bg-base-200 cursor-pointer">
                             <ChevronRight size={18} />
                         </button>
                     </div>
-                </div>
-            </div>
 
-            {/* Barra de Progresso */}
-            <div className="bg-base-100 border border-base-200 rounded-2xl p-4 shadow-sm">
-                <div className="flex justify-between items-center mb-2">
-                    <span className="text-xs font-bold text-base-content uppercase tracking-wider">Progresso da Semana</span>
-                    <span className="text-xs font-bold text-success">{completedGoals}/{totalGoals} ({progressPercent}%)</span>
-                </div>
-                <div className="w-full h-2.5 bg-base-200 rounded-full overflow-hidden">
-                    <div
-                        className="h-full bg-success transition-all duration-500 rounded-full"
-                        style={{ width: `${progressPercent}%` }}
-                    />
+                    {headerAction && (
+                        <div className="flex items-center">
+                            {headerAction}
+                        </div>
+                    )}
                 </div>
             </div>
 
@@ -220,7 +229,7 @@ export default function QuadroSemanalPage() {
                     return (
                         <div key={`header-${day.date}`} className={`p-3 text-center border-b border-base-200 bg-base-50 ${!isLast ? 'border-r border-base-200' : ''}`}>
                             <h3 className={`text-xs font-black uppercase ${day.isToday ? 'text-primary' : 'text-base-content'}`}>{day.dayName}</h3>
-                            <p className={`text-[10px] font-bold mt-0.5 ${day.isToday ? 'text-primary' : 'text-neutral-content'}`}>{day.date}</p>
+                            <p className={`text-xs font-bold mt-0.5 ${day.isToday ? 'text-primary' : 'text-neutral-content'}`}>{day.date}</p>
                         </div>
                     );
                 })}
@@ -231,7 +240,7 @@ export default function QuadroSemanalPage() {
                         {displayWeekData.map((day, dayIndex) => {
                             const isLast = dayIndex === displayWeekData.length - 1;
                             const goal = day.goals[rowIndex];
-                            
+
                             return (
                                 <div key={`cell-${day.date}-${rowIndex}`} className={`p-1.5 ${!isLast ? 'border-r border-base-200' : ''}`}>
                                     {goal ? (
@@ -246,16 +255,19 @@ export default function QuadroSemanalPage() {
                                             </button>
 
                                             <div className="flex flex-col gap-1 flex-1">
-                                                <span className={`text-[10px] font-bold leading-tight pr-4 ${goal.completed ? 'line-through opacity-80' : ''}`}>
+                                                <span className={`text-xs font-bold leading-tight pr-4 ${goal.completed ? 'line-through opacity-80' : ''}`}>
                                                     {goal.subject}
                                                 </span>
                                                 {goal.topicName && (
-                                                    <span className={`text-[9px] font-medium leading-tight opacity-90 ${goal.completed ? 'line-through' : ''}`}>
+                                                    <span className={`text-xs font-medium leading-tight opacity-90 ${goal.completed ? 'line-through' : ''}`}>
                                                         {goal.topicName}
                                                     </span>
                                                 )}
-                                                <div className="mt-auto pt-2">
-                                                    <span className="text-[9px] font-bold bg-black/5 border border-black/5 px-1.5 py-0.5 rounded text-slate-600 inline-block">
+                                                <div className="mt-auto pt-2 flex flex-col items-start gap-1">
+                                                    <span className="text-xs font-extrabold tracking-wide text-black/40 mix-blend-multiply leading-none">
+                                                        {getTypeLabel(goal.type)}
+                                                    </span>
+                                                    <span className="text-xs font-bold bg-black/5 border border-black/5 px-1.5 py-0.5 rounded text-slate-600 inline-block">
                                                         {Math.floor(goal.durationMinutes / 60)}h{(goal.durationMinutes % 60).toString().padStart(2, '0')}min
                                                     </span>
                                                 </div>
@@ -277,7 +289,7 @@ export default function QuadroSemanalPage() {
                         <div key={`footer-${day.date}`} className={`p-1.5 border-t border-base-200 mt-auto bg-base-50/40 ${!isLast ? 'border-r border-base-200' : ''}`}>
                             <button
                                 onClick={() => handleAddGoalClick(day.date)}
-                                className="w-full py-2 rounded-lg text-[10px] font-bold transition-colors text-slate-400 hover:bg-base-200 hover:text-slate-600"
+                                className="w-full py-2 rounded-lg text-xs font-bold transition-colors text-slate-400 hover:bg-base-200 hover:text-slate-600"
                             >
                                 <Plus size={14} className="mx-auto" />
                             </button>

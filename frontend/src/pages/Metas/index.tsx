@@ -12,6 +12,7 @@ export default function MetasPage({
 }) {
     const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
     const [initialRegisterData, setInitialRegisterData] = useState<any>(null);
+    const [registeredGoalIds, setRegisteredGoalIds] = useState<Set<string>>(new Set());
 
     const metasCadastradas = dailyGoals.filter(g => g.type !== 'REVISION').length;
 
@@ -19,13 +20,6 @@ export default function MetasPage({
         <div className="space-y-8 animate-in fade-in duration-200 w-full min-w-0">
             {/* Seção de Métricas de Estudo Diário */}
             <section className="space-y-4">
-                <div className="flex justify-between items-center">
-                    <div>
-                        <h2 className="text-2xl font-bold text-base-content tracking-tight">Metas de Hoje</h2>
-                        <p className="text-sm text-neutral-content mt-1">Gerencie suas metas de teoria e questões diárias.</p>
-                    </div>
-                </div>
-
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                     {/* Métricas de Estudo Diário (Mock) */}
                     {[
@@ -47,7 +41,7 @@ export default function MetasPage({
                                 </span>
                                 <span className="text-xs font-medium text-neutral-content mt-0.5">{metric.title}</span>
                                 {metric.subtitle && (
-                                    <span className={`text-[11px] font-medium mt-1.5 ${metric.subtitleColor}`}>
+                                    <span className={`text-xs font-medium mt-1.5 ${metric.subtitleColor}`}>
                                         {metric.subtitle}
                                     </span>
                                 )}
@@ -65,11 +59,12 @@ export default function MetasPage({
                     onStartFocusSession={handleOpenStudy}
                     onOpenRegisterModal={() => setIsRegisterModalOpen(true)}
                     onManualRegister={(goal) => {
-                        setInitialRegisterData({ subject: goal.subject, topicName: goal.topicName, type: 'REVISION' });
+                        setInitialRegisterData({ id: goal.id, subject: goal.subject, topicName: goal.topicName, type: 'REVISION' });
                         setIsRegisterModalOpen(true);
                     }}
                     setActiveTab={setActiveTab}
                     isCompact={false}
+                    registeredGoalIds={registeredGoalIds}
                 />
             </section>
 
@@ -83,11 +78,12 @@ export default function MetasPage({
                     handleOpenStudy={handleOpenStudy}
                     setIsRegisterModalOpen={setIsRegisterModalOpen}
                     onManualRegister={(goal) => {
-                        setInitialRegisterData({ subject: goal.subject, topicName: goal.topicName });
+                        setInitialRegisterData({ id: goal.id, subject: goal.subject, topicName: goal.topicName });
                         setIsRegisterModalOpen(true);
                     }}
                     setActiveTab={setActiveTab}
                     isCompact={false}
+                    registeredGoalIds={registeredGoalIds}
                 />
             </section>
 
@@ -101,6 +97,10 @@ export default function MetasPage({
                 initialData={initialRegisterData}
                 onSave={(dados) => {
                     console.log('Estudo registrado a partir de metas:', dados);
+                    if (initialRegisterData?.id) {
+                        setRegisteredGoalIds(prev => new Set(prev).add(initialRegisterData.id));
+                        toggleGoalCompletion(initialRegisterData.id);
+                    }
                     setIsRegisterModalOpen(false);
                     setInitialRegisterData(null);
                 }}

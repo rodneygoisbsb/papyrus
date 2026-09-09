@@ -93,8 +93,8 @@ export default function WeeklyStudyChartCard() {
                     return (
                         <div key={idx} className="relative flex flex-col items-center justify-end h-full w-[10%] group z-10">
                             {/* Tooltip Hover */}
-                            <div className="absolute -top-10 opacity-0 group-hover:opacity-100 group-hover:-translate-y-1 transition-transform duration-200 ease-out duration-200 pointer-events-none z-20 transform-gpu">
-                                <div className="bg-slate-800 text-white text-[10px] font-bold py-1 px-2.5 rounded-lg shadow-lg whitespace-nowrap">
+                            <div className="absolute -top-10 opacity-0 group-hover:opacity-100 group-hover:-translate-y-1 transition-[opacity,transform] duration-150 ease-out pointer-events-none z-20 transform-gpu will-change-[opacity,transform]">
+                                <div className="bg-slate-800 text-white text-xs font-bold py-1 px-2.5 rounded-lg shadow-lg whitespace-nowrap">
                                     {data.day.toUpperCase()}: {mode === 'tempo' ? `${data.timeValue}h de estudo` : `${data.questionValue} questões`}
                                     {/* Seta do tooltip */}
                                     <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-800 transform-gpu" />
@@ -112,7 +112,7 @@ export default function WeeklyStudyChartCard() {
                             </div>
 
                             {/* Rótulo do dia */}
-                            <span className="text-[10px] font-bold uppercase text-slate-400 mt-2 h-4">
+                            <span className="text-xs font-bold uppercase text-slate-400 mt-2 h-4">
                                 {data.day}
                             </span>
                         </div>

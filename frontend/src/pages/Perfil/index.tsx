@@ -185,7 +185,7 @@ export default function PerfilPage() {
                                     <User size={17} className="text-primary" />
                                     <h3 className="text-sm font-bold text-base-content">Informações Pessoais</h3>
                                 </div>
-                                <span className="text-[11px] text-slate-400 font-medium">Atualize seu cadastro</span>
+                                <span className="text-xs text-slate-400 font-medium">Atualize seu cadastro</span>
                             </div>
 
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -315,7 +315,7 @@ export default function PerfilPage() {
                                 <Sparkles size={18} className="text-amber-600 shrink-0 mt-0.5" />
                                 <div className="space-y-0.5 text-xs text-amber-900">
                                     <p className="font-bold">Como funciona o Ranking Papyrus?</p>
-                                    <p className="text-amber-700 text-[11px] leading-relaxed">
+                                    <p className="text-amber-700 text-xs leading-relaxed">
                                         Compare seu volume de horas líquidas e taxa de acertos em simulados com outros estudantes do mesmo cargo alvo para manter o foco competitivo.
                                     </p>
                                 </div>
@@ -325,7 +325,7 @@ export default function PerfilPage() {
                                 <label className="flex items-center justify-between p-3.5 rounded-xl bg-slate-50 border border-base-200 cursor-pointer hover:bg-slate-100/60 transition-colors">
                                     <div className="space-y-0.5">
                                         <span className="text-xs font-bold text-base-content block">Participar do Ranking Geral</span>
-                                        <span className="text-[11px] text-slate-400 font-normal">Exibir sua pontuação e conquistas nas tabelas públicas</span>
+                                        <span className="text-xs text-slate-400 font-normal">Exibir sua pontuação e conquistas nas tabelas públicas</span>
                                     </div>
                                     <input
                                         type="checkbox"
@@ -338,7 +338,7 @@ export default function PerfilPage() {
                                 <label className="flex items-center justify-between p-3.5 rounded-xl bg-slate-50 border border-base-200 cursor-pointer hover:bg-slate-100/60 transition-colors">
                                     <div className="space-y-0.5">
                                         <span className="text-xs font-bold text-base-content block">Exibir Total de Horas Semanais</span>
-                                        <span className="text-[11px] text-slate-400 font-normal">Outros concurseiros poderão ver seu tempo de estudo acumulado</span>
+                                        <span className="text-xs text-slate-400 font-normal">Outros concurseiros poderão ver seu tempo de estudo acumulado</span>
                                     </div>
                                     <input
                                         type="checkbox"
@@ -379,7 +379,7 @@ export default function PerfilPage() {
                                     <Shield size={17} className="text-primary" />
                                     <h3 className="text-sm font-bold text-base-content">Segurança da Conta</h3>
                                 </div>
-                                <span className="text-[11px] text-slate-400 font-medium">Controle de acesso</span>
+                                <span className="text-xs text-slate-400 font-medium">Controle de acesso</span>
                             </div>
 
                             <div className="space-y-4">
@@ -440,7 +440,7 @@ export default function PerfilPage() {
                                     <label className="flex items-center justify-between p-3.5 rounded-xl bg-slate-50 border border-base-200 cursor-pointer hover:bg-slate-100/60 transition-colors">
                                         <div className="space-y-0.5">
                                             <span className="text-xs font-bold text-base-content block">Autenticação em Duas Etapas (2FA)</span>
-                                            <span className="text-[11px] text-slate-400 font-normal">Exigir código adicional via e-mail ao logar em novo dispositivo</span>
+                                            <span className="text-xs text-slate-400 font-normal">Exigir código adicional via e-mail ao logar em novo dispositivo</span>
                                         </div>
                                         <input
                                             type="checkbox"

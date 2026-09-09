@@ -243,7 +243,7 @@ export default function ConfiguracoesPage() {
 
                         {/* Barra Visual Colorida */}
                         <div className="space-y-2">
-                            <div className="h-4 rounded-xl overflow-hidden flex font-bold text-[10px] text-white text-center leading-4 shadow-inner">
+                            <div className="h-4 rounded-xl overflow-hidden flex font-bold text-xs text-white text-center leading-4 shadow-inner">
                                 <div style={{ width: `${corteRuim}%` }} className="bg-rose-500 transition-all">
                                     Ruim (&lt;{corteRuim}%)
                                 </div>
@@ -299,7 +299,7 @@ export default function ConfiguracoesPage() {
                                 <Clock size={17} className="text-accent" />
                                 <h3 className="text-sm font-bold text-base-content">Período dos Ciclos de Revisão</h3>
                             </div>
-                            <span className="text-[11px] text-slate-400">Curva de Esquecimento / Repetição</span>
+                            <span className="text-xs text-slate-400">Curva de Esquecimento / Repetição</span>
                         </div>
 
                         <div className="flex flex-wrap items-center gap-2.5">
@@ -441,7 +441,7 @@ export default function ConfiguracoesPage() {
                                 <Tag size={17} className="text-primary" />
                                 <h3 className="text-sm font-bold text-base-content">Categorias Padrão do Sistema</h3>
                             </div>
-                            <span className="text-[11px] text-slate-400 font-medium">Tipos estruturais de estudo</span>
+                            <span className="text-xs text-slate-400 font-medium">Tipos estruturais de estudo</span>
                         </div>
 
                         <div className="flex flex-wrap items-center gap-3">
@@ -454,7 +454,7 @@ export default function ConfiguracoesPage() {
                                         title="Clique para alterar a cor"
                                     >
                                         <span className="group-hover:opacity-0 transition-opacity">{cat.nome}</span>
-                                        <span className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/20 text-white text-[10px]">
+                                        <span className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/20 text-white text-xs">
                                             MUDAR COR
                                         </span>
                                     </button>
@@ -463,7 +463,7 @@ export default function ConfiguracoesPage() {
                                     {editingFixedCat === cat.id && (
                                         <div className="absolute top-full left-0 mt-2 z-50 bg-base-100 rounded-2xl shadow-xl border border-base-300 p-3 w-[160px] animate-in fade-in slide-in-from-top-2 duration-150">
                                             <div className="flex justify-between items-center mb-2 pb-1.5 border-b border-base-200">
-                                                <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Cor</span>
+                                                <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Cor</span>
                                                 <button type="button" onClick={() => setEditingFixedCat(null)} className="text-slate-400 hover:text-slate-600 text-xs cursor-pointer">✕</button>
                                             </div>
                                             <div className="grid grid-cols-3 gap-2">
@@ -493,7 +493,7 @@ export default function ConfiguracoesPage() {
                         <div className="flex items-center justify-between border-b border-base-200 pb-3">
                             <div>
                                 <h3 className="text-sm font-bold text-base-content">Categorias Personalizadas</h3>
-                                <p className="text-[11px] text-slate-400">Crie tags adicionais para categorizar sessões e filtros</p>
+                                <p className="text-xs text-slate-400">Crie tags adicionais para categorizar sessões e filtros</p>
                             </div>
                             <button
                                 type="button"
@@ -529,7 +529,7 @@ export default function ConfiguracoesPage() {
                                 <h4 className="text-xs font-bold text-base-content">Adicionar Nova Categoria</h4>
                                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                                     <div className="sm:col-span-2 space-y-1">
-                                        <label className="text-[11px] font-bold text-slate-600">Nome da Categoria</label>
+                                        <label className="text-xs font-bold text-slate-600">Nome da Categoria</label>
                                         <input
                                             type="text"
                                             value={novaCategoriaNome}
@@ -540,7 +540,7 @@ export default function ConfiguracoesPage() {
                                         />
                                     </div>
                                     <div className="space-y-1">
-                                        <label className="text-[11px] font-bold text-slate-600">Cor do Badge</label>
+                                        <label className="text-xs font-bold text-slate-600">Cor do Badge</label>
                                         <div className="flex items-center gap-2 h-8">
                                             {CORES_PALETA.map(cor => (
                                                 <button
@@ -587,7 +587,7 @@ export default function ConfiguracoesPage() {
                                 <Bell size={17} className="text-primary" />
                                 <h3 className="text-sm font-bold text-base-content">Tipos de Notificações</h3>
                             </div>
-                            <span className="text-[11px] text-slate-400 font-medium">Alertas no navegador e e-mail</span>
+                            <span className="text-xs text-slate-400 font-medium">Alertas no navegador e e-mail</span>
                         </div>
 
                         {/* Card 1: Constância */}
@@ -597,7 +597,7 @@ export default function ConfiguracoesPage() {
                                     <Flame size={16} className="text-accent" />
                                     <span className="text-xs font-bold text-base-content">Constância & Streak</span>
                                 </div>
-                                <p className="text-[11px] text-slate-500 leading-relaxed font-normal">
+                                <p className="text-xs text-slate-500 leading-relaxed font-normal">
                                     Lembretes diários para manter o ritmo dos seus estudos e criar uma rotina consistente e inabalável.
                                 </p>
                             </div>
@@ -616,7 +616,7 @@ export default function ConfiguracoesPage() {
                                     <Clock size={16} className="text-secondary" />
                                     <span className="text-xs font-bold text-base-content">Revisão Espaçada</span>
                                 </div>
-                                <p className="text-[11px] text-slate-500 leading-relaxed font-normal">
+                                <p className="text-xs text-slate-500 leading-relaxed font-normal">
                                     Notificações inteligentes para revisar tópicos e questões exatamente no momento ideal da sua curva de retenção.
                                 </p>
                             </div>
@@ -635,7 +635,7 @@ export default function ConfiguracoesPage() {
                                     <Sparkles size={16} className="text-primary" />
                                     <span className="text-xs font-bold text-base-content">Feedback & IA Insights</span>
                                 </div>
-                                <p className="text-[11px] text-slate-500 leading-relaxed font-normal">
+                                <p className="text-xs text-slate-500 leading-relaxed font-normal">
                                     Mensagens com insights, diagnósticos de retenção e sugestões sobre seu rendimento semanal.
                                 </p>
                             </div>

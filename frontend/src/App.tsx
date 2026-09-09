@@ -13,11 +13,10 @@ import ConfiguracoesPage from './pages/Configuracoes';
 import DisciplinasPage from './pages/Disciplinas';
 import PlanoEstudosPage from './pages/PlanoEstudos';
 import PlanejamentoPage from './pages/Planejamento';
-import QuadroSemanalPage from './pages/QuadroSemanal';
 import DesempenhoPage from './pages/Desempenho';
 import EditalVerticalizadoPage from './pages/EditalVerticalizado';
 import CriarPlanoPage from './pages/CriarPlano';
-import CriarPlanoEditaisProntosPage from './pages/CriarPlanoEditaisProntos';
+import PlanTemplates from './pages/CriarPlano/components/PlanTemplates';
 
 // 3. Hooks personalizados
 import { useLocalStorage } from './hooks/useLocalStorage';
@@ -28,44 +27,44 @@ export default function App() {
   const [selectedPlanId, setSelectedPlanId] = useLocalStorage('@papyrus:selectedPlanId', 1);
   const [planosDisponiveis, setPlanosDisponiveis] = useLocalStorage('@papyrus:planosDisponiveis', [
     {
-        id: 1,
-        nome: 'PM-DF Oficial',
-        orgao: 'Polícia Militar do Distrito Federal',
-        questoes: 1250,
-        acerto: 78,
-        horas: 145,
-        atualizacao: 'Atualizado hoje',
-        iconColor: 'text-blue-600',
-        bgLight: 'bg-blue-50'
+      id: 1,
+      nome: 'PM-DF Oficial',
+      orgao: 'Polícia Militar do Distrito Federal',
+      questoes: 1250,
+      acerto: 78,
+      horas: 145,
+      atualizacao: 'Atualizado hoje',
+      iconColor: 'text-blue-600',
+      bgLight: 'bg-blue-50'
     },
     {
-        id: 2,
-        nome: 'Plano Banco do Brasil',
-        orgao: 'Agente Comercial',
-        questoes: 840,
-        acerto: 82,
-        horas: 92,
-        atualizacao: 'Atualizado há 2 dias',
-        iconColor: 'text-amber-500',
-        bgLight: 'bg-amber-50'
+      id: 2,
+      nome: 'Plano Banco do Brasil',
+      orgao: 'Agente Comercial',
+      questoes: 840,
+      acerto: 82,
+      horas: 92,
+      atualizacao: 'Atualizado há 2 dias',
+      iconColor: 'text-amber-500',
+      bgLight: 'bg-amber-50'
     },
     {
-        id: 3,
-        nome: 'Polícia Federal',
-        orgao: 'Agente de Polícia Federal',
-        questoes: 410,
-        acerto: 65,
-        horas: 55,
-        atualizacao: 'Atualizado há 1 semana',
-        iconColor: 'text-slate-800',
-        bgLight: 'bg-slate-100'
+      id: 3,
+      nome: 'Polícia Federal',
+      orgao: 'Agente de Polícia Federal',
+      questoes: 410,
+      acerto: 65,
+      horas: 55,
+      atualizacao: 'Atualizado há 1 semana',
+      iconColor: 'text-slate-800',
+      bgLight: 'bg-slate-100'
     }
   ]);
 
   const handleCreatePlan = (nome: string, cargo: string, imagem: File | null) => {
     let imagemUrl = undefined;
     if (imagem) {
-        imagemUrl = URL.createObjectURL(imagem);
+      imagemUrl = URL.createObjectURL(imagem);
     }
 
     const newPlan = {
@@ -80,23 +79,23 @@ export default function App() {
       iconColor: 'text-emerald-600',
       bgLight: 'bg-emerald-50'
     };
-    
+
     setPlanosDisponiveis((prev: any) => [...prev, newPlan]);
     setSelectedPlanId(newPlan.id);
   };
 
   const handleDeletePlan = (id: number) => {
     if (confirm('Deseja realmente excluir este plano?')) {
-        setPlanosDisponiveis((prev: any) => prev.filter((p: any) => p.id !== id));
-        if (selectedPlanId === id) {
-            setSelectedPlanId(null);
-        }
+      setPlanosDisponiveis((prev: any) => prev.filter((p: any) => p.id !== id));
+      if (selectedPlanId === id) {
+        setSelectedPlanId(null);
+      }
     }
   };
 
   const handleEditPlan = (updatedPlan: any) => {
-    setPlanosDisponiveis((prev: any) => 
-        prev.map((p: any) => (p.id === updatedPlan.id ? updatedPlan : p))
+    setPlanosDisponiveis((prev: any) =>
+      prev.map((p: any) => (p.id === updatedPlan.id ? updatedPlan : p))
     );
   };
 
@@ -280,6 +279,16 @@ export default function App() {
     window.dispatchEvent(new CustomEvent('papyrus:open-zen-focus', { detail: goal }));
   };
 
+  const handleReplanGoals = () => {
+    setDailyGoals((prev) =>
+      prev.map((g) => ({
+        ...g,
+        isOverdue: false,
+        daysOverdue: 0
+      }))
+    );
+  };
+
   return (
     <MainLayout
       activeTab={activeTab}
@@ -305,6 +314,7 @@ export default function App() {
           toggleGoalCompletion={toggleGoalCompletion}
           handleOpenStudy={handleOpenStudy}
           setActiveTab={setActiveTab}
+          handleReplanGoals={handleReplanGoals}
         />
       )}
 
@@ -324,13 +334,13 @@ export default function App() {
       )}
 
       {activeTab === 'plano-estudos' && (
-        <PlanoEstudosPage 
-            planos={planosDisponiveis} 
-            selectedPlanId={selectedPlanId}
-            setActiveTab={setActiveTab} 
-            onSelectPlan={setSelectedPlanId}
-            onDeletePlan={handleDeletePlan}
-            onEditPlan={handleEditPlan}
+        <PlanoEstudosPage
+          planos={planosDisponiveis}
+          selectedPlanId={selectedPlanId}
+          setActiveTab={setActiveTab}
+          onSelectPlan={setSelectedPlanId}
+          onDeletePlan={handleDeletePlan}
+          onEditPlan={handleEditPlan}
         />
       )}
 
@@ -339,7 +349,7 @@ export default function App() {
       )}
 
       {activeTab === 'criar-plano-editais-prontos' && (
-        <CriarPlanoEditaisProntosPage setActiveTab={setActiveTab} />
+        <PlanTemplates setActiveTab={setActiveTab} />
       )}
 
       {activeTab === 'metas' && (
@@ -357,9 +367,11 @@ export default function App() {
 
       {activeTab === 'planejamento' && <PlanejamentoPage />}
 
-      {activeTab === 'quadro' && <QuadroSemanalPage />}
+      {activeTab === 'edital' && <EditalVerticalizadoPage />}
 
-      {activeTab !== 'inicio' && activeTab !== 'disciplinas' && activeTab !== 'plano-estudos' && activeTab !== 'metas' && activeTab !== 'perfil' && activeTab !== 'configuracoes' && activeTab !== 'planejamento' && activeTab !== 'quadro' && !activeTab.startsWith('criar-plano') && (
+      {activeTab === 'desempenho' && <DesempenhoPage />}
+
+      {activeTab !== 'inicio' && activeTab !== 'edital' && activeTab !== 'disciplinas' && activeTab !== 'plano-estudos' && activeTab !== 'metas' && activeTab !== 'perfil' && activeTab !== 'configuracoes' && activeTab !== 'planejamento' && activeTab !== 'desempenho' && !activeTab.startsWith('criar-plano') && (
         <div className="card-papyrus !p-12 text-center space-y-4 flex flex-col items-center justify-center h-full min-h-[400px]">
           <Layers size={40} className="text-primary" />
           <h3 className="text-lg font-bold text-base-content capitalize">
