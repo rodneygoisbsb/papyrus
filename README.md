@@ -6,7 +6,7 @@
 ![Front-end](https://img.shields.io/badge/Front--end-v1.0_Concluído-brightgreen)
 ![Back-end](https://img.shields.io/badge/Back--end-Em_Construção-orange)
 
-🔗 **Deploy do Front-end:** [https://papyrus-demo.vercel.app](https://papyrus-rg.vercel.app)
+🔗 **Deploy do Front-end:** [https://papyrus-rg.vercel.app](https://papyrus-rg.vercel.app)
 
 ---
 
