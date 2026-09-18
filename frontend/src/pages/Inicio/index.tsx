@@ -42,7 +42,8 @@ export default function InicioPage({
     return (
         <div className="space-y-6 animate-in fade-in duration-200 font-['Plus_Jakarta_Sans'] text-base-content w-full">
             
-            {/* BANNER DE REPLANEJAMENTO */}
+            {/* BANNER DE REPLANEJAMENTO (Oculto Temporariamente) */}
+            {/*
             {hasOverdueGoals && (
                 <div className="bg-amber-50 border border-amber-200/60 rounded-[24px] p-4 flex flex-col sm:flex-row items-center justify-between gap-4 animate-in fade-in slide-in-from-top-4 duration-300">
                     <div className="flex items-center gap-3">
@@ -64,6 +65,7 @@ export default function InicioPage({
                     </button>
                 </div>
             )}
+            */}
 
             {/* 1. LINHA SUPERIOR: 3 CARDS TOP */}
             <TopKpiCards

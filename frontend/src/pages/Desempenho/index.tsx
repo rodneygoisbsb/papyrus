@@ -153,65 +153,57 @@ export default function DesempenhoTab() {
                 </div>
             </div>
 
-            {/* KPI Cards (Agora com 6 cards em 2 linhas ou em grid menor no mobile) */}
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-                <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-center items-center text-center sm:flex-row sm:text-left sm:justify-start gap-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
-                    <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-500 flex items-center justify-center shrink-0">
-                        <Clock size={20} />
+            {/* KPI Cards (4 principais) */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-center items-center text-center sm:flex-row sm:text-left sm:justify-start gap-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
+                    <div className="w-12 h-12 rounded-xl bg-blue-50 text-blue-500 flex items-center justify-center shrink-0">
+                        <Clock size={24} />
                     </div>
-                    <div>
-                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Horas Estudadas</p>
-                        <p className="text-xl font-black text-slate-800">{data.kpis.hours}</p>
-                    </div>
-                </div>
-
-                <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-center items-center text-center sm:flex-row sm:text-left sm:justify-start gap-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
-                    <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-500 flex items-center justify-center shrink-0">
-                        <Target size={20} />
-                    </div>
-                    <div>
-                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Aproveitamento</p>
-                        <p className="text-xl font-black text-slate-800">{data.kpis.accuracy}</p>
+                    <div className="flex-1">
+                        <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">Tempo Estudado</p>
+                        <div className="flex items-center gap-2">
+                            <p className="text-xl font-black text-slate-800">{data.kpis.hours}</p>
+                            <span className="text-[10px] font-bold bg-emerald-50 text-emerald-600 px-1.5 py-0.5 rounded-md">+15%</span>
+                        </div>
                     </div>
                 </div>
 
-                <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-center items-center text-center sm:flex-row sm:text-left sm:justify-start gap-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
-                    <div className="w-10 h-10 rounded-xl bg-orange-50 text-orange-500 flex items-center justify-center shrink-0">
-                        <Flame size={20} />
+                <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-center items-center text-center sm:flex-row sm:text-left sm:justify-start gap-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
+                    <div className="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-500 flex items-center justify-center shrink-0">
+                        <Target size={24} />
                     </div>
-                    <div>
-                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Dias Seguidos</p>
-                        <p className="text-xl font-black text-slate-800">{data.kpis.streak}</p>
-                    </div>
-                </div>
-
-                <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-center items-center text-center sm:flex-row sm:text-left sm:justify-start gap-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
-                    <div className="w-10 h-10 rounded-xl bg-purple-50 text-purple-500 flex items-center justify-center shrink-0">
-                        <Award size={20} />
-                    </div>
-                    <div>
-                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Edital Visto</p>
-                        <p className="text-xl font-black text-slate-800">{data.kpis.edital}</p>
+                    <div className="flex-1">
+                        <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">Aproveitamento</p>
+                        <div className="flex items-center gap-2">
+                            <p className="text-xl font-black text-slate-800">{data.kpis.accuracy}</p>
+                            <span className="text-[10px] font-bold bg-emerald-50 text-emerald-600 px-1.5 py-0.5 rounded-md">+2%</span>
+                        </div>
                     </div>
                 </div>
 
-                <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-center items-center text-center sm:flex-row sm:text-left sm:justify-start gap-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
-                    <div className="w-10 h-10 rounded-xl bg-pink-50 text-pink-500 flex items-center justify-center shrink-0">
-                        <ListChecks size={20} />
+                <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-center items-center text-center sm:flex-row sm:text-left sm:justify-start gap-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
+                    <div className="w-12 h-12 rounded-xl bg-pink-50 text-pink-500 flex items-center justify-center shrink-0">
+                        <ListChecks size={24} />
                     </div>
-                    <div>
-                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Questões</p>
-                        <p className="text-xl font-black text-slate-800">{data.kpis.questions}</p>
+                    <div className="flex-1">
+                        <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">Questões (Resolvidas)</p>
+                        <div className="flex items-center gap-2">
+                            <p className="text-xl font-black text-slate-800">{data.kpis.questions}</p>
+                            <span className="text-[10px] font-bold bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded-md">Pico Máx</span>
+                        </div>
                     </div>
                 </div>
 
-                <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-center items-center text-center sm:flex-row sm:text-left sm:justify-start gap-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
-                    <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-500 flex items-center justify-center shrink-0">
-                        <RefreshCw size={20} />
+                <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-center items-center text-center sm:flex-row sm:text-left sm:justify-start gap-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
+                    <div className="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-500 flex items-center justify-center shrink-0">
+                        <RefreshCw size={24} />
                     </div>
-                    <div>
-                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Revisões</p>
-                        <p className="text-xl font-black text-slate-800">{data.kpis.revisions}</p>
+                    <div className="flex-1">
+                        <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">Revisões</p>
+                        <div className="flex items-center gap-2">
+                            <p className="text-xl font-black text-slate-800">{data.kpis.revisions}</p>
+                            <span className="text-[10px] font-bold bg-indigo-50 text-indigo-600 px-1.5 py-0.5 rounded-md">No Prazo</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -358,26 +350,43 @@ export default function DesempenhoTab() {
                     </div>
                 </div>
 
-                {/* Tempo de Estudo da Semana (Bar) */}
-                <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col">
-                    <div className="mb-6">
-                        <h3 className="font-bold text-slate-800">Distribuição do Tempo</h3>
-                        <p className="text-xs font-medium text-slate-400">Horas divididas no período</p>
+                <div className="flex flex-col space-y-6">
+                    {/* Tempo de Estudo da Semana (Bar) */}
+                    <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col flex-1">
+                        <div className="mb-6">
+                            <h3 className="font-bold text-slate-800">Distribuição do Tempo</h3>
+                            <p className="text-xs font-medium text-slate-400">Horas divididas no período</p>
+                        </div>
+                        <div className="h-48 flex-1">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <BarChart data={data.hoursData} margin={{ top: 0, right: 0, left: -25, bottom: 0 }}>
+                                    <CartesianGrid vertical={false} stroke="#e2e8f0" strokeDasharray="4 4" />
+                                    <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{fill: '#94a3b8', fontSize: 12}} dy={10} />
+                                    <YAxis axisLine={false} tickLine={false} tick={{fill: '#94a3b8', fontSize: 12}} />
+                                    <RechartsTooltip 
+                                        cursor={{fill: '#f8fafc'}}
+                                        contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                                        formatter={(value) => [`${value}h`, 'Estudadas']}
+                                    />
+                                    <Bar dataKey="hours" fill="#3b82f6" radius={[4, 4, 0, 0]} animationDuration={1000} />
+                                </BarChart>
+                            </ResponsiveContainer>
+                        </div>
                     </div>
-                    <div className="h-64 flex-1">
-                        <ResponsiveContainer width="100%" height="100%">
-                            <BarChart data={data.hoursData} margin={{ top: 0, right: 0, left: -25, bottom: 0 }}>
-                                <CartesianGrid vertical={false} stroke="#e2e8f0" strokeDasharray="4 4" />
-                                <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{fill: '#94a3b8', fontSize: 12}} dy={10} />
-                                <YAxis axisLine={false} tickLine={false} tick={{fill: '#94a3b8', fontSize: 12}} />
-                                <RechartsTooltip 
-                                    cursor={{fill: '#f8fafc'}}
-                                    contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
-                                    formatter={(value) => [`${value}h`, 'Estudadas']}
-                                />
-                                <Bar dataKey="hours" fill="#3b82f6" radius={[4, 4, 0, 0]} animationDuration={1000} />
-                            </BarChart>
-                        </ResponsiveContainer>
+
+                    {/* Card de Edital realocado */}
+                    <div className="grid grid-cols-1 gap-4">
+                        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex justify-start items-center hover:-translate-y-1 transition-transform">
+                            <div className="flex items-center gap-4">
+                                <div className="w-12 h-12 rounded-xl bg-purple-50 text-purple-500 flex items-center justify-center shrink-0">
+                                    <Award size={24} />
+                                </div>
+                                <div className="text-left">
+                                    <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Edital Visto</p>
+                                    <p className="text-2xl font-black text-slate-800">{data.kpis.edital}</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
