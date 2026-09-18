@@ -1,71 +1,81 @@
-# 🏛️ Papyrus
+# 📚 Papyrus - Gerenciador de Estudos
 
-**Plataforma moderna para gestão de estudos, ciclo de revisões espaçadas e fechamento de editais para concursos públicos**
+> Aplicação Full Stack desenvolvida para planejamento, organização e acompanhamento de rotinas e metas de estudos.
 
----
+![Status do Projeto](https://img.shields.io/badge/Status-Em_Desenvolvimento-yellow)
+![Front-end](https://img.shields.io/badge/Front--end-v1.0_Concluído-brightgreen)
+![Back-end](https://img.shields.io/badge/Back--end-Em_Construção-orange)
 
-## Sobre o Projeto
-
-O **Papyrus** nasceu com um propósito genuíno: **democratizar o acesso a ferramentas de estudo de alto rendimento**
-
-O projeto foi idealizado e construído para suprir uma necessidade real de familiares que precisavam de um método estruturado para serem aprovados em concursos públicos, mas não tinham recursos financeiros para arcar com as caras assinaturas das plataformas
-
-### Desenvolvimento com Inteligência Artificial
-
-Liderei a concepção arquitetural, a modelagem de dados e a interface do projeto, utilizando metodologias modernas de **Engenharia de Software assistida por Inteligência Artificial (AI Pair Programming)**. A IA atuou como copiloto técnico em tempo real, acelerando a escrita da API REST em Java/Spring Boot, a integração com o banco PostgreSQL e o ecossistema reativo em React + Tailwind CSS
+🔗 **Deploy do Front-end:** [https://papyrus-demo.vercel.app](https://papyrus-rg.vercel.app)
 
 ---
 
-## Principais Recursos
+## 📌 Sobre o Projeto
 
-* 🎯 **Gestão de Concursos:** Acompanhe múltiplos editais simultâneos com barra de progresso dinâmico de fechamento de tópicos
-* ⏱️ **Cronômetro & Modo Concentração:** Registro de horas líquidas com visual imersivo e sem distrações
-* 📝 **Caderno de Erros & Resumos:** Editor de texto rico para fixação de pegadinhas de prova e esquemas de matérias
-* 🔄 **Edital Verticalizado & Revisão em Bloco:** Controle visual dos 6 ciclos de revisão espaçada (24h, 7d, 15d, 30d, 60d, 90d) e disparo de blocos a cada 3 tópicos
-* 📊 **Métricas e Desempenho:** Contabilização de questões resolvidas, taxa de acerto percentual e controle de ofensiva diária (*streak*)
+O **Papyrus** nasceu da necessidade de gerenciar materiais, tópicos de estudo e ciclos de revisão de forma ágil e intuitiva. 
+
+A interface foca em produtividade, responsividade e experiência do usuário (UX), enquanto a arquitetura foi planejada para suportar alta escalabilidade e segurança com foco em boas práticas de engenharia de software e testes (Shift-Left).
 
 ---
 
-## Tecnologias Utilizadas
+## 🛠️ Tecnologias Utilizadas
 
-* **Frontend:** React.js, Vite, Tailwind CSS, Lucide Icons, Axios
-* **Backend:** Java 17, Spring Boot 3, Spring Data JPA, Hibernate
-* **Banco de Dados:** PostgreSQL
-* **Metodologia:** AI Pair Programming / Engenharia de Prompts
+### **Front-end (v1.0)**
+- **React.js** com **TypeScript**
+- **Tailwind CSS**
+- **Vite**
+- **Lucide Icons**
 
----
+### **Back-end (Em desenvolvimento)**
+- **Java 17 / 21**
+- **Spring Boot 3.x**
+  - Spring Web
+  - Spring Data JPA
+  - Bean Validation
+- **PostgreSQL**
 
-## Como Executar
-
-### 1. Backend (Java / Spring Boot)
-
-1. Entre na pasta do backend: `cd backend`
-2. Execute a aplicação: `./mvnw spring-boot:run`
-*(O servidor iniciará na porta 3333)*
-
-### 2. Frontend (React / Vite)
-
-1. Entre na pasta do frontend: `cd frontend`
-2. Instale os pacotes: `npm install`
-3. Inicie o servidor: `npm run dev`
-*(Acesse no navegador: `http://localhost:5173` ou `5174`)*
+### **Qualidade & Ferramentas**
+- **Git & GitHub**
+- **Cypress / Postman**
 
 ---
 
-## Autor e Créditos
+## 🚀 Funcionalidades
 
-* **Idealização e Condução:** [Rodney Gois](https://www.google.com/search?q=https://github.com/rodneygoisbsb)
-* **Desenvolvimento:** Construído com suporte e aceleração de Inteligência Artificial
+### Front-end (Disponível):
+- [x] Dashboard interativo com interface limpa e intuitiva
+- [x] Gerenciamento visual de blocos e tópicos de estudo
+- [x] Componentes modulares e totalmente responsivos (mobile/desktop)
+- [x] Tipagem estática com TypeScript para prevenção de erros em tempo de build
+
+### Back-end (Roadmap):
+- [ ] Modelagem de dados e migrações no PostgreSQL
+- [ ] Endpoints RESTful para criação, listagem e atualização de tarefas
+- [ ] Autenticação e controle de sessões
+- [ ] Cobertura de testes unitários e de integração
 
 ---
 
-### Para enviar ao GitHub:
+## 💻 Como Rodar o Front-end Localmente
 
-Salve o arquivo no VS Code e rode no terminal:
+1. Clone o repositório:
+   ```bash
+   git clone [https://github.com/rodneygoisbsb/papyrus.git](https://github.com/rodneygoisbsb/papyrus.git)
 
-```bash
-git add README.md
-git commit -m "docs: corrige formatacao do README"
-git push origin main
+2. Acesse a pasta do front-end:
+    ```Bash
+    cd papyrus/frontend
 
-```
+4. Instale as dependências:
+    ```Bash
+    npm install
+
+4. Inicie o servidor de desenvolvimento:
+    ```Bash
+    npm run dev
+
+---
+
+## 👨‍💻 Autor
+
+Desenvolvido por Rodney Góis
