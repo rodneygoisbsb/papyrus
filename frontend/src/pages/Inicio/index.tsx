@@ -41,6 +41,14 @@ export default function InicioPage({
 
     return (
         <div className="space-y-6 animate-in fade-in duration-200 font-['Plus_Jakarta_Sans'] text-base-content w-full">
+            <section className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between" aria-labelledby="inicio-title">
+                <div>
+                    <p className="text-xs font-bold uppercase tracking-[0.16em] text-primary">Visão geral</p>
+                    <h1 id="inicio-title" className="mt-1 text-2xl font-extrabold tracking-tight text-base-content sm:text-3xl">Bom dia, vamos manter o ritmo?</h1>
+                    <p className="mt-1 text-sm text-neutral-content">Acompanhe seu progresso e escolha o próximo passo de estudo.</p>
+                </div>
+                <span className="text-xs font-semibold text-neutral-content">Atualizado agora</span>
+            </section>
             
             {/* BANNER DE REPLANEJAMENTO (Oculto Temporariamente) */}
             {/*

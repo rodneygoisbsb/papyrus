@@ -6,7 +6,6 @@ import { Layers } from 'lucide-react';
 import MainLayout from './components/layout/MainLayout';
 
 import InicioPage from './pages/Inicio';
-import ConcursosPage from './pages/Concursos';
 import MetasPage from './pages/Metas';
 import PerfilPage from './pages/Perfil';
 import ConfiguracoesPage from './pages/Configuracoes';

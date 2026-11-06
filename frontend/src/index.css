@@ -173,10 +173,19 @@
    ============================================================ */
 @layer components {
   .card-papyrus {
-    @apply bg-base-100 border border-base-300/70 rounded-3xl p-6 shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 transform-gpu;
+    @apply bg-base-100 border border-base-300/70 rounded-2xl p-5 shadow-[0_2px_12px_rgba(15,34,61,0.04)] hover:shadow-[0_8px_24px_rgba(15,34,61,0.08)] hover:-translate-y-0.5 transition-all duration-200 transform-gpu;
   }
 
   .card-papyrus-static {
-    @apply bg-base-100 border border-base-300/70 rounded-3xl p-6 shadow-md;
+    @apply bg-base-100 border border-base-300/70 rounded-2xl p-5 shadow-[0_2px_12px_rgba(15,34,61,0.04)];
+  }
+
+  button, a, [role='button'] {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible {
+    outline: 3px solid color-mix(in oklch, var(--color-primary) 32%, transparent);
+    outline-offset: 2px;
   }
 }
