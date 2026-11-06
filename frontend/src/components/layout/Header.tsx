@@ -24,7 +24,7 @@ export default function Header({
     }, []);
 
     return (
-        <header className="h-[68px] px-7 flex items-center justify-between bg-base-100 border-b border-base-300/60 relative z-20 shrink-0 shadow-sm">
+        <header className="h-[72px] px-5 sm:px-7 flex items-center justify-between bg-base-100/95 backdrop-blur border-b border-base-300/60 relative z-20 shrink-0 shadow-[0_1px_12px_rgba(15,34,61,0.04)]">
             {/* ESQUERDA: Seletor de plano */}
             <div className="flex items-center gap-3 pl-4">
                 <span className="text-xs uppercase font-bold tracking-widest text-neutral-content">

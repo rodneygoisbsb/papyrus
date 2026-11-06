@@ -41,7 +41,7 @@ export default function Sidebar({ activeTab, setActiveTab }) {
             onMouseLeave={() => setExpanded(false)}
             className={[
                 expanded ? 'w-60' : 'w-[68px]',
-                'bg-base-100 flex flex-col justify-between shrink-0 h-screen sticky top-0 z-40 transition-all duration-300 ease-[cubic-bezier(0.2,0.8,0.2,1)] border-r border-base-300/60 shadow-[4px_0_24px_rgba(0,0,0,0.03)]',
+                'bg-base-100 flex flex-col justify-between shrink-0 h-screen sticky top-0 z-40 transition-all duration-300 ease-[cubic-bezier(0.2,0.8,0.2,1)] border-r border-base-300/60 shadow-[4px_0_24px_rgba(15,34,61,0.06)]',
                 'select-none hidden md:flex',
             ].join(' ')}
         >
